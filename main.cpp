@@ -6,7 +6,7 @@
 */
 
 #include <iostream>
-
+#include <string> // required on windows for std::to_string(...)
 #include "Pig.hpp"
 
 int main(void)

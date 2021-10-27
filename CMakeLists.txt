@@ -10,3 +10,5 @@ target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 # Conan
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
+
+target_link_libraries(rtype ${CONAN_LIBS})
