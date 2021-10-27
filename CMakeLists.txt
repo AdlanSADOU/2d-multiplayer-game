@@ -11,4 +11,14 @@ target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/lib)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
-target_link_libraries(rtype ${CONAN_LIBS})
+# copy sfml DLLs built by conan into the build directory
+add_custom_command(TARGET rtype POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CONAN_BIN_DIRS_SFML}
+                ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+
+# CONAN_* variables are set in conanbuildinfo.cmake
+# that is generated after $>conan install
+target_include_directories(rtype PUBLIC ${CONAN_INCLUDE_DIRS_SFML})
+target_link_directories(rtype PUBLIC ${CONAN_LIB_DIRS_SFML})
+target_link_libraries(rtype ${CONAN_LIBS_SFML})
