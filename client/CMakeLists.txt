@@ -8,8 +8,13 @@ target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 target_link_libraries(rtype nuts_engine)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-add_custom_command(TARGET rtype POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CONAN_BIN_DIRS_SFML}
-                ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+if(MSVC)
+  target_compile_options(rtype PRIVATE /W1)
+
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  add_custom_command(TARGET rtype POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CONAN_BIN_DIRS_SFML}
+  ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+
+  endif()
