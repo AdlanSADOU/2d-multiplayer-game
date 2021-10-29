@@ -6,13 +6,17 @@
 */
 
 #include <iostream>
-
+#include <string> // required on windows for std::to_string(...)
 #include "Pig.hpp"
+#include "rtype.h"
+#include "nutsEngineAPI.h"
 
 int main(void)
 {
     Pig peppa(10);
     std::cout << std::to_string(peppa.GetPigSize()) << std::endl;
 
-    return (0);
+    runEngine();
+
+    return 0;
 }

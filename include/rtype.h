@@ -8,6 +8,6 @@
 #ifndef RTYPE_H_
 #define RTYPE_H_
 
-
+int runEngine();
 
 #endif /* !RTYPE_H_ */
