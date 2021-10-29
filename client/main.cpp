@@ -7,7 +7,9 @@ int main()
 {
     runEngine();
 
-    sf::Window window(sf::VideoMode(800, 600), "My window");
+    sf::RenderWindow window;
+    window.create((sf::VideoMode){800, 600, 32}, "Title");
+    window.setFramerateLimit(0);
 
     // run the program as long as the window is open
     while (window.isOpen())
