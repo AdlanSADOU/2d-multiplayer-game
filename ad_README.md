@@ -1,12 +1,4 @@
 # Remarks
-- how to tell conan to build shared libs?
-
-- no way to tell conan to pull/build x64(or amd64) libs?
-
-- <string> must be explicitly included on windows for std::to_string
-
-- can't pull bincrafters sfml version on windows
-
 
 - working conan profile:
 ```
@@ -14,7 +6,7 @@
 os=Windows
 os_build=Windows
 arch=x86_64
-arch_build=x64
+arch_build=x86_64
 compiler=Visual Studio
 compiler.version=16
 build_type=Debug #or Release
