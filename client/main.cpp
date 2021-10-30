@@ -1,27 +1,26 @@
 
 #include <SFML/Graphics.hpp>
-#include <NutsEngine.h>
-#include <stdio.h>
+#include <Nuts.h>
+#include <iostream>
+#include <bitset>
+#include <cassert>
 
 int main()
 {
-    runEngine();
 
-    sf::RenderWindow window;
-    window.create((sf::VideoMode){800, 600, 32}, "Title");
-    window.setFramerateLimit(0);
+    Nuts nuts;
+    nuts.InitWindow("test window", 400, 200);
 
-    // run the program as long as the window is open
-    while (window.isOpen())
+    while (nuts.IsRunning())
     {
-        // check all the window's events that were triggered since the last iteration of the loop
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            // "close requested" event: we close the window
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+        nuts.HandleInput();
+
+        nuts.Clear();
+
+        if (nuts.GetKeyDown(sf::Keyboard::Q))
+            printf("WORKING !!\n");
+
+        nuts.Present();
     }
 
     return 0;

@@ -6,6 +6,7 @@ add_executable(rtype main.cpp)
 
 target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+target_include_directories(rtype PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine)
 target_link_libraries(rtype nuts_engine)
 
 if(MSVC)
