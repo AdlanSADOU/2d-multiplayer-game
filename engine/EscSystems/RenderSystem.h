@@ -7,14 +7,27 @@
 
 #pragma once
 
+#include <System.h>
+#include <SpriteComponent.h>
 
+extern Coordinator gCoordinator;
 
-class RenderSystem
+class RenderSystem : public System // has all entities
 {
 private:
 
 public:
-    RenderSystem();
-    ~RenderSystem();
 
+    void Init() {
+
+    }
+
+    void Update(sf::RenderWindow &window) {
+        for (auto const &entity : mEntities)
+        {
+            auto const& spriteComponent = gCoordinator.GetComponent<SpriteComponent>(entity);
+
+            window.draw(spriteComponent.sprite);
+        }
+    }
 };

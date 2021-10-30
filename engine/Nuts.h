@@ -8,15 +8,19 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <TransformComponent.h>
+#include <SpriteComponent.h>
 
 class Nuts
 {
-private:
+public:
     sf::RenderWindow window;
+
+private:
     sf::Keyboard::Key pressedKey;
+    sf::Keyboard::Key downKey;
 
 public:
-
     void InitWindow(char *windowName, std::uint32_t width, std::uint32_t height)
     {
         window.create({width, height, 32}, windowName);
@@ -32,7 +36,8 @@ public:
         window.display();
     }
 
-    bool IsRunning(){
+    bool IsRunning()
+    {
         return window.isOpen();
     }
 
@@ -46,13 +51,27 @@ public:
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed)
+            {
                 pressedKey = event.key.code;
+                downKey = event.key.code;
+            }
+            if (event.type == sf::Event::KeyReleased)
+            {
+                downKey = sf::Keyboard::Unknown;
+            }
         }
     };
 
-    bool GetKeyDown(sf::Keyboard::Key key)
+    bool GetKeyPressed(sf::Keyboard::Key key)
     {
         if (key == pressedKey)
+            return true;
+        return false;
+    }
+
+    bool GetKeyDown(sf::Keyboard::Key key)
+    {
+        if (key == downKey)
             return true;
         return false;
     }
