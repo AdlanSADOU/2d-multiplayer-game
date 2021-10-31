@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2021
 ** B-CPP-501-NCE-5-1-rtype-adlan.sadou
 ** File description:
-** SystemManager
+** SystemManager.h
 */
 
 #pragma once
@@ -29,7 +29,7 @@ public:
 	}
 
 	template<typename T>
-	void SetSignature(Signature signature)
+	void SetSignature(EntitySignature signature)
 	{
 		const char* typeName = typeid(T).name();
 
@@ -49,7 +49,7 @@ public:
 		}
 	}
 
-	void EntitySignatureChanged(Entity entity, Signature entitySignature)
+	void EntitySignatureChanged(Entity entity, EntitySignature entitySignature)
 	{
 		for (auto const& pair : mSystems)
 		{
@@ -69,6 +69,6 @@ public:
 	}
 
 private:
-	std::unordered_map<const char*, Signature> mSignatures{};
+	std::unordered_map<const char*, EntitySignature> mSignatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> mSystems{};
 };

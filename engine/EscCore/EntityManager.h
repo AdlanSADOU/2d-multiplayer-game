@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** EntityManager.h
+*/
+
 #pragma once
 
 #include "Types.h"
@@ -13,17 +20,17 @@ public:
 	{
 		for (Entity entity = 0; entity < MAX_ENTITIES; ++entity)
 		{
-			mAvailableEntities.push(entity);
+			mEntitiesPool.push(entity);
 		}
 	}
 
 	Entity CreateEntity()
 	{
-		assert(mLivingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
+		assert(mExistingEntitiesCount < MAX_ENTITIES && "Too many entities in existence.");
 
-		Entity id = mAvailableEntities.front();
-		mAvailableEntities.pop();
-		++mLivingEntityCount;
+		Entity id = mEntitiesPool.front();
+		mEntitiesPool.pop();
+		++mExistingEntitiesCount;
 
 		return id;
 	}
@@ -33,18 +40,18 @@ public:
 		assert(entity < MAX_ENTITIES && "Entity out of range.");
 
 		mSignatures[entity].reset();
-		mAvailableEntities.push(entity);
-		--mLivingEntityCount;
+		mEntitiesPool.push(entity);
+		--mExistingEntitiesCount;
 	}
 
-	void SetSignature(Entity entity, Signature signature)
+	void SetSignature(Entity entity, EntitySignature signature)
 	{
 		assert(entity < MAX_ENTITIES && "Entity out of range.");
 
 		mSignatures[entity] = signature;
 	}
 
-	Signature GetSignature(Entity entity)
+	EntitySignature GetSignature(Entity entity)
 	{
 		assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -52,7 +59,7 @@ public:
 	}
 
 private:
-	std::queue<Entity> mAvailableEntities{};
-	std::array<Signature, MAX_ENTITIES> mSignatures{};
-	uint32_t mLivingEntityCount{};
+	std::queue<Entity> mEntitiesPool{};
+	std::array<EntitySignature, MAX_ENTITIES> mSignatures{};
+	uint32_t mExistingEntitiesCount{};
 };

@@ -1,49 +1,69 @@
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** main.cpp
+*/
 
 #include <SFML/Graphics.hpp>
 
 #include <Nuts.h>
 
-#include <EscCore/Coordinator.h>
+#include <EscCore/Scene.h>
 #include <EscSystems/RenderSystem.h>
 
 #include <iostream>
 #include <bitset>
 #include <cassert>
 
-Coordinator gCoordinator;
+Scene gScene;
 
 int main()
 {
 
     Nuts nuts;
-    nuts.InitWindow("test window", 400, 200);
+    nuts.InitWindow("R-TYPE", 700, 200);
 
-    gCoordinator.Init();
-    gCoordinator.RegisterComponent<TransformComponent>();
-    gCoordinator.RegisterComponent<SpriteComponent>();
+    /**
+     * Scene is a global instance holding references to all managers:
+     * ComponentManager
+     * EntityManager
+     * SystemManager
+     * EventManager --> unsused for now, maybe we'll trash it
+     *
+     * The scene knows about every entity, components and systems
+     * and manages communication between them
+     **/
+    gScene.Init();
+    gScene.RegisterComponent<TransformComponent>();
+    gScene.RegisterComponent<SpriteComponent>();
 
-    auto renderSystem = gCoordinator.RegisterSystem<RenderSystem>();
+    ///////////////////////////
+    // RenderSystem
+    auto renderSystem = gScene.RegisterSystem<RenderSystem>();
     {
-        Signature sig;
-        sig.set(gCoordinator.GetComponentType<TransformComponent>());
-        sig.set(gCoordinator.GetComponentType<SpriteComponent>());
-        gCoordinator.SetSystemSignature<RenderSystem>(sig);
+        EntitySignature sig;
+        sig.set(gScene.GetComponentType<TransformComponent>());
+        sig.set(gScene.GetComponentType<SpriteComponent>());
+        gScene.SetSystemSignature<RenderSystem>(sig);
     }
 
-
+    ///////////////////////////
+    // Entity
     Entity playerEntity;
-    playerEntity = gCoordinator.CreateEntity();
-    gCoordinator.AddComponent(playerEntity, TransformComponent{});
-    gCoordinator.AddComponent(playerEntity, SpriteComponent{});
+    playerEntity = gScene.CreateEntity();
+    gScene.AddComponent(playerEntity, TransformComponent{});
+    gScene.AddComponent(playerEntity, SpriteComponent{});
 
-    TransformComponent &playerTransformComponent = gCoordinator.GetComponent<TransformComponent>(playerEntity);
-    SpriteComponent &playerSprite = gCoordinator.GetComponent<SpriteComponent>(playerEntity);
+    TransformComponent &playerTransformComponent = gScene.GetComponent<TransformComponent>(playerEntity);
+    SpriteComponent &playerSprite = gScene.GetComponent<SpriteComponent>(playerEntity);
 
-    playerTransformComponent.position = {100,100};
-    playerSprite.texture.loadFromFile("resources/me.jpg");
+    playerTransformComponent.position = {10, 10};
+    playerSprite.texture.loadFromFile("resources/r_type_logo.png");
     playerSprite.sprite.setTexture(playerSprite.texture);
     playerSprite.sprite.setPosition(playerTransformComponent.position);
 
+    // GameLoop
     while (nuts.IsRunning())
     {
         nuts.HandleInput();
@@ -53,7 +73,7 @@ int main()
         if (nuts.GetKeyPressed(sf::Keyboard::Q))
             printf("WORKING !!\n");
 
-        renderSystem->Update(nuts.window);
+        renderSystem->Update(nuts.window); // iterates over and draws entities
 
         nuts.Present();
     }

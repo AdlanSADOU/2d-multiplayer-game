@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2021
 ** B-CPP-501-NCE-5-1-rtype-adlan.sadou
 ** File description:
-** Coordinator
+** Scene
 */
 
 #pragma once
@@ -16,7 +16,7 @@
 #include "Types.h"
 #include <memory>
 
-class Coordinator
+class Scene
 {
 public:
 	void Init()
@@ -96,7 +96,7 @@ public:
 	}
 
 	template<typename T>
-	void SetSystemSignature(Signature signature)
+	void SetSystemSignature(EntitySignature signature)
 	{
 		mSystemManager->SetSignature<T>(signature);
 	}

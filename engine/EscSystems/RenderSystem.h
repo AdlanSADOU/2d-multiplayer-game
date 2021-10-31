@@ -10,9 +10,15 @@
 #include <System.h>
 #include <SpriteComponent.h>
 
-extern Coordinator gCoordinator;
+extern Scene gScene;
 
-class RenderSystem : public System // has all entities
+/**
+ * Derives from System, which has a reference to all entities.
+ * RenderSystem iterates over every entity that has at least a
+ * TransformComponent & SpriteComponent
+ * and draws them
+ **/
+class RenderSystem : public System
 {
 private:
 
@@ -25,7 +31,7 @@ public:
     void Update(sf::RenderWindow &window) {
         for (auto const &entity : mEntities)
         {
-            auto const& spriteComponent = gCoordinator.GetComponent<SpriteComponent>(entity);
+            auto const& spriteComponent = gScene.GetComponent<SpriteComponent>(entity);
 
             window.draw(spriteComponent.sprite);
         }

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2021
 ** B-CPP-501-NCE-5-1-rtype-adlan.sadou
 ** File description:
-** Entity
+** Entity.h
 */
 
 #pragma once
@@ -11,12 +11,9 @@
 #include <any>
 #include <unordered_map>
 
-
 class Event
 {
 public:
-	Event() = delete;
-
 	explicit Event(EventId type)
 		: mType(type)
 	{}

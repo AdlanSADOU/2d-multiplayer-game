@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** ComponentArray.h
+*/
+
 #pragma once
 
 #include "Types.h"
@@ -9,7 +16,6 @@
 class IComponentArray
 {
 public:
-	virtual ~IComponentArray() = default;
 	virtual void EntityDestroyed(Entity entity) = 0;
 };
 
