@@ -49,6 +49,9 @@ public:
 		}
 	}
 
+	/**
+	 * adds & updates entities from systems that have matching signatures
+	 **/
 	void EntitySignatureChanged(Entity entity, EntitySignature entitySignature)
 	{
 		for (auto const& pair : mSystems)
