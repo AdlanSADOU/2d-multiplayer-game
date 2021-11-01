@@ -15,6 +15,7 @@ struct Client
 	ClientID uuid;
 	bool registered;
 	bool IsInLobby;
+	std::uint8_t lobbyID;
 };
 
 std::vector<Client> clients;
@@ -46,13 +47,13 @@ int main()
 		{
 			for (auto &clientSocket : clientSockets)
 			{
-				sf::Packet packet;
+				sf::Packet remotePacket;
 				Rpc rpcType = -1;
 
-				sf::Socket::Status status = clientSocket->receive(packet);
+				sf::Socket::Status status = clientSocket->receive(remotePacket);
 				if (status == sf::Socket::Done)
 				{
-					packet >> rpcType;
+					remotePacket >> rpcType;
 					switch (rpcType)
 					{
 					case ERpc::CLIENT_CONNECT:
@@ -60,7 +61,7 @@ int main()
 						printf("new connection request from IP:[%s] | PORT:[%d]\n", clientSocket->getRemoteAddress().toString().c_str(), clientSocket->getRemotePort());
 						Client tmpClient;
 						tmpClient.socket = clientSocket;
-						tmpClient.registered = false;
+						tmpClient.registered = true;
 						tmpClient.IsInLobby = false;
 						tmpClient.uuid = clientID;
 						clients.push_back(tmpClient);
@@ -68,13 +69,16 @@ int main()
 						++clientID;
 
 						sf::Packet idPacket;
-						idPacket << ERpc::CLIENT_CONNECT << clientID;
+						idPacket << ERpc::CLIENT_CONNECT << tmpClient.uuid;
 						clientSocket->send(idPacket);
 						break;
 					}
 					case ERpc::CLIENT_DISCONNECT:
 					{
-						printf("disconnect");
+						ClientID remoteId;
+						remotePacket >> remoteId;
+						printf("client [%d] disconnected\n", remoteId);
+						// clients should be unordered_map so we can call .find(id)
 						break;
 					}
 					default:

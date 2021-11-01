@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <EscCore/Scene.h>
+#include <EcsCore/Scene.h>
 #include <string>
 
 class GameObject
@@ -40,7 +40,7 @@ public:
 
     void RemoveComponent()
     {
-        
+
     }
 
     template <typename T>

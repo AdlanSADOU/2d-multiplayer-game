@@ -7,8 +7,9 @@ NutsEngine.cpp
 )
 
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/EscCore)
-target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Components)
+target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/EcsCore)
+target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/EcsComponents)
+target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/EcsSystems)
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 
 # Conan

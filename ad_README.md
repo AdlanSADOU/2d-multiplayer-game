@@ -29,3 +29,14 @@ https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Sha
 # Server Issues
 server accepts same incoming connection multiple times
   [really an issue? we can just not register it]
+
+# TODO sever
+class Server
+  Init()
+  IsRunning()
+  Listen()
+  Accept()
+  Dispatch()
+
+# TODO Engine
+sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake

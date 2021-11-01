@@ -7,9 +7,9 @@ add_executable(rtype_client ClientMain.cpp)
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine)
-target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/EscComponents)
-target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/EscCore)
-target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/EscSystems)
+target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/EcsComponents)
+target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/EcsCore)
+target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../engine/EcsSystems)
 
 target_link_libraries(rtype_client nuts_engine)
 
