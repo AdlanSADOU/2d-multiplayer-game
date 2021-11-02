@@ -19,11 +19,13 @@ public:
 private:
     sf::Keyboard::Key pressedKey;
     sf::Keyboard::Key downKey;
+    bool isRunning;
 
 public:
     void InitWindow(char *windowName, std::uint32_t width, std::uint32_t height)
     {
         window.create({width, height, 32}, windowName);
+        isRunning = true;
     };
 
     void Clear()
@@ -41,6 +43,11 @@ public:
         return window.isOpen();
     }
 
+    void CloseWindow()
+    {
+        window.close();
+    }
+
     void HandleInput()
     {
         sf::Event event;
@@ -50,6 +57,7 @@ public:
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
             if (event.type == sf::Event::KeyPressed)
             {
                 pressedKey = event.key.code;

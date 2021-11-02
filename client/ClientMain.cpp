@@ -11,8 +11,8 @@
 #include <Nuts.h>
 #include <Networking.h>
 
-#include <EscCore/Scene.h>
-#include <EscSystems/RenderSystem.h>
+#include <EcsCore/Scene.h>
+#include <EcsSystems/RenderSystem.h>
 
 #include <iostream>
 #include <bitset>
@@ -23,6 +23,9 @@ static ClientID myID;
 
 int main()
 {
+	sf::TcpSocket tcpSock;
+	bool isConnected = false;
+	tcpSock.setBlocking(false);
 
 	Nuts nuts;
 	nuts.InitWindow("R-TYPE", 700, 200);
@@ -66,13 +69,11 @@ int main()
 	playerSprite.sprite.setTexture(playerSprite.texture);
 	playerSprite.sprite.setPosition(playerTransformComponent.position);
 
-	sf::TcpSocket tcpSock;
-	bool isConnected = false;
-	tcpSock.setBlocking(false);
 	// GameLoop
 	while (nuts.IsRunning())
 	{
 		nuts.HandleInput();
+
 
 		nuts.Clear();
 
@@ -98,12 +99,29 @@ int main()
 		{
 			if (isConnected)
 			{
-				printf("sent connection request\n");
+				printf("[Client]: connection request\n");
 				sf::Packet packet;
 				packet << ERpc::CLIENT_CONNECT;
 
 				tcpSock.send(packet);
 			}
+		}
+
+		/**
+		* Disconnect client
+		*/
+		if (nuts.GetKeyPressed(sf::Keyboard::Num0))
+		{
+			if (isConnected)
+			{
+				printf("[Client]: disconnection request\n");
+				sf::Packet packet;
+				packet << ERpc::CLIENT_DISCONNECT << myID;
+
+				tcpSock.send(packet);
+			}
+
+
 		}
 
 		sf::Packet packet;
