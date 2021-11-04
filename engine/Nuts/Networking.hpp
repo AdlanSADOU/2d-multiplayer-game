@@ -12,10 +12,9 @@
 
 using ClientID = std::uint8_t;
 using Rpc = std::uint8_t;
-namespace ERpc
-{
-    const Rpc CLIENT_CONNECT = 0;
-    const Rpc CLIENT_DISCONNECT = 1;
-    const Rpc LOBBY_CREATE = 2;
-    const Rpc LOBBY_ID = 3;
+namespace ERpc {
+const Rpc CLIENT_CONNECT = 0;
+const Rpc CLIENT_DISCONNECT = 1;
+const Rpc LOBBY_CREATE = 2;
+const Rpc LOBBY_ID = 3;
 }

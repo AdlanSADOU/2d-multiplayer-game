@@ -10,8 +10,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-struct SpriteComponent
-{
+struct SpriteComponent {
     sf::Texture texture;
     sf::Sprite sprite;
 };

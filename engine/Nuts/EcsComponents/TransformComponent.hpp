@@ -9,10 +9,8 @@
 
 #include <SFML/Graphics.hpp>
 
-struct TransformComponent
-{
+struct TransformComponent {
     sf::Vector2f position;
     float angle;
     float scale;
 };
-

@@ -7,30 +7,28 @@
 
 #pragma once
 
-#include <System.hpp>
 #include <SpriteComponent.hpp>
+#include <System.hpp>
 
 extern Scene gScene;
 
 /**
- * Derives from System, which has a reference to all entities.
+ * Derives from System, which has a reference to all entities witch matching signature
  * RenderSystem iterates over every entity that has at least a
  * TransformComponent & SpriteComponent
  * and draws them
  **/
-class RenderSystem : public System
-{
+
+class RenderSystem : public System {
 private:
-
 public:
-
-    void Init() {
-
+    void Init()
+    {
     }
 
-    void Update(sf::RenderWindow &window) {
-        for (auto const &entity : _Entities)
-        {
+    void Update(sf::RenderWindow& window)
+    {
+        for (auto const& entity : _entities) {
             auto const& spriteComponent = gScene.GetComponent<SpriteComponent>(entity);
 
             window.draw(spriteComponent.sprite);

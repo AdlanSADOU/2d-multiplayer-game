@@ -14,65 +14,58 @@
 #include <memory>
 #include <unordered_map>
 
-class SystemManager
-{
+class SystemManager {
 private:
-	std::unordered_map<const char*, EntitySignature> _Signatures{};
-	std::unordered_map<const char*, std::shared_ptr<System>> _Systems{};
+    std::unordered_map<const char*, EntitySignature> _Signatures {};
+    std::unordered_map<const char*, std::shared_ptr<System>> _Systems {};
 
 public:
-	template<typename T>
-	std::shared_ptr<T> RegisterSystem()
-	{
-		const char* typeName = typeid(T).name();
+    template <typename T>
+    std::shared_ptr<T> RegisterSystem()
+    {
+        const char* typeName = typeid(T).name();
 
-		assert(_Systems.find(typeName) == _Systems.end() && "Registering system more than once.");
+        assert(_Systems.find(typeName) == _Systems.end() && "Registering system more than once.");
 
-		auto system = std::make_shared<T>();
-		_Systems.insert({typeName, system});
-		return system;
-	}
+        auto system = std::make_shared<T>();
+        _Systems.insert({ typeName, system });
+        return system;
+    }
 
-	template<typename T>
-	void SetSignature(EntitySignature signature)
-	{
-		const char* typeName = typeid(T).name();
+    template <typename T>
+    void SetSignature(EntitySignature signature)
+    {
+        const char* typeName = typeid(T).name();
 
-		assert(_Systems.find(typeName) != _Systems.end() && "System used before registered.");
+        assert(_Systems.find(typeName) != _Systems.end() && "System used before registered.");
 
-		_Signatures.insert({typeName, signature});
-	}
+        _Signatures.insert({ typeName, signature });
+    }
 
-	void EntityDestroyed(Entity entity)
-	{
-		for (auto const& pair : _Systems)
-		{
-			auto const& system = pair.second;
+    void EntityDestroyed(Entity entity)
+    {
+        for (auto const& pair : _Systems) {
+            auto const& system = pair.second;
 
+            system->_entities.erase(entity);
+        }
+    }
 
-			system->_Entities.erase(entity);
-		}
-	}
-
-	/**
+    /**
 	 * adds & updates entities from systems that have matching signatures
 	 **/
-	void EntitySignatureChanged(Entity entity, EntitySignature entitySignature)
-	{
-		for (auto const& pair : _Systems)
-		{
-			auto const& type = pair.first;
-			auto const& system = pair.second;
-			auto const& systemSignature = _Signatures[type];
+    void EntitySignatureChanged(Entity entity, EntitySignature entitySignature)
+    {
+        for (auto const& pair : _Systems) {
+            auto const& type = pair.first;
+            auto const& system = pair.second;
+            auto const& systemSignature = _Signatures[type];
 
-			if ((entitySignature & systemSignature) == systemSignature)
-			{
-				system->_Entities.insert(entity);
-			}
-			else
-			{
-				system->_Entities.erase(entity);
-			}
-		}
-	}
+            if ((entitySignature & systemSignature) == systemSignature) {
+                system->_entities.insert(entity);
+            } else {
+                system->_entities.erase(entity);
+            }
+        }
+    }
 };

@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "EcsComponents/TransformComponent.hpp"
+#include <SFML/Graphics.hpp>
+#include <Input.hpp>
 
-class Nuts
-{
+class Nuts {
 public:
     sf::RenderWindow window;
 
@@ -21,9 +21,9 @@ private:
     bool isRunning;
 
 public:
-    void InitWindow(char *windowName, std::uint32_t width, std::uint32_t height)
+    void InitWindow(char* windowName, std::uint32_t width, std::uint32_t height)
     {
-        window.create({width, height, 32}, windowName);
+        window.create({ width, height, 32 }, windowName);
         isRunning = true;
     };
 
@@ -52,24 +52,21 @@ public:
         sf::Event event;
         pressedKey = sf::Keyboard::Unknown;
 
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (event.type == sf::Event::KeyPressed)
-            {
+            if (event.type == sf::Event::KeyPressed) {
                 pressedKey = event.key.code;
                 downKey = event.key.code;
             }
-            if (event.type == sf::Event::KeyReleased)
-            {
+            if (event.type == sf::Event::KeyReleased) {
                 downKey = sf::Keyboard::Unknown;
             }
         }
     };
 
-    bool GetKeyPressed(sf::Keyboard::Key key)
+    bool GetKeyPressed(Input::Key key)
     {
         if (key == pressedKey)
             return true;

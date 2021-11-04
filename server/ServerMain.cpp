@@ -1,3 +1,9 @@
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** ServerMain.cpp
+*/
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
@@ -10,10 +16,8 @@
 
 #include <Server.hpp>
 
-
 int main()
 {
-
 	Server server;
 
 	server.Init();

@@ -16,11 +16,11 @@
  * @brief ComponentArray Interface needed to handle components
  * in a generic way.
  *
- */ //////////////////////////////////////////////
-class IComponentArray
-{
+ */
+//////////////////////////////////////////////
+class IComponentArray {
 public:
-	virtual void EntityDestroyed(Entity entity) = 0;
+    virtual void EntityDestroyed(Entity entity) = 0;
 };
 
 /** ////////////////////////////////////////////
@@ -34,27 +34,16 @@ public:
  */
 //////////////////////////////////////////////
 template <typename T>
-class ComponentArray : public IComponentArray
-{
+class ComponentArray : public IComponentArray {
 
 private:
-	std::array<T, MAX_ENTITIES> _ComponentArray{};
-	std::unordered_map<Entity, size_t> _EntityToArrayIndexMap{};
-	std::unordered_map<size_t, Entity> _ArrayIndexToEntityMap{};
-	size_t mSize{};
+    std::array<T, MAX_ENTITIES> _ComponentArray {};
+    std::unordered_map<Entity, size_t> _EntityToArrayIndexMap {};
+    std::unordered_map<size_t, Entity> _ArrayIndexToEntityMap {};
+    size_t mSize {};
 
 public:
-	////////////////////////////////////////////////////////////
-	///
-
-	///
-	///
-	///
-	///
-	///
-	///
-	////////////////////////////////////////////////////////////
-	/** ////////////////////////////////////////////
+    /**
 	 * @brief Adds given component to the ComponentArray attached to the given entity.
 	 *	This function is intended to be called by the ComponentManager and should not be called directly
 	 *
@@ -65,20 +54,19 @@ public:
 	 *  @see entity
 	 *
 	 */
-	//////////////////////////////////////////////
-	void InsertData(Entity entity, T component)
-	{
-		assert(_EntityToArrayIndexMap.find(entity) == _EntityToArrayIndexMap.end() && "Component added to same entity more than once.");
+    void InsertData(Entity entity, T component)
+    {
+        assert(_EntityToArrayIndexMap.find(entity) == _EntityToArrayIndexMap.end() && "Component added to same entity more than once.");
 
-		// Put new entry at end
-		size_t newIndex = mSize;
-		_EntityToArrayIndexMap[entity] = newIndex;
-		_ArrayIndexToEntityMap[newIndex] = entity;
-		_ComponentArray[newIndex] = component;
-		++mSize;
-	}
+        // Put new entry at end
+        size_t newIndex = mSize;
+        _EntityToArrayIndexMap[entity] = newIndex;
+        _ArrayIndexToEntityMap[newIndex] = entity;
+        _ComponentArray[newIndex] = component;
+        ++mSize;
+    }
 
-	/** ////////////////////////////////////////////
+    /**
 	 * @brief Removes given component from the ComponentArray attached to the given entity.
 	 *	This function is intended to be called by the ComponentManager and should not be called directly
 	 *
@@ -87,39 +75,38 @@ public:
 	 *  @see entity
 	 *
 	 */
-	//////////////////////////////////////////////
-	void RemoveData(Entity entity)
-	{
-		assert(_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end() && "Removing non-existent component.");
 
-		// Copy last element into deleted element's place to maintain its contiguous nature
-		size_t indexOfRemovedEntity = _EntityToArrayIndexMap[entity];
-		size_t indexOfLastElement = mSize - 1;
-		_ComponentArray[indexOfRemovedEntity] = _ComponentArray[indexOfLastElement];
+    void RemoveData(Entity entity)
+    {
+        assert(_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end() && "Removing non-existent component.");
 
-		// Update map to point to moved spot
-		Entity entityOfLastElement = _ArrayIndexToEntityMap[indexOfLastElement];
-		_EntityToArrayIndexMap[entityOfLastElement] = indexOfRemovedEntity;
-		_ArrayIndexToEntityMap[indexOfRemovedEntity] = entityOfLastElement;
+        // Copy last element into deleted element's place to maintain its contiguous nature
+        size_t indexOfRemovedEntity = _EntityToArrayIndexMap[entity];
+        size_t indexOfLastElement = mSize - 1;
+        _ComponentArray[indexOfRemovedEntity] = _ComponentArray[indexOfLastElement];
 
-		_EntityToArrayIndexMap.erase(entity);
-		_ArrayIndexToEntityMap.erase(indexOfLastElement);
+        // Update map to point to moved spot
+        Entity entityOfLastElement = _ArrayIndexToEntityMap[indexOfLastElement];
+        _EntityToArrayIndexMap[entityOfLastElement] = indexOfRemovedEntity;
+        _ArrayIndexToEntityMap[indexOfRemovedEntity] = entityOfLastElement;
 
-		--mSize;
-	}
+        _EntityToArrayIndexMap.erase(entity);
+        _ArrayIndexToEntityMap.erase(indexOfLastElement);
 
-	T &GetData(Entity entity)
-	{
-		assert(_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end() && "Retrieving non-existent component.");
+        --mSize;
+    }
 
-		return _ComponentArray[_EntityToArrayIndexMap[entity]];
-	}
+    T& GetData(Entity entity)
+    {
+        assert(_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end() && "Retrieving non-existent component.");
 
-	void EntityDestroyed(Entity entity) override
-	{
-		if (_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end())
-		{
-			RemoveData(entity);
-		}
-	}
+        return _ComponentArray[_EntityToArrayIndexMap[entity]];
+    }
+
+    void EntityDestroyed(Entity entity) override
+    {
+        if (_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end()) {
+            RemoveData(entity);
+        }
+    }
 };

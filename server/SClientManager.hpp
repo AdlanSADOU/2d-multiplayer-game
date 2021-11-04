@@ -1,22 +1,28 @@
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** SclientManager.hpp
+*/
+
 #pragma once
 
 #include "SClient.hpp"
 
-class SClientManager
-{
+class SClientManager {
 private:
-    std::vector<SClient> clients{};
     ClientID _clientId = 0;
 
 public:
-    std::vector<sf::TcpSocket *> clientSockets{};
-    SClient &GetClientById(){
+    std::vector<SClient> clients {};
+    std::vector<sf::TcpSocket*> clientSockets {};
+    SClient& GetClientById() {
 
     };
 
-    void PushClient(sf::TcpSocket &newTcpClient)
+    void PushClientSocket(sf::TcpSocket& newTcpClient)
     {
-        sf::TcpSocket *tcpSockPtr = new sf::TcpSocket();
+        sf::TcpSocket* tcpSockPtr = new sf::TcpSocket();
         tcpSockPtr = &newTcpClient;
 
         printf("incomming connection\n");
@@ -24,7 +30,7 @@ public:
         clientSockets.push_back(tcpSockPtr);
     };
 
-    void RegisterClient(sf::TcpSocket *socket)
+    void RegisterClient(sf::TcpSocket* socket)
     {
         SClient tmpClient;
         tmpClient.socket = socket;
@@ -39,10 +45,10 @@ public:
 
         ++_clientId;
         printf("client registered as ID:[%d] from | IP:[%s] | PORT:[%d]\n",
-               _clientId, socket->getRemoteAddress().toString().c_str(), socket->getRemotePort());
+            _clientId, socket->getRemoteAddress().toString().c_str(), socket->getRemotePort());
     };
 
-    std::vector<sf::TcpSocket *> &GetClientSockets()
+    std::vector<sf::TcpSocket*>& GetClientSockets()
     {
         return clientSockets;
     }

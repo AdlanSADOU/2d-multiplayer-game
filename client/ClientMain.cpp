@@ -10,6 +10,7 @@
 
 #include <Nuts.hpp>
 #include <Nuts/Networking.hpp>
+#include <Nuts/Input.hpp>
 
 #include <EcsCore/Scene.hpp>
 #include <EcsSystems/RenderSystem.hpp>
@@ -43,7 +44,6 @@ int main()
 	gScene.RegisterComponent<TransformComponent>();
 	gScene.RegisterComponent<SpriteComponent>();
 
-	///////////////////////////
 	// RenderSystem
 	auto renderSystem = gScene.RegisterSystem<RenderSystem>();
 	{
@@ -53,7 +53,6 @@ int main()
 		gScene.SetSystemSignature<RenderSystem>(sig);
 	}
 
-	///////////////////////////
 	// Entity
 	Entity playerEntity;
 	playerEntity = gScene.CreateEntity();
@@ -80,7 +79,7 @@ int main()
 		/** Establish first connection
 		 * Client is not registered to server at this point
 		 */
-		if (nuts.GetKeyPressed(sf::Keyboard::Num1))
+		if (nuts.GetKeyPressed(Input::Key::Num1))
 		{
 			sock_status = tcpSock.connect(sf::IpAddress::LocalHost, 55001);
 			if (sock_status == sf::Socket::Error)
@@ -93,7 +92,7 @@ int main()
 		 * Ask server to be registered on it and receive ClientID
 		 * used for any further communication
 		 */
-		if (nuts.GetKeyPressed(sf::Keyboard::Num2))
+		if (nuts.GetKeyPressed(Input::Key::Num2))
 		{
 			if (isConnected)
 			{
@@ -108,7 +107,7 @@ int main()
 		/**
 		* Disconnect client
 		*/
-		if (nuts.GetKeyPressed(sf::Keyboard::Num0))
+		if (nuts.GetKeyPressed(Input::Key::Num2))
 		{
 			if (isConnected)
 			{
