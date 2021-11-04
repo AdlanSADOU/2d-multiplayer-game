@@ -40,5 +40,9 @@ class Server
   Dispatch()
 
 # TODO Engine
-SFML types must be typedefed by Nuts or somehow abstracted for consistency's sake
-Client and Server should not have to include any SFML headers for any reason
+sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
+
+prediction
+plus proche de rtype
+design
+sounds

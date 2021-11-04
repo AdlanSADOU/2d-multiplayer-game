@@ -35,7 +35,6 @@ int main()
 	 * ComponentManager
 	 * EntityManager
 	 * SystemManager
-	 * EventManager --> unsused for now, maybe we'll trash it
 	 *
 	 * The scene knows about every entity, components and systems
 	 * and manages communication between them
@@ -73,7 +72,6 @@ int main()
 	while (nuts.IsRunning())
 	{
 		nuts.HandleInput();
-
 
 		nuts.Clear();
 
@@ -120,8 +118,6 @@ int main()
 
 				tcpSock.send(packet);
 			}
-
-
 		}
 
 		sf::Packet packet;

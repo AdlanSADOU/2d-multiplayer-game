@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <vector>
 #include <array>
-
+#include <unordered_map>
 
 struct Client
 {
@@ -31,13 +31,13 @@ int main()
 
 	printf("running server...\n");
 
-	sf::TcpSocket tmpTcpClient;
+	sf::TcpSocket tmpTcpSock;
 	while (1)
 	{
-		if (listener.accept(tmpTcpClient) == sf::Socket::Done)
+		if (listener.accept(tmpTcpSock) == sf::Socket::Done)
 		{
 			sf::TcpSocket *tcpSockPtr = new sf::TcpSocket();
-			tcpSockPtr = &tmpTcpClient;
+			tcpSockPtr = &tmpTcpSock;
 
 			printf("incomming connection\n");
 			tcpSockPtr->setBlocking(false);
@@ -78,7 +78,7 @@ int main()
 						ClientID remoteId;
 						remotePacket >> remoteId;
 						printf("client [%d] disconnected\n", remoteId);
-						// clients should be unordered_map so we can call .find(id)
+
 						break;
 					}
 					default:
@@ -88,6 +88,5 @@ int main()
 			}
 		}
 	}
-
 	return 0;
 }
