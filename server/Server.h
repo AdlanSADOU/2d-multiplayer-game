@@ -1,25 +1,20 @@
-#include <Networking.h>
+#include "Nuts/Networking.h"
+
 #include <vector>
+
+#include "Sclient.h"
 
 class Server
 {
 private:
-    struct Client
-{
-	sf::TcpSocket *socket;
-	ClientID uuid;
-	bool registered;
-	bool IsInLobby;
-	std::uint8_t lobbyID;
-};
 
-std::vector<Client> clients;
+std::vector<Sclient> clients;
 std::vector<sf::TcpSocket *> clientSockets;
 
 public:
     Server() {};
     ~Server() {};
-	GetClientById() {
+	Sclient &GetClientById() {
 
 	};
 };

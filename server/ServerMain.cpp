@@ -1,8 +1,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-#include <NutsEngine.h>
-#include <Networking.h>
+#include <Nuts/Networking.h>
 
 #include <stdio.h>
 #include <vector>

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(rtype_server ServerMain.cpp)
 
 target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
 target_link_libraries(rtype_server nuts_engine)
 
 if(MSVC)

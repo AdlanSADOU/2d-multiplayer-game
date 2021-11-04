@@ -9,7 +9,7 @@
 #include <SFML/Network.hpp>
 
 #include <Nuts.h>
-#include <Networking.h>
+#include <Nuts/Networking.h>
 
 #include <EcsCore/Scene.h>
 #include <EcsSystems/RenderSystem.h>

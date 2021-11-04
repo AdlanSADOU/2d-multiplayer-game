@@ -8,8 +8,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <TransformComponent.h>
-#include <SpriteComponent.h>
+#include "EcsComponents/TransformComponent.h"
 
 class Nuts
 {
