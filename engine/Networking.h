@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <SFML/Network.hpp>
 #include <iostream>
 
 using ClientID = std::uint8_t;

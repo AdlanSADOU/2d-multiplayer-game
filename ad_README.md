@@ -40,3 +40,8 @@ class Server
 
 # TODO Engine
 sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
+
+prediction
+plus proche de rtype
+design
+sounds
