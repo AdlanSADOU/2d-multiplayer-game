@@ -21,7 +21,7 @@ private:
     bool isRunning;
 
 public:
-    void InitWindow(char *windowName, std::uint32_t width, std::uint32_t height)
+    void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
     {
         window.create({width, height, 32}, windowName);
         isRunning = true;
