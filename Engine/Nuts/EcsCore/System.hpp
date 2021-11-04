@@ -13,6 +13,6 @@
 
 class System
 {
-public:
-	std::set<Entity> _Entities;
+    public:
+        std::set<Entity> _Entities;
 };

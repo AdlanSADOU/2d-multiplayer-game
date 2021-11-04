@@ -15,4 +15,3 @@ struct TransformComponent
     float angle;
     float scale;
 };
-

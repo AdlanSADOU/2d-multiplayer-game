@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <EcsCore/Scene.h>
+#include <EcsCore/Scene.hpp>
 #include <string>
 
 /** TODO(adlan):
@@ -17,48 +17,48 @@
  */
 class GameObject
 {
-private:
-    // has a transform at least
-    // ??????????
-    // Components
-    std::shared_ptr<Scene> _scene;
-    std::string _name;
-    Entity _entity;
+    private:
+        // has a transform at least
+        // ??????????
+        // Components
+        std::shared_ptr<Scene> _scene;
+        std::string _name;
+        Entity _entity;
 
-public:
-    GameObject(){};
+    public:
+        GameObject(){};
 
-    GameObject(std::shared_ptr<Scene> scene, std::string name)
-    {
-        Create(scene, name);
-    };
+        GameObject(std::shared_ptr<Scene> scene, std::string name)
+        {
+            Create(scene, name);
+        };
 
-    void Create(std::shared_ptr<Scene> scene, std::string name)
-    {
-        _scene = scene;
-        _name = name;
-        _entity = _scene->CreateEntity();
-    }
+        void Create(std::shared_ptr<Scene> scene, std::string name)
+        {
+            _scene = scene;
+            _name = name;
+            _entity = _scene->CreateEntity();
+        }
 
-    template <typename T>
-    void AddComponent()
-    {
-        _scene->AddComponent(_entity, T{});
-    };
+        template <typename T>
+        void AddComponent()
+        {
+            _scene->AddComponent(_entity, T{});
+        };
 
-    void RemoveComponent()
-    {
+        void RemoveComponent()
+        {
 
-    }
+        }
 
-    template <typename T>
-    T GetComponent()
-    {
-       return _scene->GetComponent<T>(_entity);
-    }
+        template <typename T>
+        T GetComponent()
+        {
+        return _scene->GetComponent<T>(_entity);
+        }
 
-    Entity GetEntity()
-    {
-        return _entity;
-    }
+        Entity GetEntity()
+        {
+            return _entity;
+        }
 };

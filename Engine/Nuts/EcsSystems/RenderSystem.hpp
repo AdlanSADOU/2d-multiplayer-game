@@ -13,27 +13,26 @@
 extern Scene gScene;
 
 /**
- * Derives from System, which has a reference to all entities.
- * RenderSystem iterates over every entity that has at least a
- * TransformComponent & SpriteComponent
- * and draws them
- **/
+* Derives from System, which has a reference to all entities.
+* RenderSystem iterates over every entity that has at least a
+* TransformComponent & SpriteComponent and draws them
+**/
 class RenderSystem : public System
 {
-private:
+    private:
 
-public:
+    public:
 
-    void Init() {
+        void Init() {
 
-    }
-
-    void Update(sf::RenderWindow &window) {
-        for (auto const &entity : _Entities)
-        {
-            auto const& spriteComponent = gScene.GetComponent<SpriteComponent>(entity);
-
-            window.draw(spriteComponent.sprite);
         }
-    }
+
+        void Update(sf::RenderWindow &window) {
+            for (auto const &entity : _Entities)
+            {
+                auto const& spriteComponent = gScene.GetComponent<SpriteComponent>(entity);
+
+                window.draw(spriteComponent.sprite);
+            }
+        }
 };
