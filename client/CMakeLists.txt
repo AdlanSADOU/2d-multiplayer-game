@@ -23,5 +23,4 @@ if(MSVC)
 
   )
 
-  endif()
-  
+endif()
