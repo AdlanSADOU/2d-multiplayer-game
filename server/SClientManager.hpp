@@ -9,9 +9,20 @@ private:
     ClientID _clientId = 0;
 
 public:
-    std::vector<sf::TcpSocket *> clientSockets{};
-    SClient &GetClientById(){
+    std::vector<sf::TcpSocket *> _clientSockets{};
 
+    SClient &GetClientById(ClientID id)
+    {
+        
+    };
+
+    sf::TcpSocket *GetClientSocketById(ClientID id)
+    {
+        for (auto c : clients)
+        {
+            if (c.uuid == id)
+                return c.socket;
+        }
     };
 
     void PushClient(sf::TcpSocket &newTcpClient)
@@ -21,7 +32,7 @@ public:
 
         printf("incomming connection\n");
         tcpSockPtr->setBlocking(false);
-        clientSockets.push_back(tcpSockPtr);
+        _clientSockets.push_back(tcpSockPtr);
     };
 
     void RegisterClient(sf::TcpSocket *socket)
@@ -42,8 +53,15 @@ public:
                _clientId, socket->getRemoteAddress().toString().c_str(), socket->getRemotePort());
     };
 
+    void DisconnectClient(ClientID id) {
+        SClient &client = GetClientById(id);
+        client.registered = false;
+        client.IsInLobby = false;
+
+    };
+
     std::vector<sf::TcpSocket *> &GetClientSockets()
     {
-        return clientSockets;
+        return _clientSockets;
     }
 };

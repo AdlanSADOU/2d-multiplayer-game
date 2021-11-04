@@ -47,7 +47,7 @@ public:
 
 	void Dispatch()
 	{
-		for (sf::TcpSocket *clientSocket : _clientManager->clientSockets)
+		for (sf::TcpSocket *clientSocket : _clientManager->_clientSockets)
 		{
 			sf::Packet remotePacket;
 			Rpc rpcType = -1;
@@ -70,7 +70,7 @@ public:
 					ClientID remoteId;
 					remotePacket >> remoteId;
 					printf("client [%d] disconnected\n", remoteId);
-
+					
 					break;
 				}
 				default:
