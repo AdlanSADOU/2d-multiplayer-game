@@ -25,6 +25,7 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 
 cmake build static libraries:
 https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Shared%20Libraries.html
+https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
 
 # Server Issues
 server accepts same incoming connection multiple times
@@ -39,4 +40,5 @@ class Server
   Dispatch()
 
 # TODO Engine
-sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
+SFML types must be typedefed by Nuts or somehow abstracted for consistency's sake
+Client and Server should not have to include any SFML headers for any reason
