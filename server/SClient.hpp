@@ -1,6 +1,6 @@
-#include <Nuts/Networking.h>
+#include <Nuts/Networking.hpp>
 
-class Sclient
+class SClient
 {
 public:
     sf::TcpSocket *socket;

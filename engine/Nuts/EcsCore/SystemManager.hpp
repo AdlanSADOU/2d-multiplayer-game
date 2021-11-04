@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "System.h"
-#include "Types.h"
+#include "System.hpp"
+#include "Types.hpp"
 
 #include <cassert>
 #include <memory>

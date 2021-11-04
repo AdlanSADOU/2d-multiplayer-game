@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "ComponentManager.h"
-#include "EntityManager.h"
-#include "SystemManager.h"
-#include "Types.h"
+#include "ComponentManager.hpp"
+#include "EntityManager.hpp"
+#include "SystemManager.hpp"
+#include "Types.hpp"
 #include <memory>
 
 class Scene

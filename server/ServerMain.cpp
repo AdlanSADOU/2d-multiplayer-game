@@ -1,12 +1,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-#include <Nuts/Networking.h>
+#include <Nuts/Networking.hpp>
 
 #include <stdio.h>
 #include <vector>
 #include <array>
 #include <unordered_map>
+
+#include <Server.hpp>
 
 struct Client
 {
@@ -22,13 +24,14 @@ std::vector<sf::TcpSocket *> clientSockets;
 
 int main()
 {
+	printf("running server...\n");
+
 	sf::TcpListener listener;
 	listener.setBlocking(false);
 	listener.listen(55001);
 
 	ClientID clientID = 0;
 
-	printf("running server...\n");
 
 	sf::TcpSocket tmpTcpSock;
 	while (1)

@@ -16,6 +16,9 @@ build_type=Debug #or Release
 ```
 
 # Notes
+VSCODE: possible conflicts for includes between c_cpp_configuration.json
+and Cmake configuration provider in settings.json
+
 x64 == x86_64 == x86_amd64 == Amd64
 
 

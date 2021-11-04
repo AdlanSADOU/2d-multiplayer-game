@@ -8,11 +8,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
-#include <Nuts.h>
-#include <Nuts/Networking.h>
+#include <Nuts.hpp>
+#include <Nuts/Networking.hpp>
 
-#include <EcsCore/Scene.h>
-#include <EcsSystems/RenderSystem.h>
+#include <EcsCore/Scene.hpp>
+#include <EcsSystems/RenderSystem.hpp>
 
 #include <iostream>
 #include <bitset>
