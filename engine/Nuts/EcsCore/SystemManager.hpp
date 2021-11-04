@@ -7,24 +7,29 @@
 
 #pragma once
 
-#include "System.h"
-#include "Types.h"
+#include "System.hpp"
+#include "Types.hpp"
+
 #include <cassert>
 #include <memory>
 #include <unordered_map>
 
 class SystemManager
 {
+private:
+	std::unordered_map<const char*, EntitySignature> _Signatures{};
+	std::unordered_map<const char*, std::shared_ptr<System>> _Systems{};
+
 public:
 	template<typename T>
 	std::shared_ptr<T> RegisterSystem()
 	{
 		const char* typeName = typeid(T).name();
 
-		assert(mSystems.find(typeName) == mSystems.end() && "Registering system more than once.");
+		assert(_Systems.find(typeName) == _Systems.end() && "Registering system more than once.");
 
 		auto system = std::make_shared<T>();
-		mSystems.insert({typeName, system});
+		_Systems.insert({typeName, system});
 		return system;
 	}
 
@@ -33,42 +38,41 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-		assert(mSystems.find(typeName) != mSystems.end() && "System used before registered.");
+		assert(_Systems.find(typeName) != _Systems.end() && "System used before registered.");
 
-		mSignatures.insert({typeName, signature});
+		_Signatures.insert({typeName, signature});
 	}
 
 	void EntityDestroyed(Entity entity)
 	{
-		for (auto const& pair : mSystems)
+		for (auto const& pair : _Systems)
 		{
 			auto const& system = pair.second;
 
 
-			system->mEntities.erase(entity);
+			system->_Entities.erase(entity);
 		}
 	}
 
+	/**
+	 * adds & updates entities from systems that have matching signatures
+	 **/
 	void EntitySignatureChanged(Entity entity, EntitySignature entitySignature)
 	{
-		for (auto const& pair : mSystems)
+		for (auto const& pair : _Systems)
 		{
 			auto const& type = pair.first;
 			auto const& system = pair.second;
-			auto const& systemSignature = mSignatures[type];
+			auto const& systemSignature = _Signatures[type];
 
 			if ((entitySignature & systemSignature) == systemSignature)
 			{
-				system->mEntities.insert(entity);
+				system->_Entities.insert(entity);
 			}
 			else
 			{
-				system->mEntities.erase(entity);
+				system->_Entities.erase(entity);
 			}
 		}
 	}
-
-private:
-	std::unordered_map<const char*, EntitySignature> mSignatures{};
-	std::unordered_map<const char*, std::shared_ptr<System>> mSystems{};
 };

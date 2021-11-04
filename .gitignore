@@ -34,3 +34,8 @@
 # VSCODE TRASH FOLDER
 .vscode/
 build/
+
+./clientRun.bat
+./serverRun.bat
+clientRun.bat
+serverRun.bat

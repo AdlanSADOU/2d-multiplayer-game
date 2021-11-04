@@ -16,6 +16,9 @@ build_type=Debug #or Release
 ```
 
 # Notes
+VSCODE: possible conflicts for includes between c_cpp_configuration.json
+and Cmake configuration provider in settings.json
+
 x64 == x86_64 == x86_amd64 == Amd64
 
 
@@ -25,15 +28,24 @@ cmake .. -G "Visual Studio 16 2019" -A x64
 
 cmake build static libraries:
 https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Shared%20Libraries.html
+https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
 
-- sfml version from conan only pulls "Release" static libs
-  so it only compiles in release mode (or without debug info)
-    - maybe we can specify in conanfile which versions we want?
-        - [solved] conan install .. --build=missing -s build_type=Debug
+# Server Issues
+server accepts same incoming connection multiple times
+  [really an issue? we can just not register it]
 
-- conan sfml package targets x86_64, but I'm using x64 compiler
-    - [solved] using x86_64 for everything
-        - now conan builds static libraries (sfml-graphics-s-d.lib)
-        [?] but cmake generates solution with dynamic libraries (sfml-graphics-d.lib)
-          - [solved] by setting conanfile [options] [sfml:shared=True]
+# TODO sever
+class Server
+  Init()
+  IsRunning()
+  Listen()
+  Accept()
+  Dispatch()
 
+# TODO Engine
+sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
+
+prediction
+plus proche de rtype
+design
+sounds

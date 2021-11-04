@@ -7,12 +7,20 @@
 
 #pragma once
 
-#include <EscCore/Scene.h>
+#include <EcsCore/Scene.h>
 #include <string>
 
+/** TODO(adlan):
+ * GameObjects should handle their own Components
+ * it should implement its own array of components
+ *
+ */
 class GameObject
 {
 private:
+    // has a transform at least
+    // ??????????
+    // Components
     std::shared_ptr<Scene> _scene;
     std::string _name;
     Entity _entity;
@@ -40,7 +48,7 @@ public:
 
     void RemoveComponent()
     {
-        
+
     }
 
     template <typename T>

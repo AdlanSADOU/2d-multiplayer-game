@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "Types.h"
+#include "Types.hpp"
 #include <set>
 
 
 class System
 {
 public:
-	std::set<Entity> mEntities;
+	std::set<Entity> _Entities;
 };
