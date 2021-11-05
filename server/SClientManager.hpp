@@ -8,7 +8,11 @@ private:
     ClientID _clientId = 0;
 
 public:
-    std::vector<SClient> clients {};
+    /** TODO(adlan):
+    * we might want to change this into an unordered_map<ClientId, SClient>
+    * to be able to .find
+    */
+    std::unordered_map<ClientID, SClient> clients {};
     // std::vector<sf::TcpSocket*> clientSockets {};
     SClient& GetClientById() {
 
@@ -26,29 +30,14 @@ public:
 
     void RegisterClient(sf::TcpSocket* socket)
     {
-        bool isRegistered = false;
-        printf("new request from [%s:%d]\n\n",
-            socket->getRemoteAddress().toString().c_str(), socket->getRemotePort());
-
-        for (auto const& client : clients) {
-            if (client.socket && socket->getRemoteAddress() == client.socket->getRemoteAddress() && socket->getRemotePort() == client.socket->getRemotePort()) {
-                printf("client already connected as ");
-                printf("ID:[%d] from [%s:%d] | sockPtr:[%p]\n\n",
-                    client.uuid, client.socket->getRemoteAddress().toString().c_str(), client.socket->getRemotePort(), client.socket);
-                isRegistered = true;
-                break;
-            }
-        }
-
-        if (isRegistered)
-            return;
+        if (socket == nullptr) return;
 
         SClient tmpClient;
         tmpClient.socket = socket;
         tmpClient.connected = true;
         tmpClient.IsInLobby = false;
         tmpClient.uuid = _clientId;
-        clients.push_back(tmpClient);
+        clients.insert({_clientId, tmpClient});
 
         sf::Packet idPacket;
         idPacket << static_cast<sf::Uint8>(ERpc::CLIENT_CONNECT) << tmpClient.uuid;
@@ -68,7 +57,7 @@ public:
         printf("[SERVER]: Connected clients:\n");
         for (auto const& client : clients) {
             printf("------ ID:[%d] from [%s:%d] | sockPtr:[%p]\n",
-                client.uuid, client.socket->getRemoteAddress().toString().c_str(), client.socket->getRemotePort(), client.socket);
+                client.second.uuid, client.second.socket->getRemoteAddress().toString().c_str(), client.second.socket->getRemotePort(), client.second.socket);
         }
     }
 };

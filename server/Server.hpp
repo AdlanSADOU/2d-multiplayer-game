@@ -62,12 +62,12 @@ public:
             sf::Packet remotePacket;
             Rpc rpcType = -1;
 
-            if (!client.socket) {
-                printf("[ERROR]: client socket with ID:[%d] is nullptr\n", client.uuid);
+            if (!client.second.socket) {
+                printf("[ERROR]: client socket with ID:[%d] is nullptr\n", client.second.uuid);
                 continue;
             }
 
-            sf::Socket::Status status = client.socket->receive(remotePacket);
+            sf::Socket::Status status = client.second.socket->receive(remotePacket);
             if (status == sf::Socket::Done) {
                 remotePacket >> rpcType;
                 printf("[SERVER]: received Rpc type:[%d]\n", rpcType);
@@ -78,14 +78,15 @@ public:
                     remotePacket >> remoteId;
 
                     for (auto& client : _clientManager->clients) {
-                        if (client.uuid == remoteId) {
+                        if (client.second.uuid == remoteId) {
                             printf("[SERVER]: client disconnected ID:[%d] from [%s:%d] || sockPtr:[%p]\n",
-                                client.uuid, client.socket->getRemoteAddress().toString().c_str(), client.socket->getRemotePort(), client.socket);
-                            client.socket->disconnect();
-                            client.connected = false;
-                            if (client.socket)
-                                delete client.socket;
-                            // _clientManager->clients.(client);
+                                client.second.uuid, client.second.socket->getRemoteAddress().toString().c_str(), client.second.socket->getRemotePort(), client.second.socket);
+                            client.second.socket->disconnect();
+                            client.second.connected = false;
+                            if (client.second.socket)
+                                delete client.second.socket;
+                            _clientManager->clients.erase(remoteId);
+                            return;
                         }
                     }
                 } break;
