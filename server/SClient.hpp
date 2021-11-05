@@ -5,11 +5,14 @@
 ** Sclient.hpp
 */
 
+#pragma once
+
 #include <Nuts/Networking.hpp>
 
 class SClient {
 public:
-    sf::TcpSocket* socket;
+    sf::TcpSocket* tcp;
+    sf::UdpSocket* upd;
     ClientID uuid;
     bool connected;
     bool IsInLobby;
