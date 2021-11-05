@@ -11,7 +11,7 @@ class SClient {
 public:
     sf::TcpSocket* socket;
     ClientID uuid;
-    bool registered;
+    bool connected;
     bool IsInLobby;
     std::uint8_t lobbyID;
 };

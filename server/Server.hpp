@@ -20,8 +20,8 @@ private:
     std::unique_ptr<SClientManager> _clientManager;
 
     sf::TcpListener _listener;
-    sf::TcpSocket _tmpTcpSock;
     bool isRunning = false;
+    sf::TcpSocket* sockPtr = nullptr;
 
 public:
     void Init()
@@ -33,57 +33,66 @@ public:
     {
         _listener.setBlocking(false);
         _listener.listen(port);
+        sockPtr = new sf::TcpSocket();
 
-        std::cout << "Server listening on port:["
-                  << port << "]\n";
+        std::cout << "Server listening on port:[" << port << "]\n\n";
 
         isRunning = true;
     };
 
     sf::Socket::Status Accept()
     {
-        sf::Socket::Status status = _listener.accept(_tmpTcpSock);
+        sf::Socket::Status status = _listener.accept(*sockPtr);
 
         if (status == sf::Socket::Done) {
-            _clientManager->PushClientSocket(_tmpTcpSock);
-        }
+            sockPtr->setBlocking(false);
+            _clientManager->RegisterClient(sockPtr);
+            sockPtr = new sf::TcpSocket();
+        } else if (status == sf::Socket::Error)
+            printf("accept error\n");
+        else if (status == sf::Socket::Partial)
+            printf("accept Partial\n");
 
         return status;
     };
 
     void Dispatch()
     {
-        for (sf::TcpSocket* clientSocket : _clientManager->clientSockets) {
+        for (auto& client : _clientManager->clients) {
             sf::Packet remotePacket;
             Rpc rpcType = -1;
 
-            sf::Socket::Status status = clientSocket->receive(remotePacket);
+            if (!client.socket) {
+                printf("[ERROR]: client socket with ID:[%d] is nullptr\n", client.uuid);
+                continue;
+            }
+
+            sf::Socket::Status status = client.socket->receive(remotePacket);
             if (status == sf::Socket::Done) {
                 remotePacket >> rpcType;
+                printf("[SERVER]: received Rpc type:[%d]\n", rpcType);
                 switch (rpcType) {
-                case ERpc::CLIENT_CONNECT: {
-                    printf("new connection request from IP:[%s] | PORT:[%d]\n", clientSocket->getRemoteAddress().toString().c_str(), clientSocket->getRemotePort());
-                    for (auto const& client : _clientManager->clients) {
-                        if (client.socket && clientSocket->getRemoteAddress() == client.socket->getRemoteAddress() &&
-                        clientSocket->getRemotePort() == client.socket->getRemotePort())
-                        {
-                            printf("client already registered\n");
-                        }
-                        break;
-                    }
 
-                    // check if already registered
-                    _clientManager->RegisterClient(clientSocket);
-
-                    break;
-                }
                 case ERpc::CLIENT_DISCONNECT: {
                     ClientID remoteId;
                     remotePacket >> remoteId;
-                    printf("client [%d] disconnected\n", remoteId);
 
-                    break;
-                }
+                    for (auto& client : _clientManager->clients) {
+                        if (client.uuid == remoteId) {
+                            printf("[SERVER]: client disconnected ID:[%d] from [%s:%d] || sockPtr:[%p]\n",
+                                client.uuid, client.socket->getRemoteAddress().toString().c_str(), client.socket->getRemotePort(), client.socket);
+                            client.socket->disconnect();
+                            client.connected = false;
+                            if (client.socket)
+                                delete client.socket;
+                            // _clientManager->clients.(client);
+                        }
+                    }
+                } break;
+                case ERpc::CLIENTS_PRINT: {
+                    _clientManager->PrintConnectedClients();
+                } break;
+
                 default:
                     break;
                 }

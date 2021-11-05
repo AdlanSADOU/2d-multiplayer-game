@@ -25,7 +25,7 @@ private:
     {
         const char* typeName = typeid(T).name();
 
-        assert(_ComponentTypes.find(typeName) != _ComponentTypes.end() && "Component not registered before use.");
+        assert(_ComponentTypes.find(typeName) != _ComponentTypes.end() && "Component not connected before use.");
 
         return std::static_pointer_cast<ComponentArray<T>>(_ComponentArrays[typeName]);
     }
@@ -49,7 +49,7 @@ public:
     {
         const char* typeName = typeid(T).name();
 
-        assert(_ComponentTypes.find(typeName) != _ComponentTypes.end() && "Component not registered before use.");
+        assert(_ComponentTypes.find(typeName) != _ComponentTypes.end() && "Component not connected before use.");
 
         return _ComponentTypes[typeName];
     }

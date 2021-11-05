@@ -10,11 +10,15 @@
 #include <SFML/Network.hpp>
 #include <iostream>
 
-using ClientID = std::uint8_t;
-using Rpc = std::uint8_t;
-namespace ERpc {
-const Rpc CLIENT_CONNECT = 0;
-const Rpc CLIENT_DISCONNECT = 1;
-const Rpc LOBBY_CREATE = 2;
-const Rpc LOBBY_ID = 3;
-}
+using ClientID = sf::Uint8;
+using Rpc = sf::Uint8;
+
+enum ERpc {
+     CLIENT_CONNECT = 1,
+     CLIENT_DISCONNECT,
+     CLIENTS_PRINT,
+     LOBBY_CREATE,
+     LOBBY_ID,
+};
+
+#define RPC(x)(static_cast<sf::Uint8>(x))

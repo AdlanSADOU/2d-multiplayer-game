@@ -37,7 +37,7 @@ public:
     {
         const char* typeName = typeid(T).name();
 
-        assert(_Systems.find(typeName) != _Systems.end() && "System used before registered.");
+        assert(_Systems.find(typeName) != _Systems.end() && "System used before connected.");
 
         _Signatures.insert({ typeName, signature });
     }
