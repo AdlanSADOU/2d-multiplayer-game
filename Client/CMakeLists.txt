@@ -9,6 +9,14 @@ target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(rtype_client nuts_engine)
 
+if(UNIX)
+  add_custom_command(TARGET rtype_client POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_CURRENT_SOURCE_DIR}/../resources
+  ${CMAKE_CURRENT_BINARY_DIR}/Debug/resources
+  )
+endif()
+
 if(MSVC)
   target_compile_options(rtype_client PRIVATE /W1)
 
