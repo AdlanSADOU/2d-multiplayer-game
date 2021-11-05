@@ -1,0 +1,54 @@
+#include "SClientManager.hpp"
+
+void SClientManager::RegisterClient(sf::TcpSocket* socket)
+{
+    if (socket == nullptr)
+        return;
+
+    SClient tmpClient;
+    tmpClient.socket = socket;
+    tmpClient.connected = true;
+    tmpClient.IsInLobby = false;
+    tmpClient.uuid = _clientId;
+    clients.insert({ _clientId, tmpClient });
+
+    sf::Packet idPacket;
+    idPacket << static_cast<sf::Uint8>(ERpc::CLIENT_CONNECT) << tmpClient.uuid;
+
+    sf::Socket::Status status;
+    if ((status = socket->send(idPacket)) != sf::Socket::Done)
+        printf("[SERVER]:CLIENT_CONNECT::Error: Status:[%d]", status);
+
+    printf("[SERVER]: Client connected as ID:[%d] from [%s:%d]\n\n",
+        _clientId, socket->getRemoteAddress().toString().c_str(), tmpClient.socket->getRemotePort());
+
+    ++_clientId;
+};
+
+bool SClientManager::DisconnectClient(ClientID remoteId)
+{
+    assert(clients.find(remoteId) != clients.end() && "Removing non-existant client.");
+
+    for (auto& client : clients) {
+        if (client.second.uuid == remoteId) {
+            printf("[SERVER]: client disconnected ID:[%d] from [%s:%d] || sockPtr:[%p]\n",
+                client.second.uuid, client.second.socket->getRemoteAddress().toString().c_str(), client.second.socket->getRemotePort(), client.second.socket);
+            client.second.socket->disconnect();
+            client.second.connected = false;
+            if (client.second.socket)
+                delete client.second.socket;
+            clients.erase(remoteId);
+            return true;
+        }
+    }
+    return false;
+}
+
+void SClientManager::PrintConnectedClients()
+{
+    printf("[SERVER]: Connected clients:\n");
+    for (auto const& client : clients) {
+        printf("------ ID:[%d] from [%s:%d] | sockPtr:[%p]\n",
+            client.second.uuid, client.second.socket->getRemoteAddress().toString().c_str(), client.second.socket->getRemotePort(), client.second.socket);
+    }
+}

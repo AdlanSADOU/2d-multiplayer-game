@@ -33,8 +33,8 @@ public:
     {
         _listener.setBlocking(false);
         _listener.listen(port);
-        sockPtr = new sf::TcpSocket();
 
+        sockPtr = new sf::TcpSocket();
         std::cout << "Server listening on port:[" << port << "]\n\n";
 
         isRunning = true;
@@ -67,29 +67,23 @@ public:
                 continue;
             }
 
+            assert(client.second.socket && "socket is nullptr");
+
             sf::Socket::Status status = client.second.socket->receive(remotePacket);
             if (status == sf::Socket::Done) {
                 remotePacket >> rpcType;
+
                 printf("[SERVER]: received Rpc type:[%d]\n", rpcType);
+
                 switch (rpcType) {
 
                 case ERpc::CLIENT_DISCONNECT: {
                     ClientID remoteId;
                     remotePacket >> remoteId;
-
-                    for (auto& client : _clientManager->clients) {
-                        if (client.second.uuid == remoteId) {
-                            printf("[SERVER]: client disconnected ID:[%d] from [%s:%d] || sockPtr:[%p]\n",
-                                client.second.uuid, client.second.socket->getRemoteAddress().toString().c_str(), client.second.socket->getRemotePort(), client.second.socket);
-                            client.second.socket->disconnect();
-                            client.second.connected = false;
-                            if (client.second.socket)
-                                delete client.second.socket;
-                            _clientManager->clients.erase(remoteId);
-                            return;
-                        }
-                    }
+                    if (_clientManager->DisconnectClient(remoteId))
+                        return;
                 } break;
+
                 case ERpc::CLIENTS_PRINT: {
                     _clientManager->PrintConnectedClients();
                 } break;

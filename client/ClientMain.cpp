@@ -6,7 +6,6 @@
 */
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
 
 #include <Nuts.hpp>
 #include <Nuts/Input.hpp>
@@ -17,7 +16,6 @@
 
 #include <bitset>
 #include <cassert>
-#include <iostream>
 
 Scene gScene;
 ClientID myID;
