@@ -134,6 +134,7 @@ int main()
             printf("[CLIENT]: print clients request\n");
             packet << RPC(ERpc::CLIENTS_PRINT) << myID;
             // if (packet.getDataSize() <= sf::UdpSocket::MaxDatagramSize)
+            if (isConnected)
                 udpSock.send(packet, serverIp, serverPort + 1);
         }
 
@@ -148,6 +149,10 @@ int main()
             switch (rpcType) {
             case ERpc::CLIENT_CONNECT: {
                 printf("[Client]: connected to server with ID:[%d]\n", myID);
+
+                sf::Packet udpConnect;
+                udpConnect << RPC(ERpc::CLIENT_UDP) << myID << udpSock.getLocalPort();
+                udpSock.send(udpConnect, serverIp, serverPort + 1);
 
             } break;
 

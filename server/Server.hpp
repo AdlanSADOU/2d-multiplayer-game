@@ -13,22 +13,30 @@
 #include <stdio.h>
 #include <vector>
 
+#include "Dispatcher.hpp"
 #include "Lobby.hpp"
 #include "SClientManager.hpp"
 
+typedef void (*RemoteCallPtr)(sf::Packet& packet);
+std::unique_ptr<SClientManager> _clientManager;
+
 class Server {
 private:
-    std::unique_ptr<SClientManager> _clientManager;
+    std::unique_ptr<Dispatcher> _dispatcher;
 
     sf::TcpListener _listener;
     sf::UdpSocket _udpSock;
-    bool isRunning = false;
     sf::TcpSocket* sockPtr = nullptr;
+
+    bool isRunning = false;
 
 public:
     void Init()
     {
         _clientManager = std::make_unique<SClientManager>();
+        _dispatcher = std::make_unique<Dispatcher>();
+
+        _dispatcher->Init();
     }
 
     void Listen(std::uint16_t port)
@@ -61,41 +69,21 @@ public:
         return status;
     };
 
-    void Dispatch()
+    void Receive()
     {
         for (auto& client : _clientManager->clients) {
             sf::Packet remotePacket;
-            Rpc rpcType = -1;
-
             if (!client.second.tcp) {
                 printf("[ERROR]: client socket with ID:[%d] is nullptr\n", client.second.uuid);
-                continue;
+                return;
             }
-
-            assert(client.second.tcp && "socket is nullptr");
 
             sf::Socket::Status status = client.second.tcp->receive(remotePacket);
             if (status == sf::Socket::Done) {
-                remotePacket >> rpcType;
 
-                printf("[SERVER]: received Rpc type:[%d]\n", rpcType);
-
-                switch (rpcType) {
-
-                case ERpc::CLIENT_DISCONNECT: {
-                    ClientID remoteId;
-                    remotePacket >> remoteId;
-                    if (_clientManager->DisconnectClient(remoteId))
-                        return;
-                } break;
-
-                case ERpc::CLIENTS_PRINT: {
-                    _clientManager->PrintConnectedClients();
-                } break;
-
-                default:
-                    break;
-                }
+                printf("[SERVER_TCP]: received Rpc\n");
+                if (_dispatcher->Dispatch(remotePacket))
+                    return;
             }
         }
 
@@ -106,30 +94,11 @@ public:
             sf::IpAddress remoteAddress;
             unsigned short remotePort;
 
-            ClientID clientId;
-
             sf::Socket::Status status = _udpSock.receive(remotePacket, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
-                remotePacket >> rpcType >> clientId;
 
-                printf("[SERVER]: received Rpc type:[%d] from ID:[%d]:[%s:%d]\n", rpcType, clientId, remoteAddress.toString().c_str(), remotePort);
-
-                switch (rpcType) {
-
-                case ERpc::CLIENT_CONNECT: {
-                    ClientID remoteId;
-                    remotePacket >> remoteId;
-                    if (_clientManager->DisconnectClient(remoteId))
-                        return;
-                } break;
-
-                case ERpc::CLIENTS_PRINT: {
-                    _clientManager->PrintConnectedClients();
-                } break;
-
-                default:
-                    break;
-                }
+                printf("[SERVER_UDP]: received Rpc\n");
+                _dispatcher->Dispatch(remotePacket);
             }
         }
     };

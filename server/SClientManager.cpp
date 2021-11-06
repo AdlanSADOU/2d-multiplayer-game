@@ -26,9 +26,17 @@ void SClientManager::RegisterClient(sf::TcpSocket* socket)
     ++_clientId;
 };
 
+void SClientManager::AddClientUdpPort(sf::Uint16 udpPort, ClientID remoteId)
+{
+    printf("[SERVER]: added udpPort:[%d] to client[%d]\n", udpPort, remoteId);
+    clients.find(remoteId)->second.updPort = udpPort;
+    
+}
+
 bool SClientManager::DisconnectClient(ClientID remoteId)
 {
-    assert(clients.find(remoteId) != clients.end() && "Removing non-existant client.");
+    // assert(clients.find(remoteId) != clients.end() && "Removing non-existant client.");
+    // if (clients.find(remoteId) != clients.end()) return false;
 
     for (auto& client : clients) {
         if (client.second.uuid == remoteId) {
@@ -49,7 +57,9 @@ void SClientManager::PrintConnectedClients()
 {
     printf("[SERVER]: Connected clients:\n");
     for (auto const& client : clients) {
+
         printf("------ ID:[%d] from [%s:%d] | sockPtr:[%p]\n",
             client.second.uuid, client.second.tcp->getRemoteAddress().toString().c_str(), client.second.tcp->getRemotePort(), client.second.tcp);
     }
 }
+

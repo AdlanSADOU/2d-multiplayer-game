@@ -21,6 +21,7 @@ private:
 public:
     std::unordered_map<ClientID, SClient> clients {};
     void RegisterClient(sf::TcpSocket* socket);
+    void AddClientUdpPort(sf::Uint16 udpPort, ClientID remoteId);
     bool DisconnectClient(ClientID remoteId);
     void PrintConnectedClients();
 };

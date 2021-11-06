@@ -14,11 +14,18 @@ using ClientID = sf::Uint8;
 using Rpc = sf::Uint8;
 
 enum ERpc {
-     CLIENT_CONNECT = 1,
-     CLIENT_DISCONNECT,
-     CLIENTS_PRINT,
-     LOBBY_CREATE,
-     LOBBY_ID,
+    CLIENT_CONNECT = 1,
+    CLIENT_DISCONNECT,
+    CLIENT_UDP,
+    CLIENTS_PRINT,
+    LOBBY_CREATE,
+    LOBBY_ID,
 };
 
-#define RPC(x)(static_cast<sf::Uint8>(x))
+enum ESocketType {
+    Tcp, ///< TCP protocol
+    Udp ///< UDP protocol
+};
+
+#define MAX_RPC 64
+#define RPC(x) (static_cast<sf::Uint8>(x))

@@ -5,16 +5,8 @@
 ** ServerMain.cpp
 */
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
-#include <Nuts/Networking.hpp>
-
-#include <stdio.h>
-#include <vector>
-#include <array>
-#include <unordered_map>
-
 #include <Server.hpp>
+
 
 int main()
 {
@@ -26,7 +18,7 @@ int main()
 	while (server.IsRunning())
 	{
 		server.Accept();
-		server.Dispatch();
+		server.Receive();
 	}
 
 	server.ShutDown();

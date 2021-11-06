@@ -12,7 +12,7 @@
 class SClient {
 public:
     sf::TcpSocket* tcp;
-    sf::UdpSocket* upd;
+    sf::Uint16 updPort;
     ClientID uuid;
     bool connected;
     bool IsInLobby;
