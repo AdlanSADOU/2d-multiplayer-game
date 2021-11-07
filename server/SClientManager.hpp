@@ -1,67 +1,27 @@
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** SclientManager.hpp
+*/
+
 #pragma once
 
+#include <assert.h>
+#include <unordered_map>
+
+#include "Lobby.hpp"
 #include "SClient.hpp"
 
-class SClientManager
-{
-    private:
-        std::vector<SClient> clients{};
-        ClientID _clientId = 0;
+class SClientManager {
+private:
+    ClientID _clientId = 0;
+    Lobby lobby;
 
-    public:
-        std::vector<sf::TcpSocket *> _clientSockets{};
-
-        SClient &GetClientById(ClientID id)
-        {
-
-        };
-
-        sf::TcpSocket *GetClientSocketById(ClientID id)
-        {
-            for (auto c : clients)
-            {
-                if (c.uuid == id)
-                    return c.socket;
-            }
-        };
-
-        void PushClient(sf::TcpSocket &newTcpClient)
-        {
-            sf::TcpSocket *tcpSockPtr = new sf::TcpSocket();
-            tcpSockPtr = &newTcpClient;
-
-            printf("incomming connection\n");
-            tcpSockPtr->setBlocking(false);
-            _clientSockets.push_back(tcpSockPtr);
-        };
-
-        void RegisterClient(sf::TcpSocket *socket)
-        {
-            SClient tmpClient;
-            tmpClient.socket = socket;
-            tmpClient.registered = true;
-            tmpClient.IsInLobby = false;
-            tmpClient.uuid = _clientId;
-            clients.push_back(tmpClient);
-
-            sf::Packet idPacket;
-            idPacket << ERpc::CLIENT_CONNECT << tmpClient.uuid;
-            socket->send(idPacket);
-
-            ++_clientId;
-            printf("client registered as ID:[%d] from | IP:[%s] | PORT:[%d]\n",
-                _clientId, socket->getRemoteAddress().toString().c_str(), socket->getRemotePort());
-        };
-
-        void DisconnectClient(ClientID id) {
-            SClient &client = GetClientById(id);
-            client.registered = false;
-            client.IsInLobby = false;
-
-        };
-
-        std::vector<sf::TcpSocket *> &GetClientSockets()
-        {
-            return _clientSockets;
-        }
+public:
+    std::unordered_map<ClientID, SClient> clients {};
+    void RegisterClient(sf::TcpSocket* socket);
+    void AddClientUdpPort(sf::Uint16 udpPort, ClientID remoteId);
+    bool DisconnectClient(ClientID remoteId);
+    void PrintConnectedClients();
 };

@@ -12,53 +12,51 @@
 #include <cassert>
 #include <queue>
 
-class EntityManager
-{
-    private:
-        std::queue<Entity> _EntitiesPool{};
-        std::array<EntitySignature, MAX_ENTITIES> _Signatures{};
-        uint32_t _ExistingEntitiesCount{};
+class EntityManager {
+private:
+    std::queue<Entity> _EntitiesPool {};
+    std::array<EntitySignature, MAX_ENTITIES> _Signatures {};
+    uint32_t _ExistingEntitiesCount {};
 
-    public:
-        EntityManager()
-        {
-            for (Entity entity = 0; entity < MAX_ENTITIES; ++entity)
-            {
-                _EntitiesPool.push(entity);
-            }
-        }
-
-        Entity CreateEntity()
-        {
-            assert(_ExistingEntitiesCount < MAX_ENTITIES && "Too many entities in existence.");
-
-            Entity id = _EntitiesPool.front();
-            _EntitiesPool.pop();
-            ++_ExistingEntitiesCount;
-
-            return id;
-        }
-
-        void DestroyEntity(Entity entity)
-        {
-            assert(entity < MAX_ENTITIES && "Entity out of range.");
-
-            _Signatures[entity].reset();
+public:
+    EntityManager()
+    {
+        for (Entity entity = 0; entity < MAX_ENTITIES; ++entity) {
             _EntitiesPool.push(entity);
-            --_ExistingEntitiesCount;
         }
+    }
 
-        void SetSignature(Entity entity, EntitySignature signature)
-        {
-            assert(entity < MAX_ENTITIES && "Entity out of range.");
+    Entity CreateEntity()
+    {
+        assert(_ExistingEntitiesCount < MAX_ENTITIES && "Too many entities in existence.");
 
-            _Signatures[entity] = signature;
-        }
+        Entity id = _EntitiesPool.front();
+        _EntitiesPool.pop();
+        ++_ExistingEntitiesCount;
 
-        EntitySignature GetSignature(Entity entity)
-        {
-            assert(entity < MAX_ENTITIES && "Entity out of range.");
+        return id;
+    }
 
-            return _Signatures[entity];
-        }
+    void DestroyEntity(Entity entity)
+    {
+        assert(entity < MAX_ENTITIES && "Entity out of range.");
+
+        _Signatures[entity].reset();
+        _EntitiesPool.push(entity);
+        --_ExistingEntitiesCount;
+    }
+
+    void SetSignature(Entity entity, EntitySignature signature)
+    {
+        assert(entity < MAX_ENTITIES && "Entity out of range.");
+
+        _Signatures[entity] = signature;
+    }
+
+    EntitySignature GetSignature(Entity entity)
+    {
+        assert(entity < MAX_ENTITIES && "Entity out of range.");
+
+        return _Signatures[entity];
+    }
 };

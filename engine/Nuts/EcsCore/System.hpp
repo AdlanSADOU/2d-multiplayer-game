@@ -10,9 +10,7 @@
 #include "Types.hpp"
 #include <set>
 
-
-class System
-{
+class System {
     public:
-        std::set<Entity> _Entities;
+        std::set<Entity> _entities;
 };
