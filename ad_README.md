@@ -84,4 +84,37 @@ Once in a lobby clients have a [READY] button, when clicked, server receives a p
 When the last client in the lobby clicks the [READY] button, the server receives a [START_GAME] packet, which inits a game session on the server side and broadcasts to all clients data related to the game session. the client can now start to load the necessary sprite assets to start drawing all entities received from the server.
 
 ---
-Server needs to know 
+IServer common interface
+- Clients
+
+- TcpListener
+
+- TcpSocket
+- UdpSocket
+
+- Listen()
+- virtual Accept()
+
+- sendMessage()
+- receiveMessage()
+
+IClient common interface
+- clientId
+
+- TcpSocket
+- UdpSocket
+
+- ConnectToServer()
+
+- MessageType<T>
+
+- MessageQueue<T>
+
+- WriteMessageHeader()
+- WriteMessageBody()
+
+- ReadMessageHeader()
+- ReadMessageBody()
+
+- sendMessage(Connection, Packet)
+- receiveMessage()
