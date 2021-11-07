@@ -13,8 +13,8 @@
 
 class Nuts {
     private:
-        sf::Keyboard::Key pressedKey;
-        sf::Keyboard::Key downKey;
+        Input::Key pressedKey;
+        Input::Key downKey;
         bool isRunning;
 
     public:
@@ -49,18 +49,18 @@ class Nuts {
         void HandleEvent()
         {
             sf::Event event;
-            pressedKey = sf::Keyboard::Unknown;
+            pressedKey = Input::Unknown;
 
             while (window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed)
                     window.close();
 
                 if (event.type == sf::Event::KeyPressed) {
-                    pressedKey = event.key.code;
-                    downKey = event.key.code;
+                    pressedKey = (Input::Key)event.key.code;
+                    downKey = (Input::Key)event.key.code;
                 }
                 if (event.type == sf::Event::KeyReleased) {
-                    downKey = sf::Keyboard::Unknown;
+                    downKey = Input::Unknown;
                 }
             };
         }
@@ -72,7 +72,7 @@ class Nuts {
             return false;
         }
 
-        bool GetKeyDown(sf::Keyboard::Key key)
+        bool GetKeyDown(Input::Key key)
         {
             if (key == downKey)
                 return true;
