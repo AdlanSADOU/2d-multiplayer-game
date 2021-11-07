@@ -24,12 +24,17 @@ class Nuts {
         {
             window.create((sf::VideoMode){width, height, 32}, windowName);
             isRunning = true;
-        };
+        }
+
+        void SetFramerateLimit(unsigned int limit)
+        {
+            window.setFramerateLimit(limit);
+        }
 
         void Clear()
         {
             window.clear();
-        };
+        }
 
         void Present()
         {
@@ -62,7 +67,7 @@ class Nuts {
                 if (event.type == sf::Event::KeyReleased) {
                     downKey = Input::Unknown;
                 }
-            };
+            }
         }
 
         bool GetKeyPressed(Input::Key key)
