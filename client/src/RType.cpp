@@ -43,7 +43,10 @@ void RType::Init()
 void RType::Run()
 {
     while (_nuts.IsRunning()) {
+        _nuts.Clear();
         _nuts.HandleEvent();
+
+        
 
         _renderSystem.get()->Update(_nuts.window);
 

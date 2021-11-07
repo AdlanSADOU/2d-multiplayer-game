@@ -31,9 +31,9 @@ class Nuts {
             window.setFramerateLimit(limit);
         }
 
-        void Clear()
+        void Clear(uint8_t r = 0U, uint8_t g = 0U, uint8_t b = 0U, uint8_t a = 255U)
         {
-            window.clear();
+            window.clear((sf::Color){r, g, b, a});
         }
 
         void Present()
