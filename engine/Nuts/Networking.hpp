@@ -22,10 +22,79 @@ enum ERpc {
     LOBBY_ID,
 };
 
-enum ESocketType {
+enum SocketType {
     Tcp, ///< TCP protocol
     Udp ///< UDP protocol
 };
 
 #define MAX_RPC 64
 #define RPC(x) (static_cast<sf::Uint8>(x))
+
+class Connection {
+private:
+    SocketType _type;
+    std::shared_ptr<sf::UdpSocket> _udpSock;
+    std::shared_ptr<sf::TcpSocket> _tcpSock;
+    sf::IpAddress _ipAdress;
+    sf::Uint16 _port;
+
+public:
+    ~Connection()
+    {
+        _tcpSock->disconnect();
+    }
+
+    void AssignTcpSocket(sf::TcpSocket* socket)
+    {
+        _tcpSock.reset(socket);
+    }
+
+    void TcpConnect(sf::IpAddress remoteIp, sf::Uint16 remotePort)
+    {
+        sf::Socket::Status status;
+        if (_tcpSock->connect(remoteIp, remotePort) != sf::Socket::Status::Done)
+            std::cerr << "ERROR:TCP: unable to connect\n";
+    }
+    void UdpBind(sf::Uint16 port, sf::IpAddress ip)
+    {
+        _udpSock = std::make_shared<sf::UdpSocket>();
+        sf::Socket::Status status;
+        if (_udpSock->bind(port, ip) != sf::Socket::Status::Done)
+            std::cerr << "ERROR:UDP: unable to connect\n";
+    }
+    void UdpSetBlocking(bool value)
+    {
+        _udpSock->setBlocking(value);
+    }
+    void TcpSetBlocking(bool value)
+    {
+        _tcpSock->setBlocking(value);
+    }
+
+    sf::Socket::Status Send(sf::Packet& packet)
+    {
+        if (_tcpSock->send(packet) != sf::Socket::Status::Done)
+            std::cerr << "ERROR:TCP: unable to send\n";
+    }
+
+    sf::Socket::Status UdpSend(sf::Packet& packet, sf::IpAddress& remoteIp, sf::Uint16 remotePort)
+    {
+        if (_udpSock->send(packet, remoteIp, remotePort) != sf::Socket::Status::Done)
+            std::cerr << "ERROR:UDP: unable to send\n";
+    }
+
+    sf::Socket::Status UdpReceive(sf::Packet& packet, sf::IpAddress& remoteIp, sf::Uint16& remotePort)
+    {
+        sf::Socket::Status status;
+        (status = _udpSock->receive(packet, remoteIp, remotePort));
+        // std::cerr << "ERROR:UDP: unable to receive\n";
+        return status;
+    }
+};
+
+class ServerInterface {
+private:
+protected:
+    sf::TcpListener _listener;
+    Connection _serverConnection;
+};
