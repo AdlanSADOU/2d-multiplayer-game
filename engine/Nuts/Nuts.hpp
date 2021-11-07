@@ -22,7 +22,7 @@ class Nuts {
 
         void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
         {
-            window.create((sf::VideoMode){width, height, 32}, windowName);
+            window.create({width, height, 32}, windowName);
             isRunning = true;
         }
 
