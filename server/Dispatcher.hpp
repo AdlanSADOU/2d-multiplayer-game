@@ -42,7 +42,7 @@ public:
         packet >> rpcType;
         (this->*(_remoteProcedureCalls[rpcType]))(packet);
 
-        if (rpcType == ERpc::CLIENT_DISCONNECT)
+        if (rpcType == RPC(ERpc::CLIENT_DISCONNECT))
             return true;
         return false;
     }
@@ -64,8 +64,6 @@ public:
 
         sf::Packet p;
         p << RPC(ERpc::CLIENT_UDP) << "connected";
-
-        _serverConnection->UdpSend(p, _clientManager->clients.find(remoteId)->second.tcp->getRemoteAddress(), udpPort);
     }
 
     void ClientsPrint(sf::Packet& packet)

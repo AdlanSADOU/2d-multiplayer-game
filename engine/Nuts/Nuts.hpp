@@ -12,25 +12,20 @@
 #include <Input.hpp>
 
 class Nuts {
-public:
-    sf::RenderWindow window;
+    public:
+        sf::RenderWindow window;
 
-    private:
-        sf::Keyboard::Key pressedKey;
-        sf::Keyboard::Key downKey;
-        bool isRunning;
+        private:
+            sf::Keyboard::Key pressedKey;
+            sf::Keyboard::Key downKey;
+            bool isRunning;
 
-public:
-    void InitWindow(char* windowName, std::uint32_t width, std::uint32_t height)
-    {
-        window.create({ width, height, 32 }, windowName);
-        isRunning = true;
-    };
-
-    void Clear()
-    {
-        window.clear();
-    };
+    public:
+        void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
+        {
+            window.create({ width, height, 32 }, windowName);
+            isRunning = true;
+        };
 
         void Clear()
         {
@@ -52,18 +47,25 @@ public:
             window.close();
         }
 
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
+        void HandleInput()
+        {
+            sf::Event event;
+            pressedKey = sf::Keyboard::Unknown;
 
-            if (event.type == sf::Event::KeyPressed) {
-                pressedKey = event.key.code;
-                downKey = event.key.code;
-            }
-            if (event.type == sf::Event::KeyReleased) {
-                downKey = sf::Keyboard::Unknown;
-            }
-        };
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::KeyPressed) {
+                    pressedKey = event.key.code;
+                    downKey = event.key.code;
+                }
+                if (event.type == sf::Event::KeyReleased) {
+                    downKey = sf::Keyboard::Unknown;
+                }
+            };
+        }
+
 
     bool GetKeyPressed(Input::Key key)
     {
@@ -72,10 +74,10 @@ public:
         return false;
     }
 
-        bool GetKeyDown(sf::Keyboard::Key key)
-        {
-            if (key == downKey)
-                return true;
-            return false;
-        }
+    bool GetKeyDown(sf::Keyboard::Key key)
+    {
+        if (key == downKey)
+            return true;
+        return false;
+    }
 };

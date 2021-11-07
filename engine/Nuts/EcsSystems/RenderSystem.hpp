@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <SpriteComponent.hpp>
-#include <System.hpp>
+#include "SpriteComponent.hpp"
+#include "System.hpp"
 
 extern Scene gScene;
 
@@ -28,7 +28,7 @@ class RenderSystem : public System
         }
 
         void Update(sf::RenderWindow &window) {
-            for (auto const &entity : _Entities)
+            for (auto const &entity : _entities)
             {
                 auto const& spriteComponent = gScene.GetComponent<SpriteComponent>(entity);
 

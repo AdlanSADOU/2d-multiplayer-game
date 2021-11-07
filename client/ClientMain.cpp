@@ -144,20 +144,21 @@ int main()
 
             sf::Socket::Status status = tcpSock.receive(packet);
             if (status == sf::Socket::Done)
-                packet >> RPC(rpcType) >> myID;
+                packet >> rpcType >> myID;
 
-            switch (rpcType) {
-            case ERpc::CLIENT_CONNECT: {
-                printf("[Client]: connected to server with ID:[%d]\n", myID);
+            switch (rpcType)
+            {
+                case RPC(ERpc::CLIENT_CONNECT): {
+                    printf("[Client]: connected to server with ID:[%d]\n", myID);
 
-                sf::Packet udpConnect;
-                udpConnect << RPC(ERpc::CLIENT_UDP) << myID << udpSock.getLocalPort();
-                udpSock.send(udpConnect, serverIp, serverPort + 1);
+                    sf::Packet udpConnect;
+                    udpConnect << RPC(ERpc::CLIENT_UDP) << myID << udpSock.getLocalPort();
+                    udpSock.send(udpConnect, serverIp, serverPort + 1);
 
-            } break;
+                } break;
 
-            default:
-                break;
+                default:
+                    break;
             }
         }
 
@@ -170,17 +171,18 @@ int main()
 
             sf::Socket::Status status = udpSock.receive(packet, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
-                packet >> RPC(rpcType) >> myID;
+                packet >> rpcType >> myID;
                 printf("[Client]: received UPD packet:[%d]\n", myID, rpcType);
             }
 
-            switch (rpcType) {
-            case ERpc::CLIENT_UDP: {
-                printf("[Client]: server regisreted UDP info\n", myID);
-            } break;
+            switch (rpcType)
+            {
+                case RPC(ERpc::CLIENT_UDP) : {
+                    printf("[Client]: server regisreted UDP info\n", myID);
+                } break;
 
-            default:
-                break;
+                default:
+                    break;
             }
         }
 

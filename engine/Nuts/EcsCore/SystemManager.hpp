@@ -51,33 +51,6 @@ public:
         }
     }
 
-<<<<<<< HEAD
-                system->_Entities.erase(entity);
-            }
-        }
-
-        /**
-        * Adds & updates entities from systems that have matching signatures
-        **/
-        void EntitySignatureChanged(Entity entity, EntitySignature entitySignature)
-        {
-            for (auto const& pair : _Systems)
-            {
-                auto const& type = pair.first;
-                auto const& system = pair.second;
-                auto const& systemSignature = _Signatures[type];
-
-                if ((entitySignature & systemSignature) == systemSignature)
-                {
-                    system->_Entities.insert(entity);
-                }
-                else
-                {
-                    system->_Entities.erase(entity);
-                }
-            }
-        }
-=======
     /**
 	 * adds & updates entities from systems that have matching signatures
 	 **/
@@ -95,5 +68,4 @@ public:
             }
         }
     }
->>>>>>> 2251306fa315986068f15eb25f0c339ebb757327
 };
