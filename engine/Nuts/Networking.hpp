@@ -20,9 +20,9 @@ using ClientID = sf::Int8;
 using MsgType = sf::Uint8;
 
 enum class MsgTypes : sf::Uint8 {
-    CLIENT_ID = 1,
-    UDP_INFO,
+    CLIENT_CONNECT = 1,
     CLIENT_DISCONNECT,
+    CLIENT_UDP_INFO,
     CLIENTS_PRINT,
     LOBBY_LIST,
     LOBBY_CREATE,
@@ -102,36 +102,11 @@ public:
     }
 };
 
-// Router & Dispatcher
-typedef class Dispatcher;
-
-/**
- * @brief Router class must be inherited by a Dispatcher class
- * All message callbacks must be implemented in Dispatcher class
- * That's why Dispatcher is forward declared here
- */
-class Router {
-protected:
-    typedef void (Dispatcher::*MessageFuncPtr)(sf::Packet& packet);
-    std::array<MessageFuncPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
-
-    void addCallback(MsgTypes rpcType, MessageFuncPtr callback)
-    {
-        _remoteProcedureCalls[MSG_TYPE(rpcType)] = callback;
-    }
-
-public:
-};
-
 /** TODO(adlan):
 * ClientInterface
 */
-class ClientInterface {
-protected:
-    std::shared_ptr<Connection> _clientConnection;
-};
-
 class ServerInterface {
+private:
 protected:
     sf::TcpListener _listener;
     std::shared_ptr<Connection> _serverConnection;

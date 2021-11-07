@@ -11,10 +11,20 @@
 #include <Nuts/Networking.hpp>
 #include <cassert>
 
-class Dispatcher : public Router {
+/** TODO(adlan):
+* clas ServerDispatcher : public Dispatcher
+*/
+class Dispatcher {
 private:
+    typedef void (Dispatcher::*RemoteCallPtr)(sf::Packet& packet);
+    std::array<RemoteCallPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
     std::shared_ptr<SClientManager> _clientManager {};
     std::shared_ptr<Connection> _serverConnection {};
+
+    void addCallback(MsgTypes rpcType, RemoteCallPtr callback)
+    {
+        _remoteProcedureCalls[MSG_TYPE(rpcType)] = callback;
+    }
 
 public:
     Dispatcher(std::shared_ptr<SClientManager> clientManager, std::shared_ptr<Connection> serverConnection)
@@ -24,7 +34,7 @@ public:
 
         addCallback(MsgTypes::CLIENT_DISCONNECT, &Dispatcher::ClientDisconnect);
         addCallback(MsgTypes::CLIENTS_PRINT, &Dispatcher::ClientsPrint);
-        addCallback(MsgTypes::UDP_INFO, &Dispatcher::ClientAddUdp);
+        addCallback(MsgTypes::CLIENT_UDP_INFO, &Dispatcher::ClientAddUdp);
     }
 
     bool Dispatch(sf::Packet& packet, SocketType sockType)
@@ -72,17 +82,6 @@ public:
         }
     }
 
-    bool ClientConnectionDropped(ClientID remoteId)
-    {
-        if (_clientManager->DisconnectClient(remoteId)) {
-            sf::Packet ClientDisconnectedPacket;
-            ClientDisconnectedPacket << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << remoteId;
-            Broadcast(ClientDisconnectedPacket, remoteId);
-            return true;
-        }
-        return false;
-    }
-
     void ClientAddUdp(sf::Packet& packet)
     {
         ClientID remoteId;
@@ -92,7 +91,7 @@ public:
         _clientManager->AddClientUdpPort(udpPort, remoteId);
 
         sf::Packet p;
-        p << MSG_TYPE(MsgTypes::UDP_INFO) << "connected";
+        p << MSG_TYPE(MsgTypes::CLIENT_UDP_INFO) << "connected";
     }
 
     void ClientsPrint(sf::Packet& packet)

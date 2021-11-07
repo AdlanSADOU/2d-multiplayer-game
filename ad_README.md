@@ -90,9 +90,7 @@ Each GameSession could be a thread, that thread has its own UDP socket that only
 
 
 ---
-## Thread workers example & mutex
-https://en.cppreference.com/w/cpp/thread/mutex
-
+## Thread workers example
     std::vector<std::thread> workers;
     for (int i = 0; i < 5; i++) {
         workers.push_back(std::thread([]()

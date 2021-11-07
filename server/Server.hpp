@@ -78,10 +78,6 @@ public:
 
                 if (_dispatcher->Dispatch(remotePacket, SocketType::Tcp))
                     return;
-            } else if ( status == sf::Socket::Disconnected) {
-                printf("\n-- client [%d] disconnected \n", client.second.uuid);
-                if (_dispatcher->ClientConnectionDropped(client.second.uuid))
-                    return;
             }
         }
 
