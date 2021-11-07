@@ -22,7 +22,6 @@ void SClientManager::RegisterClient(sf::TcpSocket* socket)
     printf("[SERVER]: Client connected as ID:[%d] from [%s:%d]\n\n",
         _clientId, socket->getRemoteAddress().toString().c_str(), tmpClient.tcp->getRemotePort());
 
-    lobby.AddClient(&clients.at(_clientId));
     ++_clientId;
 };
 
@@ -30,7 +29,7 @@ void SClientManager::AddClientUdpPort(sf::Uint16 udpPort, ClientID remoteId)
 {
     printf("[SERVER]: added udpPort:[%d] to client[%d]\n", udpPort, remoteId);
     clients.find(remoteId)->second.updPort = udpPort;
-    
+
 }
 
 bool SClientManager::DisconnectClient(ClientID remoteId)

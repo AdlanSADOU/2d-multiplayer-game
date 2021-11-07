@@ -17,15 +17,10 @@
 #include "Lobby.hpp"
 #include "SClientManager.hpp"
 
-typedef void (*RemoteCallPtr)(sf::Packet& packet);
-std::unique_ptr<SClientManager> _clientManager;
-
-class Server {
+class Server : ServerInterface {
 private:
+    std::shared_ptr<SClientManager> _clientManager;
     std::unique_ptr<Dispatcher> _dispatcher;
-
-    sf::TcpListener _listener;
-    sf::UdpSocket _udpSock;
     sf::TcpSocket* sockPtr = nullptr;
 
     bool isRunning = false;
@@ -33,10 +28,10 @@ private:
 public:
     void Init()
     {
-        _clientManager = std::make_unique<SClientManager>();
+        _clientManager = std::make_shared<SClientManager>();
         _dispatcher = std::make_unique<Dispatcher>();
 
-        _dispatcher->Init();
+        _dispatcher->Init(_clientManager);
     }
 
     void Listen(std::uint16_t port)
@@ -44,8 +39,8 @@ public:
         _listener.setBlocking(false);
         _listener.listen(port);
 
-        _udpSock.bind(port + 1, sf::IpAddress::LocalHost);
-        _udpSock.setBlocking(false);
+        _serverConnection.UdpBind(port + 1, sf::IpAddress::LocalHost);
+        _serverConnection.UdpSetBlocking(false);
 
         sockPtr = new sf::TcpSocket();
         std::cout << "Server listening on port:[" << port << "]\n\n";
@@ -94,7 +89,7 @@ public:
             sf::IpAddress remoteAddress;
             unsigned short remotePort;
 
-            sf::Socket::Status status = _udpSock.receive(remotePacket, remoteAddress, remotePort);
+            sf::Socket::Status status = _serverConnection.UdpReceive(remotePacket, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
 
                 printf("[SERVER_UDP]: received Rpc\n");

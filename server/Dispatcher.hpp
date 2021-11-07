@@ -12,33 +12,11 @@
 #include <array>
 #include <cassert>
 
-extern std::unique_ptr<SClientManager> _clientManager;
-typedef void (*RemoteCallPtr)(sf::Packet& packet);
-
-void ClientDisconnect(sf::Packet& packet)
-{
-    ClientID remoteId;
-    packet >> remoteId;
-    _clientManager->DisconnectClient(remoteId);
-}
-
-void ClientAddUdp(sf::Packet& packet)
-{
-    ClientID remoteId;
-    sf::Uint16 udpPort;
-    packet >> remoteId >> udpPort;
-
-    _clientManager->AddClientUdpPort(udpPort, remoteId);
-}
-
-void ClientsPrint(sf::Packet& packet)
-{
-    _clientManager->PrintConnectedClients();
-}
-
 class Dispatcher {
 private:
+    typedef void (Dispatcher::*RemoteCallPtr)(sf::Packet& packet);
     std::array<RemoteCallPtr, 64> _remoteProcedureCalls {};
+    std::shared_ptr<SClientManager> _clientManager {};
 
     void addCallback(ERpc rpcType, RemoteCallPtr callback)
     {
@@ -46,11 +24,12 @@ private:
     }
 
 public:
-    void Init()
+    void Init(std::shared_ptr<SClientManager> clientManager)
     {
-        addCallback(ERpc::CLIENT_DISCONNECT, &ClientDisconnect);
-        addCallback(ERpc::CLIENTS_PRINT, &ClientsPrint);
-        addCallback(ERpc::CLIENT_UDP, &ClientAddUdp);
+        _clientManager = clientManager;
+        addCallback(ERpc::CLIENT_DISCONNECT, &Dispatcher::ClientDisconnect);
+        addCallback(ERpc::CLIENTS_PRINT, &Dispatcher::ClientsPrint);
+        addCallback(ERpc::CLIENT_UDP, &Dispatcher::ClientAddUdp);
     }
 
     bool Dispatch(sf::Packet& packet)
@@ -58,11 +37,31 @@ public:
         Rpc rpcType = -1;
 
         packet >> rpcType;
-        //assert(_remoteProcedureCalls.size() == 0 && "no procedures to call\n");
-        _remoteProcedureCalls[rpcType](packet);
+        (this->*(_remoteProcedureCalls[rpcType]))(packet);
 
         if (rpcType == ERpc::CLIENT_DISCONNECT)
             return true;
         return false;
+    }
+
+    void ClientDisconnect(sf::Packet& packet)
+    {
+        ClientID remoteId;
+        packet >> remoteId;
+        _clientManager->DisconnectClient(remoteId);
+    }
+
+    void ClientAddUdp(sf::Packet& packet)
+    {
+        ClientID remoteId;
+        sf::Uint16 udpPort;
+        packet >> remoteId >> udpPort;
+
+        _clientManager->AddClientUdpPort(udpPort, remoteId);
+    }
+
+    void ClientsPrint(sf::Packet& packet)
+    {
+        _clientManager->PrintConnectedClients();
     }
 };
