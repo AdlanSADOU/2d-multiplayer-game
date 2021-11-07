@@ -11,14 +11,15 @@
 #include <iostream>
 #include <memory>
 
-using ClientID = sf::Uint8;
-using Rpc = sf::Uint8;
+using ClientID = sf::Int8;
+using MsgType = sf::Uint8;
 
-enum class ERpc : sf::Uint8 {
+enum class MsgTypes : sf::Uint8 {
     CLIENT_CONNECT = 1,
     CLIENT_DISCONNECT,
-    CLIENT_UDP,
+    CLIENT_UDP_INFO,
     CLIENTS_PRINT,
+    LOBBY_LIST,
     LOBBY_CREATE,
     LOBBY_ID,
 };
@@ -28,19 +29,18 @@ enum SocketType {
     Udp ///< UDP protocol
 };
 
-#define MAX_RPC 64
-#define RPC(x) (static_cast<sf::Uint8>(x))
+#define MAX_MSG_TYPES 64
+#define MSG_TYPE(x) (static_cast<sf::Uint8>(x))
 
-class Connection
-{
-    private:
+class Connection {
+private:
     SocketType _type;
     std::shared_ptr<sf::UdpSocket> _udpSock;
     std::shared_ptr<sf::TcpSocket> _tcpSock;
     sf::IpAddress _ipAdress;
     sf::Uint16 _port;
 
-    public:
+public:
     ~Connection()
     {
         _tcpSock->disconnect();
@@ -97,9 +97,12 @@ class Connection
     }
 };
 
+/** TODO(adlan):
+* ClientInterface
+*/
 class ServerInterface {
-    private:
-    protected:
-        sf::TcpListener _listener;
-        std::shared_ptr<Connection> _serverConnection;
+private:
+protected:
+    sf::TcpListener _listener;
+    std::shared_ptr<Connection> _serverConnection;
 };

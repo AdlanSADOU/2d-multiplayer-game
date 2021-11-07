@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <thread>
 #include <vector>
 
 #include "Dispatcher.hpp"
@@ -75,24 +76,27 @@ public:
             sf::Socket::Status status = client.second.tcp->receive(remotePacket);
             if (status == sf::Socket::Done) {
 
-                printf("[SERVER_TCP]: received Rpc\n");
-                if (_dispatcher->Dispatch(remotePacket))
+                if (_dispatcher->Dispatch(remotePacket, SocketType::Tcp))
                     return;
             }
         }
 
         {
             sf::Packet remotePacket;
-            Rpc rpcType = -1;
 
             sf::IpAddress remoteAddress;
             unsigned short remotePort;
 
             sf::Socket::Status status = _serverConnection->UdpReceive(remotePacket, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
+                    _dispatcher->Dispatch(remotePacket, SocketType::Udp);
 
-                printf("[SERVER_UDP]: received Rpc\n");
-                _dispatcher->Dispatch(remotePacket);
+                // std::thread receiveThread([this, &remotePacket]() {
+
+                // });
+
+                // if (receiveThread.joinable())
+                //     receiveThread.join();
             }
         }
     };

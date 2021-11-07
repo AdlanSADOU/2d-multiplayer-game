@@ -43,8 +43,8 @@ server accepts same incoming connection multiple times
 ---
 ## class Dispatcher
     dispacher takes in received packet and which socket type they came from (TCP or UDP)
-    It then extracts the Rpc type and 'routes' to the approriate calls though an array of function pointers
-    the Dispatcher has an array of function pointers indexed by Rpc type
+    It then extracts the MsgType type and 'routes' to the approriate calls though an array of function pointers
+    the Dispatcher has an array of function pointers indexed by MsgType type
     the Dispatcher holds unique references to ClientManager &
     LobbyManager
 
@@ -82,6 +82,31 @@ The server then associates your client ID with the lobby id and send back a [LOB
 Once in a lobby clients have a [READY] button, when clicked, server receives a packet with the format [CLIENT_READY][lobbyId][clientId]
 
 When the last client in the lobby clicks the [READY] button, the server receives a [START_GAME] packet, which inits a game session on the server side and broadcasts to all clients data related to the game session. the client can now start to load the necessary sprite assets to start drawing all entities received from the server.
+
+
+
+###### not actually sure about what follows
+Each GameSession could be a thread, that thread has its own UDP socket that only clients belonging to that session can communicate with
+
+
+---
+## Thread workers example
+    std::vector<std::thread> workers;
+    for (int i = 0; i < 5; i++) {
+        workers.push_back(std::thread([]()
+        {
+            std::cout << "thread function\n";
+        }));
+    }
+
+    std::for_each(workers.begin(), workers.end(), [](std::thread &t)
+    {
+        t.join();
+    });
+
+### threading obeservations
+trying to join workers ouside the class they were pushed
+crashes
 
 ---
 IServer common interface

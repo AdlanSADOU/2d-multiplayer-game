@@ -58,22 +58,6 @@ int main()
         gScene.SetSystemSignature<RenderSystem>(sig);
     }
 
-    // // Entity
-    // Entity playerEntity;
-    // playerEntity = gScene.CreateEntity();
-    // gScene.AddComponent(playerEntity, TransformComponent {});
-    // gScene.AddComponent(playerEntity, SpriteComponent {});
-
-    // TransformComponent& playerTransformComponent = gScene.GetComponent<TransformComponent>(playerEntity);
-    // SpriteComponent& playerSprite = gScene.GetComponent<SpriteComponent>(playerEntity);
-
-    // playerTransformComponent.position = { 10, 10 };
-    // playerSprite.texture.loadFromFile("resources/r_type_logo.png");
-    // playerSprite.sprite.setTexture(playerSprite.texture);
-    // playerSprite.sprite.setPosition(playerTransformComponent.position);
-
-    // GameObject example
-
     GameObject logo = GameObject("logo");
     logo.AddComponent<TransformComponent>();
     logo.AddComponent<SpriteComponent>();
@@ -86,8 +70,12 @@ int main()
     logoSprite.sprite.setTexture(logoSprite.texture);
     logoSprite.sprite.setPosition(logoTrans.position);
 
+    sf::Clock testClock;
+    testClock.restart();
     // GameLoop
     while (nuts.IsRunning()) {
+        float start = testClock.getElapsedTime().asSeconds();
+
         nuts.HandleInput();
 
         nuts.Clear();
@@ -121,7 +109,7 @@ int main()
                 printf("[CLIENT]: disconnection request\n");
 
                 sf::Packet packet;
-                packet << RPC(ERpc::CLIENT_DISCONNECT) << myID;
+                packet << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << myID;
                 if (tcpSock.send(packet) == sf::Socket::Status::Done) {
                     isConnected = false;
                     tcpSock.disconnect();
@@ -132,7 +120,7 @@ int main()
         if (nuts.GetKeyPressed(Input::Key::P)) {
             sf::Packet packet;
             printf("[CLIENT]: print clients request\n");
-            packet << RPC(ERpc::CLIENTS_PRINT) << myID;
+            packet << MSG_TYPE(MsgTypes::CLIENTS_PRINT) << myID;
             // if (packet.getDataSize() <= sf::UdpSocket::MaxDatagramSize)
             if (isConnected)
                 udpSock.send(packet, serverIp, serverPort + 1);
@@ -140,54 +128,65 @@ int main()
 
         { // TCP Receive loop
             sf::Packet packet;
-            Rpc rpcType = -1;
+            MsgType rpcType = -1;
 
             sf::Socket::Status status = tcpSock.receive(packet);
             if (status == sf::Socket::Done)
-                packet >> rpcType >> myID;
+                packet >> rpcType;
 
-            switch (rpcType)
-            {
-                case RPC(ERpc::CLIENT_CONNECT): {
-                    printf("[Client]: connected to server with ID:[%d]\n", myID);
+            switch (rpcType) {
+            case MSG_TYPE(MsgTypes::CLIENT_CONNECT): {
+                packet >> myID;
+                printf("[Client]: connected to server with ID:[%d]\n", myID);
 
-                    sf::Packet udpConnect;
-                    udpConnect << RPC(ERpc::CLIENT_UDP) << myID << udpSock.getLocalPort();
-                    udpSock.send(udpConnect, serverIp, serverPort + 1);
+                sf::Packet udpInfoPacket;
+                udpInfoPacket << MSG_TYPE(MsgTypes::CLIENT_UDP_INFO) << myID << udpSock.getLocalPort();
+                udpSock.send(udpInfoPacket, serverIp, serverPort + 1);
 
-                } break;
+            } break;
 
-                default:
-                    break;
+            case MSG_TYPE(MsgTypes::CLIENT_DISCONNECT): {
+                ClientID remoteId;
+                packet >> remoteId;
+                printf("[Client]: client with ID:[%d] disconnected\n", remoteId);
+
+            } break;
+
+            default:
+                break;
             }
         }
 
         if (isConnected) { // UDP Receive loop
             sf::Packet packet;
-            Rpc rpcType = -1;
+            MsgType rpcType = -1;
 
             sf::IpAddress remoteAddress;
             unsigned short remotePort;
 
             sf::Socket::Status status = udpSock.receive(packet, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
-                packet >> rpcType >> myID;
-                printf("[Client]: received UPD packet:[%d]\n", myID, rpcType);
+                packet >> rpcType;
+                printf("[CLIENT UDP]: received  MsgType[%d]\n", rpcType);
             }
 
-            switch (rpcType)
-            {
-                case RPC(ERpc::CLIENT_UDP) : {
-                    printf("[Client]: server regisreted UDP info\n", myID);
-                } break;
+            switch (rpcType) {
+            case MSG_TYPE(MsgTypes::CLIENT_UDP_INFO): {
+                printf("[Client]: server sucessfully regisreted UDP info\n", myID);
+            } break;
 
-                default:
-                    break;
+            case MSG_TYPE(MsgTypes::CLIENT_DISCONNECT): {
+                ClientID remoteId;
+                packet >> remoteId;
+                printf("[Client UDP]: client with ID:[%d] disconnected\n", remoteId);
+
+            } break;
+            default:
+                break;
             }
         }
 
-        renderSystem->Update(nuts.window); // iterates over and draws entities
-
+        renderSystem->Update(nuts.window);
         nuts.Present();
     }
 
