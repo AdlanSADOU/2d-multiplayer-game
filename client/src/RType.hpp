@@ -31,7 +31,6 @@ class RType {
     protected:
     private:
         Nuts _nuts;
-        Scene scene;
 
         std::shared_ptr<RenderSystem> _renderSystem;
         std::shared_ptr<TransformSystem> _transformSystem;

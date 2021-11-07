@@ -7,6 +7,8 @@
 
 #include "src/RType.hpp"
 
+Scene scene;
+
 int main()
 {
     RType rtype;
