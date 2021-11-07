@@ -175,8 +175,8 @@ int main()
             }
 
             switch (rpcType) {
-            case ERpc::LOBBY_ID: {
-                printf("[Client]: connected to server with ID:[%d]\n", myID);
+            case ERpc::CLIENT_UDP: {
+                printf("[Client]: server regisreted UDP info\n", myID);
             } break;
 
             default:

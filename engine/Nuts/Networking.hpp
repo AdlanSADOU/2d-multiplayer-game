@@ -73,14 +73,17 @@ public:
 
     sf::Socket::Status Send(sf::Packet& packet)
     {
-        if (_tcpSock->send(packet) != sf::Socket::Status::Done)
+        sf::Socket::Status status;
+        if ((status = _tcpSock->send(packet)) != sf::Socket::Status::Done)
             std::cerr << "ERROR:TCP: unable to send\n";
     }
 
     sf::Socket::Status UdpSend(sf::Packet& packet, sf::IpAddress& remoteIp, sf::Uint16 remotePort)
     {
-        if (_udpSock->send(packet, remoteIp, remotePort) != sf::Socket::Status::Done)
+        sf::Socket::Status status;
+        if ((status = _udpSock->send(packet, remoteIp, remotePort)) != sf::Socket::Status::Done)
             std::cerr << "ERROR:UDP: unable to send\n";
+        return status;
     }
 
     sf::Socket::Status UdpReceive(sf::Packet& packet, sf::IpAddress& remoteIp, sf::Uint16& remotePort)
@@ -96,5 +99,5 @@ class ServerInterface {
 private:
 protected:
     sf::TcpListener _listener;
-    Connection _serverConnection;
+    std::shared_ptr<Connection> _serverConnection;
 };

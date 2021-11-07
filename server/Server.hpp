@@ -29,9 +29,8 @@ public:
     void Init()
     {
         _clientManager = std::make_shared<SClientManager>();
-        _dispatcher = std::make_unique<Dispatcher>();
-
-        _dispatcher->Init(_clientManager);
+        _serverConnection = std::make_shared<Connection>();
+        _dispatcher = std::make_unique<Dispatcher>(_clientManager, _serverConnection);
     }
 
     void Listen(std::uint16_t port)
@@ -39,8 +38,8 @@ public:
         _listener.setBlocking(false);
         _listener.listen(port);
 
-        _serverConnection.UdpBind(port + 1, sf::IpAddress::LocalHost);
-        _serverConnection.UdpSetBlocking(false);
+        _serverConnection->UdpBind(port + 1, sf::IpAddress::LocalHost);
+        _serverConnection->UdpSetBlocking(false);
 
         sockPtr = new sf::TcpSocket();
         std::cout << "Server listening on port:[" << port << "]\n\n";
@@ -89,7 +88,7 @@ public:
             sf::IpAddress remoteAddress;
             unsigned short remotePort;
 
-            sf::Socket::Status status = _serverConnection.UdpReceive(remotePacket, remoteAddress, remotePort);
+            sf::Socket::Status status = _serverConnection->UdpReceive(remotePacket, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
 
                 printf("[SERVER_UDP]: received Rpc\n");

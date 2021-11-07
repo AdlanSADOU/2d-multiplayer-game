@@ -17,6 +17,7 @@ private:
     typedef void (Dispatcher::*RemoteCallPtr)(sf::Packet& packet);
     std::array<RemoteCallPtr, 64> _remoteProcedureCalls {};
     std::shared_ptr<SClientManager> _clientManager {};
+    std::shared_ptr<Connection> _serverConnection {};
 
     void addCallback(ERpc rpcType, RemoteCallPtr callback)
     {
@@ -24,9 +25,11 @@ private:
     }
 
 public:
-    void Init(std::shared_ptr<SClientManager> clientManager)
+    Dispatcher(std::shared_ptr<SClientManager> clientManager, std::shared_ptr<Connection> serverConnection)
     {
         _clientManager = clientManager;
+        _serverConnection = serverConnection;
+
         addCallback(ERpc::CLIENT_DISCONNECT, &Dispatcher::ClientDisconnect);
         addCallback(ERpc::CLIENTS_PRINT, &Dispatcher::ClientsPrint);
         addCallback(ERpc::CLIENT_UDP, &Dispatcher::ClientAddUdp);
@@ -58,10 +61,19 @@ public:
         packet >> remoteId >> udpPort;
 
         _clientManager->AddClientUdpPort(udpPort, remoteId);
+
+        sf::Packet p;
+        p << RPC(ERpc::CLIENT_UDP) << "connected";
+
+        _serverConnection->UdpSend(p, _clientManager->clients.find(remoteId)->second.tcp->getRemoteAddress(), udpPort);
     }
 
     void ClientsPrint(sf::Packet& packet)
     {
         _clientManager->PrintConnectedClients();
+    }
+
+    void ClientAddToLobby(sf::Packet& packet)
+    {
     }
 };
