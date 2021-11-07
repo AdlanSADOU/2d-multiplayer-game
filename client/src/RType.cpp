@@ -48,6 +48,7 @@ void RType::Run()
 
         
 
+        _transformSystem.get()->Update();
         _renderSystem.get()->Update(_nuts.window);
 
         _nuts.Present();
