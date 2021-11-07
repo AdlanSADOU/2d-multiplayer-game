@@ -88,7 +88,7 @@ int main()
 
     // GameLoop
     while (nuts.IsRunning()) {
-        nuts.HandleInput();
+        nuts.HandleEvent();
 
         nuts.Clear();
 

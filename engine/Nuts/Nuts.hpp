@@ -9,21 +9,20 @@
 
 #include "EcsComponents/TransformComponent.hpp"
 #include <SFML/Graphics.hpp>
-#include <Input.hpp>
+#include "Input.hpp"
 
 class Nuts {
+    private:
+        sf::Keyboard::Key pressedKey;
+        sf::Keyboard::Key downKey;
+        bool isRunning;
+
     public:
         sf::RenderWindow window;
 
-        private:
-            sf::Keyboard::Key pressedKey;
-            sf::Keyboard::Key downKey;
-            bool isRunning;
-
-    public:
         void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
         {
-            window.create({ width, height, 32 }, windowName);
+            window.create((sf::VideoMode){width, height, 32}, windowName);
             isRunning = true;
         };
 
@@ -47,7 +46,7 @@ class Nuts {
             window.close();
         }
 
-        void HandleInput()
+        void HandleEvent()
         {
             sf::Event event;
             pressedKey = sf::Keyboard::Unknown;
@@ -66,18 +65,17 @@ class Nuts {
             };
         }
 
+        bool GetKeyPressed(Input::Key key)
+        {
+            if (key == pressedKey)
+                return true;
+            return false;
+        }
 
-    bool GetKeyPressed(Input::Key key)
-    {
-        if (key == pressedKey)
-            return true;
-        return false;
-    }
-
-    bool GetKeyDown(sf::Keyboard::Key key)
-    {
-        if (key == downKey)
-            return true;
-        return false;
-    }
+        bool GetKeyDown(sf::Keyboard::Key key)
+        {
+            if (key == downKey)
+                return true;
+            return false;
+        }
 };
