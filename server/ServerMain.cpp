@@ -1,19 +1,15 @@
-
-#include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
-#include <Nuts/Networking.hpp>
-
-#include <stdio.h>
-#include <vector>
-#include <array>
-#include <unordered_map>
+/*
+** EPITECH PROJECT, 2021
+** B-CPP-501-NCE-5-1-rtype-adlan.sadou
+** File description:
+** ServerMain.cpp
+*/
 
 #include <Server.hpp>
 
 
 int main()
 {
-
 	Server server;
 
 	server.Init();
@@ -22,7 +18,7 @@ int main()
 	while (server.IsRunning())
 	{
 		server.Accept();
-		server.Dispatch();
+		server.Receive();
 	}
 
 	server.ShutDown();

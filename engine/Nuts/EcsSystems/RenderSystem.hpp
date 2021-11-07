@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <System.hpp>
 #include <SpriteComponent.hpp>
+#include <System.hpp>
 
 extern Scene gScene;
 

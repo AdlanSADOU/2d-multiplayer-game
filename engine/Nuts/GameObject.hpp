@@ -10,52 +10,48 @@
 #include <EcsCore/Scene.hpp>
 #include <string>
 
+extern Scene gScene;
+
 /** TODO(adlan):
  * GameObjects should handle their own Components
  * it should implement its own array of components
- *
  */
-class GameObject
-{
-    private:
-        // has a transform at least
-        // ??????????
-        // Components
-        std::shared_ptr<Scene> _scene;
-        std::string _name;
-        Entity _entity;
+class GameObject {
+private:
+    std::string _name;
+    Entity _entity;
 
-    public:
-        GameObject(){};
+public:
+    GameObject() {};
 
-        GameObject(std::shared_ptr<Scene> scene, std::string name)
-        {
-            Create(scene, name);
-        };
+    GameObject(std::string name)
+    {
+        Create(name);
+    };
 
-        void Create(std::shared_ptr<Scene> scene, std::string name)
-        {
-            _scene = scene;
-            _name = name;
-            _entity = _scene->CreateEntity();
-        }
+    void Create(std::string name)
+    {
+        _name = name;
+        _entity = gScene.CreateEntity();
+    }
 
-        template <typename T>
-        void AddComponent()
-        {
-            _scene->AddComponent(_entity, T{});
-        };
+    template <typename T>
+    void AddComponent()
+    {
+        gScene.AddComponent(_entity, T {});
+    };
 
-        void RemoveComponent()
-        {
+    template <typename T>
+    void RemoveComponent()
+    {
 
         }
 
-        template <typename T>
-        T GetComponent()
-        {
-        return _scene->GetComponent<T>(_entity);
-        }
+    template <typename T>
+    T &GetComponent()
+    {
+        return gScene.GetComponent<T>(_entity);
+    }
 
         Entity GetEntity()
         {

@@ -7,25 +7,30 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "EcsComponents/TransformComponent.hpp"
+#include <SFML/Graphics.hpp>
+#include <Input.hpp>
 
-class Nuts
-{
-    public:
-        sf::RenderWindow window;
+class Nuts {
+public:
+    sf::RenderWindow window;
 
     private:
         sf::Keyboard::Key pressedKey;
         sf::Keyboard::Key downKey;
         bool isRunning;
 
-    public:
-        void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
-        {
-            window.create({width, height, 32}, windowName);
-            isRunning = true;
-        };
+public:
+    void InitWindow(char* windowName, std::uint32_t width, std::uint32_t height)
+    {
+        window.create({ width, height, 32 }, windowName);
+        isRunning = true;
+    };
+
+    void Clear()
+    {
+        window.clear();
+    };
 
         void Clear()
         {
@@ -47,34 +52,25 @@ class Nuts
             window.close();
         }
 
-        void HandleInput()
-        {
-            sf::Event event;
-            pressedKey = sf::Keyboard::Unknown;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
 
-            while (window.pollEvent(event))
-            {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-
-                if (event.type == sf::Event::KeyPressed)
-                {
-                    pressedKey = event.key.code;
-                    downKey = event.key.code;
-                }
-                if (event.type == sf::Event::KeyReleased)
-                {
-                    downKey = sf::Keyboard::Unknown;
-                }
+            if (event.type == sf::Event::KeyPressed) {
+                pressedKey = event.key.code;
+                downKey = event.key.code;
+            }
+            if (event.type == sf::Event::KeyReleased) {
+                downKey = sf::Keyboard::Unknown;
             }
         };
 
-        bool GetKeyPressed(sf::Keyboard::Key key)
-        {
-            if (key == pressedKey)
-                return true;
-            return false;
-        }
+    bool GetKeyPressed(Input::Key key)
+    {
+        if (key == pressedKey)
+            return true;
+        return false;
+    }
 
         bool GetKeyDown(sf::Keyboard::Key key)
         {
