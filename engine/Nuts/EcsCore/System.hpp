@@ -11,6 +11,6 @@
 #include <set>
 
 class System {
-public:
-    std::set<Entity> _entities;
+    public:
+        std::set<Entity> _entities;
 };
