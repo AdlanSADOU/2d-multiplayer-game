@@ -14,11 +14,11 @@ void SClientManager::RegisterClient(sf::TcpSocket* socket)
     clients.insert({ _clientId, tmpClient });
 
     sf::Packet idPacket;
-    idPacket << MSG_TYPE(MsgTypes::CLIENT_CONNECT) << tmpClient.uuid;
+    idPacket << MSG_TYPE(MsgTypes::CLIENT_ID) << tmpClient.uuid;
 
     sf::Socket::Status status;
     if ((status = socket->send(idPacket)) != sf::Socket::Done)
-        printf("[SERVER]:CLIENT_CONNECT::Error: Status:[%d]", status);
+        printf("[SERVER]:CLIENT_ID::Error: Status:[%d]", status);
 
     printf("[SERVER]: Client connected as ID:[%d] from [%s:%d]\n",
         _clientId, socket->getRemoteAddress().toString().c_str(), tmpClient.tcp->getRemotePort());
