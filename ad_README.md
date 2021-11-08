@@ -133,8 +133,6 @@ IClient common interface
 
 - MessageType<T>
 
-- MessageQueue<T>
-
 - WriteMessageHeader()
 - WriteMessageBody()
 
@@ -143,3 +141,54 @@ IClient common interface
 
 - sendMessage(Connection, Packet)
 - receiveMessage()
+
+# Client/Server Protocol
+https://www.netresec.com/index.ashx?page=RawCap
+---
+                R-TYPE Protocol Description
+
+1. Client/Server internals
+
+    Client and server communicate with uint8 typed MsgTypes enum class:
+    SFML Packet class is used to pass messages between client/server.
+    A given packet always contains at least the message header as
+    the first byte followed by a ClientID that is also 1 byte long,
+    completed by the message body.
+
+2. Anatomy of a packet
+                         (byte)     (byte)
+    packet contains => { MsgType | ClientID | Body }
+
+3. Message Types
+
+    CLIENT_ID   = 1 : server sends clients ID upon accepted TCP connection
+    UDP_INFO    = 2 : upon receiving ID client reponds by sending its UDP bound port
+    UDP_OK      = 3 :
+
+4. Client/Server connection sequence
+
+    [Client]: initiates TCP connection
+    [Server]: accepts   TCP connection
+    [Server]: responds /w packet { CLIENT_ID | ClientID }
+    [Client]: responds /w packet { UDP_INFO  | ClientID  | clientUdpPort }
+    [Server]: responds /w packet { UDP_OK    | ClientID }
+
+5. Lobby
+
+    [Client]: sends       packet { LOBBY_LOAD | ClientID }
+    [Server]: responds /w packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
+
+        lobby_ids: list of lobby ids to join.
+    if none exist, client receives 0.
+
+    [Client]: sends       packet { LOBBY_CREATE | ClientID }
+
+        Server creates lobby with an attributed id.
+
+    [Server]: responds /w packet { LOBBY_LIST | ClientID | { lobby_ids } }
+
+        Client refreches lobby list
+
+        Client clicks on specific lobby:
+
+    [Client]: sends       packet { LOBBY_JOIN | ClientID | lobby_id }
