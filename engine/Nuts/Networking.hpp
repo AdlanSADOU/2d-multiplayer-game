@@ -15,7 +15,7 @@ using ClientID = sf::Int8;
 using MsgType = sf::Uint8;
 
 enum class MsgTypes : sf::Uint8 {
-    CLIENT_CONNECT = 1,
+    CLIENT_ID = 1,
     CLIENT_DISCONNECT,
     CLIENT_UDP_INFO,
     CLIENTS_PRINT,
@@ -25,8 +25,8 @@ enum class MsgTypes : sf::Uint8 {
 };
 
 enum SocketType {
-    Tcp, ///< TCP protocol
-    Udp ///< UDP protocol
+    Tcp,
+    Udp
 };
 
 #define MAX_MSG_TYPES 64
