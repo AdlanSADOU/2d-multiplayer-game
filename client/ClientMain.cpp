@@ -135,7 +135,7 @@ int main()
                 packet >> rpcType;
 
             switch (rpcType) {
-            case MSG_TYPE(MsgTypes::CLIENT_CONNECT): {
+            case MSG_TYPE(MsgTypes::CLIENT_ID): {
                 packet >> myID;
                 printf("[Client]: connected to server with ID:[%d]\n", myID);
 
