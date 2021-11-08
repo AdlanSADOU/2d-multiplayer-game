@@ -14,7 +14,7 @@ void SClientManager::RegisterClient(sf::TcpSocket* socket)
     clients.insert({ _clientId, tmpClient });
 
     sf::Packet idPacket;
-    idPacket << MSG_TYPE(MsgTypes::CLIENT_CONNECT) << tmpClient.uuid;
+    idPacket << MSG_TYPE(MsgTypes::CLIENT_ID) << tmpClient.uuid;
 
     sf::Socket::Status status;
     if ((status = socket->send(idPacket)) != sf::Socket::Done)
