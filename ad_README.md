@@ -169,28 +169,26 @@ https://www.netresec.com/index.ashx?page=RawCap
 
     [Client]: initiates TCP connection
     [Server]: accepts   TCP connection
-    [Server]: response.....packet { CLIENT_ID | ClientID }
-    [Client]: response.....packet { UDP_INFO  | ClientID  | clientUdpPort }
-    [Server]: response.....packet { UDP_OK    | ClientID }
+    [Server]: responds /w packet { CLIENT_ID | ClientID }
+    [Client]: responds /w packet { UDP_INFO  | ClientID  | clientUdpPort }
+    [Server]: responds /w packet { UDP_OK    | ClientID }
 
 5. Lobby
 
-    [Client]: request......packet { LOBBY_LOAD | ClientID }
-    [Server]: response.....packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
+    [Client]: sends       packet { LOBBY_LOAD | ClientID }
+    [Server]: responds /w packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
 
         lobby_ids: list of lobby ids to join.
     if none exist, client receives 0.
 
-    [Client]: request......packet { LOBBY_CREATE | ClientID }
+    [Client]: sends       packet { LOBBY_CREATE | ClientID }
 
         Server creates lobby with an attributed id.
 
-    [Server]: response.....packet { LOBBY_LIST | ClientID | { lobby_ids } }
+    [Server]: responds /w packet { LOBBY_LIST | ClientID | { lobby_ids } }
 
         Client refreches lobby list
 
         Client clicks on specific lobby:
 
-    [Client]: request......packet { LOBBY_JOIN | ClientID | lobby_id }
-
-        Server processes
+    [Client]: sends       packet { LOBBY_JOIN | ClientID | lobby_id }
