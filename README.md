@@ -1,5 +1,3 @@
-[![CMake](https://github.com/EpitechPromo2024/B-CPP-501-NCE-5-1-rtype-adlan.sadou/actions/workflows/cmake.yml/badge.svg)](https://github.com/EpitechPromo2024/B-CPP-501-NCE-5-1-rtype-adlan.sadou/actions/workflows/cmake.yml)
-
 # R-Type
 
 ## Installer les dependances
