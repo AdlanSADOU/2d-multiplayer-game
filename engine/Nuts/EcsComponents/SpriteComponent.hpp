@@ -13,4 +13,5 @@
 struct SpriteComponent {
     sf::Texture texture;
     sf::Sprite sprite;
+    bool isActive = false;
 };

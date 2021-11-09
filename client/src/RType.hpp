@@ -21,6 +21,12 @@
 #include "Nuts/EcsSystems/TransformSystem.hpp"
 
 class RType {
+
+    enum game_state {
+        MENU,
+        GAME
+    };
+
     public:
         RType();
         ~RType();
@@ -32,7 +38,7 @@ class RType {
     private:
         Nuts _nuts;
 
-        
+
         std::shared_ptr<RenderSystem> _renderSystem;
         std::shared_ptr<TransformSystem> _transformSystem;
 };
