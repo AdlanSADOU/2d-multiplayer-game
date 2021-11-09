@@ -140,7 +140,7 @@ int main()
                 printf("[Client]: connected to server with ID:[%d]\n", myID);
 
                 sf::Packet udpInfoPacket;
-                udpInfoPacket << MSG_TYPE(MsgTypes::CLIENT_UDP_INFO) << myID << udpSock.getLocalPort();
+                udpInfoPacket << MSG_TYPE(MsgTypes::UDP_INFO) << myID << udpSock.getLocalPort();
                 udpSock.send(udpInfoPacket, serverIp, serverPort + 1);
 
             } break;
@@ -171,7 +171,7 @@ int main()
             }
 
             switch (rpcType) {
-            case MSG_TYPE(MsgTypes::CLIENT_UDP_INFO): {
+            case MSG_TYPE(MsgTypes::UDP_INFO): {
                 printf("[Client]: server sucessfully regisreted UDP info\n", myID);
             } break;
 

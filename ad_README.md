@@ -90,7 +90,9 @@ Each GameSession could be a thread, that thread has its own UDP socket that only
 
 
 ---
-## Thread workers example
+## Thread workers example & mutex
+https://en.cppreference.com/w/cpp/thread/mutex
+
     std::vector<std::thread> workers;
     for (int i = 0; i < 5; i++) {
         workers.push_back(std::thread([]()
@@ -169,26 +171,28 @@ https://www.netresec.com/index.ashx?page=RawCap
 
     [Client]: initiates TCP connection
     [Server]: accepts   TCP connection
-    [Server]: responds /w packet { CLIENT_ID | ClientID }
-    [Client]: responds /w packet { UDP_INFO  | ClientID  | clientUdpPort }
-    [Server]: responds /w packet { UDP_OK    | ClientID }
+    [Server]: response.....packet { CLIENT_ID | ClientID }
+    [Client]: response.....packet { UDP_INFO  | ClientID  | clientUdpPort }
+    [Server]: response.....packet { UDP_OK    | ClientID }
 
 5. Lobby
 
-    [Client]: sends       packet { LOBBY_LOAD | ClientID }
-    [Server]: responds /w packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
+    [Client]: request......packet { LOBBY_LOAD | ClientID }
+    [Server]: response.....packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
 
         lobby_ids: list of lobby ids to join.
     if none exist, client receives 0.
 
-    [Client]: sends       packet { LOBBY_CREATE | ClientID }
+    [Client]: request......packet { LOBBY_CREATE | ClientID }
 
         Server creates lobby with an attributed id.
 
-    [Server]: responds /w packet { LOBBY_LIST | ClientID | { lobby_ids } }
+    [Server]: response.....packet { LOBBY_LIST | ClientID | { lobby_ids } }
 
         Client refreches lobby list
 
         Client clicks on specific lobby:
 
-    [Client]: sends       packet { LOBBY_JOIN | ClientID | lobby_id }
+    [Client]: request......packet { LOBBY_JOIN | ClientID | lobby_id }
+
+        Server processes

@@ -16,8 +16,8 @@ using MsgType = sf::Uint8;
 
 enum class MsgTypes : sf::Uint8 {
     CLIENT_ID = 1,
+    UDP_INFO,
     CLIENT_DISCONNECT,
-    CLIENT_UDP_INFO,
     CLIENTS_PRINT,
     LOBBY_LIST,
     LOBBY_CREATE,
