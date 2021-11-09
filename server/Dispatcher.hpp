@@ -34,7 +34,7 @@ public:
 
         addCallback(MsgTypes::CLIENT_DISCONNECT, &Dispatcher::ClientDisconnect);
         addCallback(MsgTypes::CLIENTS_PRINT, &Dispatcher::ClientsPrint);
-        addCallback(MsgTypes::CLIENT_UDP_INFO, &Dispatcher::ClientAddUdp);
+        addCallback(MsgTypes::UDP_INFO, &Dispatcher::ClientAddUdp);
     }
 
     bool Dispatch(sf::Packet& packet, SocketType sockType)
@@ -91,7 +91,7 @@ public:
         _clientManager->AddClientUdpPort(udpPort, remoteId);
 
         sf::Packet p;
-        p << MSG_TYPE(MsgTypes::CLIENT_UDP_INFO) << "connected";
+        p << MSG_TYPE(MsgTypes::UDP_INFO) << "connected";
     }
 
     void ClientsPrint(sf::Packet& packet)
