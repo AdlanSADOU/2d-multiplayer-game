@@ -9,7 +9,7 @@
 
 #include <SFML/System.hpp>
 
-namespace Input
+namespace NutsInput
 {
     enum Key
     {
