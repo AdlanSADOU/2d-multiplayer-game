@@ -23,7 +23,7 @@ public:
 
     void InvokeEvent(Event& event)
     {
-        std::int32_t eventType = event.GetType();
+        EventType eventType = event.GetType();
 
         for (auto const& callback : eventCallbacks[eventType]) {
             callback(event);

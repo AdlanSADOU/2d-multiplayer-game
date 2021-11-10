@@ -18,7 +18,7 @@ using ParameterId = std::int32_t;
 #define BIND_CALLBACK(_callback, _classInstance) (std::bind(_callback, _classInstance, std::placeholders::_1))
 
 std::hash<char*> hasher;
-#define HASH(x)(hasher("x"))
+#define HASH(x) (hasher("x"))
 
 namespace Events::Window {
 const EventType QUIT = HASH(Window::QUIT);
@@ -40,6 +40,7 @@ public:
     Event(EventType type)
     {
         _eventType = type;
+        // event is added but not called for some reason
     }
 
     template <typename ParamaterType>
