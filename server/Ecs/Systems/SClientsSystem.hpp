@@ -23,8 +23,7 @@ public:
     void OnClientConnected(Event& e)
     {
         assert(Events::Net::CLIENT_CONN == e.GetType() && "wrong event type");
-
-        std::cout << "add that fckin client with id " << e.GetParam<std::int32_t>(0);
+        std::cout << "add that fckin client\n";
     };
 
     void OnClientDisconnected(Event& e)

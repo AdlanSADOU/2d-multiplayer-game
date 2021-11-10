@@ -11,20 +11,10 @@
 #include <Nuts/Networking.hpp>
 #include <cassert>
 
-/** TODO(adlan):
-* clas ServerDispatcher : public Dispatcher
-*/
-class Dispatcher {
+class Dispatcher : public Router {
 private:
-    typedef void (Dispatcher::*RemoteCallPtr)(sf::Packet& packet);
-    std::array<RemoteCallPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
     std::shared_ptr<SClientManager> _clientManager {};
     std::shared_ptr<Connection> _serverConnection {};
-
-    void addCallback(MsgTypes rpcType, RemoteCallPtr callback)
-    {
-        _remoteProcedureCalls[MSG_TYPE(rpcType)] = callback;
-    }
 
 public:
     Dispatcher(std::shared_ptr<SClientManager> clientManager, std::shared_ptr<Connection> serverConnection)
@@ -80,6 +70,17 @@ public:
             ClientDisconnectedPacket << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << remoteId;
             Broadcast(ClientDisconnectedPacket, remoteId);
         }
+    }
+
+    bool ClientConnectionDropped(ClientID remoteId)
+    {
+        if (_clientManager->DisconnectClient(remoteId)) {
+            sf::Packet ClientDisconnectedPacket;
+            ClientDisconnectedPacket << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << remoteId;
+            Broadcast(ClientDisconnectedPacket, remoteId);
+            return true;
+        }
+        return false;
     }
 
     void ClientAddUdp(sf::Packet& packet)

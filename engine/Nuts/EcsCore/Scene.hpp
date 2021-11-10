@@ -110,9 +110,4 @@ public:
     {
         _EventManager->InvokeEvent(eventType);
     }
-
-    void InvokeEvent(Event &event)
-    {
-        _EventManager->InvokeEvent(event);
-    }
 };
