@@ -5,6 +5,7 @@
 ** main.cpp
 */
 
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
 #include <Nuts.hpp>
@@ -23,7 +24,7 @@ ClientID myID;
 
 int main()
 {
-    sf::IpAddress serverIp = sf::IpAddress::LocalHost;
+    sf::IpAddress serverIp = sf::IpAddress::getLocalAddress();
     sf::Uint16 serverPort = 55001;
 
     sf::TcpSocket tcpSock;
@@ -35,6 +36,10 @@ int main()
 
     Nuts nuts;
     nuts.InitWindow("R-TYPE", 700, 200);
+
+    sf::Music m;
+    if (!m.openFromFile("./resources/awesomeness.wav"))
+        return -1; // error
 
     /**
 	 * Scene is a global instance holding references to all managers:
@@ -75,6 +80,7 @@ int main()
     // GameLoop
     while (nuts.IsRunning()) {
         float start = testClock.getElapsedTime().asSeconds();
+        m.play();
 
         nuts.HandleInput();
 

@@ -7,7 +7,12 @@
 
 #pragma once
 
+#if defined(_WIN32)
+#pragma warning(disable : 4091)
+#endif //_WIN32
+
 #include <SFML/Network.hpp>
+#include <array>
 #include <iostream>
 #include <memory>
 
@@ -97,11 +102,36 @@ public:
     }
 };
 
+// Router & Dispatcher
+typedef class Dispatcher;
+
+/**
+ * @brief Router class must be inherited by a Dispatcher class
+ * All message callbacks must be implemented in Dispatcher class
+ * That's why Dispatcher is forward declared here
+ */
+class Router {
+protected:
+    typedef void (Dispatcher::*MessageFuncPtr)(sf::Packet& packet);
+    std::array<MessageFuncPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
+
+    void addCallback(MsgTypes rpcType, MessageFuncPtr callback)
+    {
+        _remoteProcedureCalls[MSG_TYPE(rpcType)] = callback;
+    }
+
+public:
+};
+
 /** TODO(adlan):
 * ClientInterface
 */
+class ClientInterface {
+protected:
+    std::shared_ptr<Connection> _clientConnection;
+};
+
 class ServerInterface {
-private:
 protected:
     sf::TcpListener _listener;
     std::shared_ptr<Connection> _serverConnection;
