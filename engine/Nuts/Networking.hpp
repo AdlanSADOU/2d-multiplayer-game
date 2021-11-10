@@ -7,40 +7,45 @@
 
 #pragma once
 
+#if defined(_WIN32)
+#pragma warning(disable : 4091)
+#endif //_WIN32
+
 #include <SFML/Network.hpp>
+#include <array>
 #include <iostream>
 #include <memory>
 
-using ClientID = sf::Uint8;
-using Rpc = sf::Uint8;
+using ClientID = sf::Int8;
+using MsgType = sf::Uint8;
 
-enum class ERpc : sf::Uint8 {
-    CLIENT_CONNECT = 1,
+enum class MsgTypes : sf::Uint8 {
+    CLIENT_ID = 1,
+    UDP_INFO,
     CLIENT_DISCONNECT,
-    CLIENT_UDP,
     CLIENTS_PRINT,
+    LOBBY_LIST,
     LOBBY_CREATE,
     LOBBY_ID,
 };
 
 enum SocketType {
-    Tcp, ///< TCP protocol
-    Udp ///< UDP protocol
+    Tcp,
+    Udp
 };
 
-#define MAX_RPC 64
-#define RPC(x) (static_cast<sf::Uint8>(x))
+#define MAX_MSG_TYPES 64
+#define MSG_TYPE(x) (static_cast<sf::Uint8>(x))
 
-class Connection
-{
-    private:
+class Connection {
+private:
     SocketType _type;
     std::shared_ptr<sf::UdpSocket> _udpSock;
     std::shared_ptr<sf::TcpSocket> _tcpSock;
     sf::IpAddress _ipAdress;
     sf::Uint16 _port;
 
-    public:
+public:
     ~Connection()
     {
         _tcpSock->disconnect();
@@ -97,9 +102,37 @@ class Connection
     }
 };
 
+// Router & Dispatcher
+typedef class Dispatcher;
+
+/**
+ * @brief Router class must be inherited by a Dispatcher class
+ * All message callbacks must be implemented in Dispatcher class
+ * That's why Dispatcher is forward declared here
+ */
+class Router {
+protected:
+    typedef void (Dispatcher::*MessageFuncPtr)(sf::Packet& packet);
+    std::array<MessageFuncPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
+
+    void addCallback(MsgTypes rpcType, MessageFuncPtr callback)
+    {
+        _remoteProcedureCalls[MSG_TYPE(rpcType)] = callback;
+    }
+
+public:
+};
+
+/** TODO(adlan):
+* ClientInterface
+*/
+class ClientInterface {
+protected:
+    std::shared_ptr<Connection> _clientConnection;
+};
+
 class ServerInterface {
-    private:
-    protected:
-        sf::TcpListener _listener;
-        std::shared_ptr<Connection> _serverConnection;
+protected:
+    sf::TcpListener _listener;
+    std::shared_ptr<Connection> _serverConnection;
 };

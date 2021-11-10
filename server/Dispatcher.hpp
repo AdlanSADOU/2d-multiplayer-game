@@ -9,20 +9,12 @@
 
 #include "SClientManager.hpp"
 #include <Nuts/Networking.hpp>
-#include <array>
 #include <cassert>
 
-class Dispatcher {
+class Dispatcher : public Router {
 private:
-    typedef void (Dispatcher::*RemoteCallPtr)(sf::Packet& packet);
-    std::array<RemoteCallPtr, 64> _remoteProcedureCalls {};
     std::shared_ptr<SClientManager> _clientManager {};
     std::shared_ptr<Connection> _serverConnection {};
-
-    void addCallback(ERpc rpcType, RemoteCallPtr callback)
-    {
-        _remoteProcedureCalls[RPC(rpcType)] = callback;
-    }
 
 public:
     Dispatcher(std::shared_ptr<SClientManager> clientManager, std::shared_ptr<Connection> serverConnection)
@@ -30,28 +22,65 @@ public:
         _clientManager = clientManager;
         _serverConnection = serverConnection;
 
-        addCallback(ERpc::CLIENT_DISCONNECT, &Dispatcher::ClientDisconnect);
-        addCallback(ERpc::CLIENTS_PRINT, &Dispatcher::ClientsPrint);
-        addCallback(ERpc::CLIENT_UDP, &Dispatcher::ClientAddUdp);
+        addCallback(MsgTypes::CLIENT_DISCONNECT, &Dispatcher::ClientDisconnect);
+        addCallback(MsgTypes::CLIENTS_PRINT, &Dispatcher::ClientsPrint);
+        addCallback(MsgTypes::UDP_INFO, &Dispatcher::ClientAddUdp);
     }
 
-    bool Dispatch(sf::Packet& packet)
+    bool Dispatch(sf::Packet& packet, SocketType sockType)
     {
-        Rpc rpcType = -1;
-
+        MsgType rpcType = -1;
         packet >> rpcType;
+
+        assert(rpcType < MAX_MSG_TYPES && "MsgType non-existent\n");
+
+        if (sockType == SocketType::Tcp)
+            printf("[SERVER_TCP]: received MsgType[%d]\n", rpcType);
+        else
+            printf("[SERVER_UDP]: received MsgType[%d]\n", rpcType);
+
         (this->*(_remoteProcedureCalls[rpcType]))(packet);
 
-        if (rpcType == RPC(ERpc::CLIENT_DISCONNECT))
+        if (rpcType == MSG_TYPE(MsgTypes::CLIENT_DISCONNECT))
             return true;
         return false;
+    }
+
+    /**
+     * @brief Sends the packet to all clients except the ignored one.
+     * if no ClientID is specified packet will be sent to all clients by default
+     *
+     * @param packet packet to send
+     * @param ClientID ignored client
+     *
+     */
+    void Broadcast(sf::Packet& packet, ClientID ignoredClientId = -1)
+    {
+        for (auto& client : _clientManager->clients) {
+            _serverConnection->UdpSend(packet, client.second.ip, client.second.updPort);
+        }
     }
 
     void ClientDisconnect(sf::Packet& packet)
     {
         ClientID remoteId;
         packet >> remoteId;
-        _clientManager->DisconnectClient(remoteId);
+        if (_clientManager->DisconnectClient(remoteId)) {
+            sf::Packet ClientDisconnectedPacket;
+            ClientDisconnectedPacket << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << remoteId;
+            Broadcast(ClientDisconnectedPacket, remoteId);
+        }
+    }
+
+    bool ClientConnectionDropped(ClientID remoteId)
+    {
+        if (_clientManager->DisconnectClient(remoteId)) {
+            sf::Packet ClientDisconnectedPacket;
+            ClientDisconnectedPacket << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << remoteId;
+            Broadcast(ClientDisconnectedPacket, remoteId);
+            return true;
+        }
+        return false;
     }
 
     void ClientAddUdp(sf::Packet& packet)
@@ -63,7 +92,7 @@ public:
         _clientManager->AddClientUdpPort(udpPort, remoteId);
 
         sf::Packet p;
-        p << RPC(ERpc::CLIENT_UDP) << "connected";
+        p << MSG_TYPE(MsgTypes::UDP_INFO) << "connected";
     }
 
     void ClientsPrint(sf::Packet& packet)

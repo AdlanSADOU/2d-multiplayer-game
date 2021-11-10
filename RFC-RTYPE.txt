@@ -1,0 +1,97 @@
+
+                R-TYPE Protocol Description
+
+1. Client/Server internals
+
+    Client and server communicate with uint8 typed MsgTypes enum class:
+    SFML Packet class is used to pass messages between client/server.
+    A given packet always contains at least the message header as
+    the first byte followed by a ClientID that is also 1 byte long,
+    completed by the message body.
+
+2. Anatomy of a packet
+                         (byte)     (byte)
+    packet contains => { MsgType | ClientID | Body }
+
+3. Message Types
+
+    CLIENT_ID = 1 	: server sends clients ID upon accepted TCP connection
+    CLIENT_DISCONNECT	:
+    UDP_INFO		: upon receiving ID client reponds by sending its UDP bound port
+    UDP_OK		: server successfully associated clients ID with clients UDP port
+    LOBBY_LOAD		: client enters lobby screen for the first time
+    LOBBY_LIST		: server sends list of existing lobby ids: 0 if none
+    LOBBY_CREATE	: client requests a new lobby room to be created
+    LOBBY_JOIN		: client requests to join given lobby
+    LOBBY_CLIENTS	: server sends list of clients in given lobby room
+    LOBBY_QUIT 		: client requests to quit lobby room
+    LOBBY_READY 	: client informs it is ready
+    LOBBY_READY_OK 	: server responds client has been marked as ready
+    LOBBY_CANCEL 	: client informs it is not-ready
+    LOBBY_CANCEL_OK	: server responds client has been marked as not-ready
+
+4. Client/Server Connection Sequence
+
+    [Client]: initiates TCP connection
+    [Server]: accepts   TCP connection
+    [Server]: response.....packet { CLIENT_ID | ClientID }
+    [Client]: response.....packet { UDP_INFO  | ClientID  | clientUdpPort }
+    [Server]: response.....packet { UDP_OK    | ClientID }
+
+5. Lobby
+
+    [Client]: request......packet { LOBBY_LOAD | ClientID }
+    [Server]: response.....packet { LOBBY_LIST | ClientID | { lobby_ids } }
+
+        lobby_ids: list of lobby ids to join.
+	if none exist, client receives 0.
+
+    [Client]: request......packet { LOBBY_CREATE | ClientID }
+
+        Server creates lobby with an attributed id.
+
+    [Server]: response.....packet { LOBBY_LIST | ClientID | { lobby_ids } }
+
+        Client refreshes lobby list
+
+        Client clicks on specific lobby:
+
+    [Client]: request......packet { LOBBY_JOIN | ClientID | lobby_id }
+
+        Server processes request to join lobby lobby_id, associates lobby_id with ClientID
+	and sends back a list of all clients ids in that lobby at the time.
+
+    [Server]: response.....packet { LOBBY_CLIENTS | ClientID | {client_ids} }
+
+	    Client receives lobby_ids and constructs/shows lobby room screen.
+	Now each time a Client joins the lobby room, each Client will receive an updated list of client_ids
+	and each client must update it's screen.
+
+    	Clients in that lobby room can now either quit the lobby and be back on the previous screen
+	or click Ready.
+	When Ready, Client can Cancel.
+
+	Quit
+	    [Client]: request.....packet { LOBBY_QUIT | ClientID | lobby_id }
+	    [Server]: response....packet { LOBBY_LIST | ClientID | { lobby_ids } }
+
+	Ready
+	    [Client]: request.....packet { LOBBY_READY 	  | ClientID }
+	    [Server]: response....packet { LOBBY_READY_OK | ClientID }
+
+		Upon receiving, Clients Ready button should become Cancel
+	Cancel
+	    [Client]: request.....packet { LOBBY_CANCEL    | ClientID }
+	    [Server]: response....packet { LOBBY_CANCEL_OK | ClientID }
+
+5. Game Session Initiation
+
+	When all clients in the lobby room are Ready, server initiates the game.
+
+	A Game thread is launched that takes as parameters a list of all clients from a given lobby room
+	as well as a Connection instance, that must be mutex guarded in a scope before use by each game thread.
+
+	This Connection instance will be used to send TCP specific messages to all clients such as disconnections,
+	mob spawns, player deaths...
+
+	Each Game thread binds its own UDP socket to communicate with clients in that thread.

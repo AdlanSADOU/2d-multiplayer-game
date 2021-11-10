@@ -7,19 +7,20 @@ void SClientManager::RegisterClient(sf::TcpSocket* socket)
 
     SClient tmpClient;
     tmpClient.tcp = socket;
+    tmpClient.ip = socket->getRemoteAddress();
     tmpClient.connected = true;
     tmpClient.IsInLobby = false;
     tmpClient.uuid = _clientId;
     clients.insert({ _clientId, tmpClient });
 
     sf::Packet idPacket;
-    idPacket << static_cast<sf::Uint8>(ERpc::CLIENT_CONNECT) << tmpClient.uuid;
+    idPacket << MSG_TYPE(MsgTypes::CLIENT_ID) << tmpClient.uuid;
 
     sf::Socket::Status status;
     if ((status = socket->send(idPacket)) != sf::Socket::Done)
-        printf("[SERVER]:CLIENT_CONNECT::Error: Status:[%d]", status);
+        printf("[SERVER]:CLIENT_ID::Error: Status:[%d]", status);
 
-    printf("[SERVER]: Client connected as ID:[%d] from [%s:%d]\n\n",
+    printf("[SERVER]: Client connected as ID:[%d] from [%s:%d]\n",
         _clientId, socket->getRemoteAddress().toString().c_str(), tmpClient.tcp->getRemotePort());
 
     ++_clientId;
@@ -27,7 +28,7 @@ void SClientManager::RegisterClient(sf::TcpSocket* socket)
 
 void SClientManager::AddClientUdpPort(sf::Uint16 udpPort, ClientID remoteId)
 {
-    printf("[SERVER]: added udpPort:[%d] to client[%d]\n", udpPort, remoteId);
+    printf("[SERVER]: added udpPort:[%d] to client[%d]\n\n", udpPort, remoteId);
     clients.find(remoteId)->second.updPort = udpPort;
 
 }
