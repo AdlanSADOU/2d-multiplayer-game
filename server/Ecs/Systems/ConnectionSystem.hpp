@@ -48,7 +48,9 @@ public:
     {
         if (_conn.listener->accept(*_tmpSocket) == sf::Socket::Done) {
             std::cout << "connection request\n";
-            gScene.InvokeEvent(Events::Net::CLIENT_CONN);
+            Event connEvent(Events::Net::CLIENT_CONN);
+            connEvent.SetParam<std::int32_t>(0, 12);
+            gScene.InvokeEvent(connEvent);
         }
     }
 
