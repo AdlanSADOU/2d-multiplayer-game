@@ -18,7 +18,7 @@ using ParameterId = std::int32_t;
 #define BIND_CALLBACK(_callback, _classInstance) (std::bind(_callback, _classInstance, std::placeholders::_1))
 
 #if !defined(HASH)
-std::hash<char*> strHasher;
+static std::hash<char*> strHasher;
 #define HASH(x) (strHasher("x"))
 #endif
 
@@ -36,7 +36,7 @@ const EventType DISCONNECT = HASH(Net::DISCONNECT);
 class Event {
 private:
     EventType _eventType;
-    std::unordered_map<ParameterId, std::any> _paramaters {};
+    std::unordered_map<ParameterId, std::any> _parameters {};
 
 public:
     Event(EventType type)
@@ -45,16 +45,16 @@ public:
         // event is added but not called for some reason
     }
 
-    template <typename ParamaterType>
-    void SetParam(ParameterId id, ParamaterType value)
+    template <typename ParameterType>
+    void SetParam(ParameterId id, ParameterType value)
     {
-        _paramaters[id] = value;
+        _parameters[id] = value;
     }
 
-    template <typename ParamaterType>
-    ParamaterType GetParam(ParameterId id)
+    template <typename ParameterType>
+    ParameterType GetParam(ParameterId id)
     {
-        return std::any_cast<ParamaterType>(_paramaters[id]);
+        return std::any_cast<ParameterType>(_parameters[id]);
     }
 
     EventType GetType() const
