@@ -9,12 +9,10 @@
 
 RType::RType()
 {
-
 }
 
 RType::~RType()
 {
-
 }
 
 void RType::Init()
@@ -38,6 +36,8 @@ void RType::Init()
     EntitySignature renderSig;
     renderSig.set(scene.GetComponentType<SpriteComponent>());
     scene.SetSystemSignature<RenderSystem>(renderSig);
+
+    _transformSystem->Init();
 }
 
 void RType::Run()
@@ -46,7 +46,9 @@ void RType::Run()
         _nuts.Clear();
         _nuts.HandleEvent();
 
-        
+        if (_nuts.GetKeyPressed(NutsInput::Left)) {
+            scene.InvokeEvent(NutsInput::Left);
+        }
 
         _transformSystem.get()->Update();
         _renderSystem.get()->Update(_nuts.window);

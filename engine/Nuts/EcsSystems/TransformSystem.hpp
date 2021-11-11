@@ -20,7 +20,11 @@ class TransformSystem : public System
     public:
 
         void Init() {
+            scene.AddEventCallback(NutsInput::Left, BIND_CALLBACK(&TransformSystem::OnLeftkeyPressed, this));
+        }
 
+        void OnLeftkeyPressed(Event &event) {
+            std::cout << "Left key pressed!"<< std::endl;
         }
 
         void Update() {
