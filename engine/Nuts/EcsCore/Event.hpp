@@ -18,7 +18,7 @@ using ParameterId = std::int32_t;
 #define BIND_CALLBACK(_callback, _classInstance) (std::bind(_callback, _classInstance, std::placeholders::_1))
 
 #if !defined(HASH)
-static std::hash<char*> strHasher;
+static std::hash<std::string> strHasher;
 #define HASH(x) (strHasher("x"))
 #endif
 
