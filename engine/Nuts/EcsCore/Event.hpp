@@ -17,8 +17,10 @@ using EventType = std::size_t;
 using ParameterId = std::int32_t;
 #define BIND_CALLBACK(_callback, _classInstance) (std::bind(_callback, _classInstance, std::placeholders::_1))
 
-std::hash<char*> hasher;
-#define HASH(x) (hasher("x"))
+#if !defined(HASH)
+std::hash<char*> strHasher;
+#define HASH(x) (strHasher("x"))
+#endif
 
 namespace Events::Window {
 const EventType QUIT = HASH(Window::QUIT);

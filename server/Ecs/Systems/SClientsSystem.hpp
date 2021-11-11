@@ -13,8 +13,8 @@ class SClientsSystem : public System {
 private:
 public:
     SClientsSystem() {
-        gScene.AddEventCallback(Events::Net::CLIENT_CONN, BIND_CALLBACK(&SClientsSystem::OnClientConnected, this));
-        gScene.AddEventCallback(Events::Net::DISCONNECT, BIND_CALLBACK(&SClientsSystem::OnClientDisconnected, this));
+        scene.AddEventCallback(Events::Net::CLIENT_CONN, BIND_CALLBACK(&SClientsSystem::OnClientConnected, this));
+        scene.AddEventCallback(Events::Net::DISCONNECT, BIND_CALLBACK(&SClientsSystem::OnClientDisconnected, this));
      }
 
     /** TODO(adlan):
@@ -35,8 +35,7 @@ public:
 
     void AddClient(std::string name, SClient client)
     {
-        GameObject tmpClient;
-        tmpClient.Create(name);
+        GameObject tmpClient(name);
         tmpClient.AddComponent<SClientComponent>();
 
         auto clientComponent = tmpClient.GetComponent<SClientComponent>();

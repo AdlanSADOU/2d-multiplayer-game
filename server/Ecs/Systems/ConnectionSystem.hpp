@@ -19,7 +19,7 @@ public:
     int Init(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
     {
         std::set<Entity>::iterator entity = _entities.find(0);
-        _conn = gScene.GetComponent<ConnectionComponent>(*entity);
+        _conn = scene.GetComponent<ConnectionComponent>(*entity);
 
         _conn.listener = std::make_shared<sf::TcpListener>();
 
@@ -50,7 +50,7 @@ public:
             std::cout << "connection request\n";
             Event connEvent(Events::Net::CLIENT_CONN);
             connEvent.SetParam<std::int32_t>(0, 12);
-            gScene.InvokeEvent(connEvent);
+            scene.InvokeEvent(connEvent);
         }
     }
 

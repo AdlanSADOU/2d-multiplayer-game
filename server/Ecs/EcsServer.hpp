@@ -12,7 +12,7 @@
 #include "Ecs/Systems/ConnectionSystem.hpp"
 #include "Ecs/Systems/SClientsSystem.hpp"
 
-Scene gScene;
+Scene scene;
 
 class EcsServer {
 private:
@@ -32,26 +32,25 @@ public:
 
     void Init()
     {
-        gScene.Init();
-        gScene.RegisterComponent<SClientComponent>();
-        gScene.RegisterComponent<ConnectionComponent>();
+        scene.Init();
+        scene.RegisterComponent<SClientComponent>();
+        scene.RegisterComponent<ConnectionComponent>();
 
-        _connectionSystem = gScene.RegisterSystem<ConnectionSystem>();
+        _connectionSystem = scene.RegisterSystem<ConnectionSystem>();
         {
             EntitySignature sig;
-            sig.set(gScene.GetComponentType<ConnectionComponent>());
-            gScene.SetSystemSignature<ConnectionSystem>(sig);
+            sig.set(scene.GetComponentType<ConnectionComponent>());
+            scene.SetSystemSignature<ConnectionSystem>(sig);
         }
 
-        _sClientSystem = gScene.RegisterSystem<SClientsSystem>();
+        _sClientSystem = scene.RegisterSystem<SClientsSystem>();
         {
             EntitySignature sig;
-            sig.set(gScene.GetComponentType<SClientComponent>());
-            gScene.SetSystemSignature<SClientsSystem>(sig);
+            sig.set(scene.GetComponentType<SClientComponent>());
+            scene.SetSystemSignature<SClientsSystem>(sig);
         }
 
-        GameObject serverConnector;
-        serverConnector.Create("serverConnector");
+        GameObject serverConnector("serverConnector");
         serverConnector.AddComponent<ConnectionComponent>();
     }
 
