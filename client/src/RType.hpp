@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "Nuts/Nuts.hpp"
+#include "Nuts/Engine.hpp"
 
 #include "Nuts/EcsCore/Scene.hpp"
 
@@ -36,7 +36,7 @@ class RType {
 
     protected:
     private:
-        Nuts _nuts;
+        Engine _nuts;
 
         std::shared_ptr<RenderSystem> _renderSystem;
         std::shared_ptr<TransformSystem> _transformSystem;
