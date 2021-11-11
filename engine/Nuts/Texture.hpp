@@ -23,7 +23,7 @@ namespace nuts
 
             ~Texture()
             {
-
+                _texture.~Texture();
             }
 
             bool LoadFromFile(const std::string &path)
@@ -40,4 +40,4 @@ namespace nuts
         private:
             sf::Texture _texture;
     };
-} // namespace nuts
+}
