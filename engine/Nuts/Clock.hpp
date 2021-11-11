@@ -13,6 +13,9 @@ namespace nuts
 {
     class Clock
     {
+        private:
+            sf::Clock _clock;
+
         public:
             Clock()
             {
@@ -43,8 +46,5 @@ namespace nuts
             {
                 _clock.restart();
             }
-
-        private:
-            sf::Clock _clock;
     };
 }

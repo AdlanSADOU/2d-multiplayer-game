@@ -61,4 +61,4 @@ namespace nuts
                 _music.setPitch(pitch);
             }
     };
-} // namespace NutsAudio
+}

@@ -21,11 +21,13 @@ class AnimationSystem : public System
 
     public:
 
-        void Init() {
+        void Init()
+        {
 
         }
 
-        void Update(nuts::Clock deltaClock) {
+        void Update(nuts::Clock deltaClock)
+        {
             for (auto const &entity : _entities)
             {
                 nuts::Sprite &sprite = scene.GetComponent<SpriteComponent>(entity).sprite;

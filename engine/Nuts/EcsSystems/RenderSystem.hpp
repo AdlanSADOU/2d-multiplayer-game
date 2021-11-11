@@ -18,11 +18,13 @@ class RenderSystem : public System
 
     public:
 
-        void Init() {
+        void Init()
+        {
 
         }
 
-        void Update(sf::RenderWindow &window) {
+        void Update(sf::RenderWindow &window)
+        {
             for (auto const &entity : _entities)
             {
                 auto const& spriteComponent = scene.GetComponent<SpriteComponent>(entity);

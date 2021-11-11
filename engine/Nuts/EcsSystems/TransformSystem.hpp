@@ -24,15 +24,18 @@ class TransformSystem : public System
 
     public:
 
-        void Init() {
+        void Init()
+        {
             scene.AddEventCallback(nuts::Key::Left, BIND_CALLBACK(&TransformSystem::OnLeftkeyPressed, this));
         }
 
-        void OnLeftkeyPressed(Event &event) {
+        void OnLeftkeyPressed(Event &event)
+        {
             std::cout << "Left key pressed!"<< std::endl;
         }
 
-        void Update(nuts::Clock deltaClock) {
+        void Update(nuts::Clock deltaClock)
+        {
             for (auto const &entity : _entities)
             {
                 nuts::Vector2f pos = scene.GetComponent<TransformComponent>(entity).position;

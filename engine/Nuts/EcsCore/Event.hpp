@@ -22,43 +22,46 @@ static std::hash<char*> strHasher;
 #define HASH(x) (strHasher("x"))
 #endif
 
-namespace Events::Window {
-const EventType QUIT = HASH(Window::QUIT);
-const EventType RESIZED = HASH(Window::RESIZED);
+namespace Events::Window
+{
+    const EventType QUIT = HASH(Window::QUIT);
+    const EventType RESIZED = HASH(Window::RESIZED);
 }
 
-namespace Events::Net {
-const EventType CLIENT_CONN = HASH(Net::CLIENT_CONN);
-const EventType UDP_INFO = HASH(Net::UDP_INFO);
-const EventType DISCONNECT = HASH(Net::DISCONNECT);
+namespace Events::Net
+{
+    const EventType CLIENT_CONN = HASH(Net::CLIENT_CONN);
+    const EventType UDP_INFO = HASH(Net::UDP_INFO);
+    const EventType DISCONNECT = HASH(Net::DISCONNECT);
 }
 
-class Event {
-private:
-    EventType _eventType;
-    std::unordered_map<ParameterId, std::any> _parameters {};
+class Event
+{
+    private:
+        EventType _eventType;
+        std::unordered_map<ParameterId, std::any> _parameters {};
 
-public:
-    Event(EventType type)
-    {
-        _eventType = type;
-        // event is added but not called for some reason
-    }
+    public:
+        Event(EventType type)
+        {
+            _eventType = type;
+            // event is added but not called for some reason
+        }
 
-    template <typename ParameterType>
-    void SetParam(ParameterId id, ParameterType value)
-    {
-        _parameters[id] = value;
-    }
+        template <typename ParameterType>
+        void SetParam(ParameterId id, ParameterType value)
+        {
+            _parameters[id] = value;
+        }
 
-    template <typename ParameterType>
-    ParameterType GetParam(ParameterId id)
-    {
-        return std::any_cast<ParameterType>(_parameters[id]);
-    }
+        template <typename ParameterType>
+        ParameterType GetParam(ParameterId id)
+        {
+            return std::any_cast<ParameterType>(_parameters[id]);
+        }
 
-    EventType GetType() const
-    {
-        return _eventType;
-    }
+        EventType GetType() const
+        {
+            return _eventType;
+        }
 };
