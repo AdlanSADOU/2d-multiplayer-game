@@ -8,7 +8,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
-#include <Nuts.hpp>
+#include <Engine.hpp>
 #include <Nuts/Input.hpp>
 #include <Nuts/Networking.hpp>
 
@@ -34,12 +34,13 @@ int main()
     tcpSock.setBlocking(false);
     udpSock.setBlocking(false);
 
-    Nuts nuts;
-    nuts.InitWindow("R-TYPE", 700, 200);
+    Engine nutsEngine;
+    nutsEngine.InitWindow("R-TYPE", 700, 200);
 
     sf::Music m;
     if (!m.openFromFile("./resources/awesomeness.wav"))
         return -1; // error
+    // m.play();
 
     /**
 	 * Scene is a global instance holding references to all managers:
@@ -78,20 +79,19 @@ int main()
     sf::Clock testClock;
     testClock.restart();
     // GameLoop
-    while (nuts.IsRunning()) {
+    while (nutsEngine.IsRunning()) {
         float start = testClock.getElapsedTime().asSeconds();
-        m.play();
 
-        nuts.HandleInput();
+        nutsEngine.HandleInput();
 
-        nuts.Clear();
+        nutsEngine.Clear();
 
         sf::Socket::Status sock_status;
 
         /** Establish first connection
 		 * Client is not connected to server at this point
 		 */
-        if (nuts.GetKeyPressed(Input::Key::Num1)) {
+        if (nutsEngine.GetKeyPressed(Input::Key::Num1)) {
             printf("[Client]: connection request\n");
 
             if (isConnected) {
@@ -110,12 +110,12 @@ int main()
         /**
 		* Disconnect client
 		*/
-        if (nuts.GetKeyPressed(Input::Key::Num0)) {
+        if (nutsEngine.GetKeyPressed(Input::Key::Num0)) {
             if (isConnected) {
                 printf("[CLIENT]: disconnection request\n");
 
                 sf::Packet packet;
-                packet << MSG_TYPE(MsgTypes::CLIENT_DISCONNECT) << myID;
+                packet << Events::Net::CLIENT_DISCONNECT << myID;
                 if (tcpSock.send(packet) == sf::Socket::Status::Done) {
                     isConnected = false;
                     tcpSock.disconnect();
@@ -123,13 +123,16 @@ int main()
             }
         }
 
-        if (nuts.GetKeyPressed(Input::Key::P)) {
+        if (nutsEngine.GetKeyPressed(Input::Key::P)) {
             sf::Packet packet;
             printf("[CLIENT]: print clients request\n");
-            packet << MSG_TYPE(MsgTypes::CLIENTS_PRINT) << myID;
+            packet << MSG_TYPE(Events::Net::CLIENTS_PRINT) << myID;
             // if (packet.getDataSize() <= sf::UdpSocket::MaxDatagramSize)
-            if (isConnected)
-                udpSock.send(packet, serverIp, serverPort + 1);
+            if (isConnected) {
+
+                if(tcpSock.send(packet) != sf::Socket::Done)
+                    printf("Error::CLIENTS_PRINT not send\n");
+            }
         }
 
         { // TCP Receive loop
@@ -137,8 +140,10 @@ int main()
             MsgType rpcType = -1;
 
             sf::Socket::Status status = tcpSock.receive(packet);
-            if (status == sf::Socket::Done)
+            if (status == sf::Socket::Done) {
+                printf("---> received\n");
                 packet >> rpcType;
+            }
 
             switch (rpcType) {
             case MSG_TYPE(MsgTypes::CLIENT_ID): {
@@ -192,8 +197,8 @@ int main()
             }
         }
 
-        renderSystem->Update(nuts.window);
-        nuts.Present();
+        renderSystem->Update(nutsEngine.window);
+        nutsEngine.Present();
     }
 
     return 0;

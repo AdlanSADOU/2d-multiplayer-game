@@ -58,5 +58,10 @@ public:
     void Start(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
     {
         _connectionSystem->Init(port, address);
+
+        while (1) {
+            _connectionSystem->Accept();
+            _sClientSystem->ReceiveTcp();
+        }
     }
 };

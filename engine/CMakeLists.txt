@@ -5,9 +5,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(nuts_engine
-Nuts/NutsEngine.cpp
-)
+add_library(nuts_engine Engine.cpp)
 
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts)

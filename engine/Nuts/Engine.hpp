@@ -11,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <Input.hpp>
 
-class Nuts {
+class Engine {
     public:
         sf::RenderWindow window;
 

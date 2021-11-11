@@ -16,7 +16,7 @@
 #include <iostream>
 #include <memory>
 
-using ClientID = sf::Int8;
+using ClientID = std::int32_t;
 using MsgType = sf::Uint8;
 
 enum class MsgTypes : sf::Uint8 {

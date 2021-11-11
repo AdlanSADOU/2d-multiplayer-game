@@ -26,9 +26,22 @@ const EventType RESIZED = HASH(Window::RESIZED);
 }
 
 namespace Events::Net {
-const EventType CLIENT_CONN = HASH(Net::CLIENT_CONN);
+const EventType CLIENT_CONNECT = HASH(Net::CLIENT_CONNECT);
+const EventType CLIENT_DISCONNECT = HASH(Net::CLIENT_DISCONNECT);
+const EventType CLIENT_ID = HASH(Net::CLIENT_ID);
+const EventType CLIENTS_PRINT = HASH(Net::CLIENTS_PRINT);
 const EventType UDP_INFO = HASH(Net::UDP_INFO);
-const EventType DISCONNECT = HASH(Net::DISCONNECT);
+const EventType UDP_OK = HASH(Net::UDP_OK);
+const EventType LOBBY_LOAD = HASH(Net::LOBBY_LOAD);
+const EventType LOBBY_LIST = HASH(Net::LOBBY_LIST);
+const EventType LOBBY_CREATE = HASH(Net::LOBBY_CREATE);
+const EventType LOBBY_JOIN = HASH(Net::LOBBY_JOIN);
+const EventType LOBBY_CLIENTS = HASH(Net::LOBBY_CLIENTS);
+const EventType LOBBY_QUIT = HASH(Net::LOBBY_QUIT);
+const EventType LOBBY_READY = HASH(Net::LOBBY_READY);
+const EventType LOBBY_READY_OK = HASH(Net::LOBBY_READY_OK);
+const EventType LOBBY_CANCEL = HASH(Net::LOBBY_CANCEL);
+const EventType LOBBY_CANCEL_OK = HASH(Net::LOBBY_CANCEL_OK);
 }
 
 class Event {
