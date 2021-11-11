@@ -32,8 +32,8 @@ public:
 
     void InvokeEvent(EventType eventType)
     {
-        for (auto const& callback : eventCallbacks[eventType]) {
-            callback(Event(eventType));
-        }
+        // for (auto const& callback : eventCallbacks[eventType]) {
+        //     callback(Event(eventType));
+        // }
     }
 };

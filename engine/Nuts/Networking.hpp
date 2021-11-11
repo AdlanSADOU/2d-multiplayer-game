@@ -83,6 +83,7 @@ public:
         sf::Socket::Status status;
         if ((status = _tcpSock->send(packet)) != sf::Socket::Status::Done)
             std::cerr << "ERROR:TCP: unable to send\n";
+        return status;
     }
 
     sf::Socket::Status UdpSend(sf::Packet& packet, sf::IpAddress& remoteIp, sf::Uint16 remotePort)

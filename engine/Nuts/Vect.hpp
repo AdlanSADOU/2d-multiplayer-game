@@ -7,24 +7,31 @@
 
 #pragma once
 
-typedef struct Vector2i {
-    int x;
-    int y;
-};
+namespace nuts
+{
+    typedef struct
+    {
+        int x;
+        int y;
+    } Vector2i;
 
-typedef struct Vector2f {
-    float x;
-    float y;
-};
+    typedef struct
+    {
+        float x;
+        float y;
+    } Vector2f;
 
-typedef struct Vector3i {
-    int x;
-    int y;
-    int z;
-};
+    typedef struct
+    {
+        int x;
+        int y;
+        int z;
+    } Vector3i;
 
-typedef struct Vector3f {
-    float x;
-    float y;
-    float z;
-};
+    typedef struct
+    {
+        float x;
+        float y;
+        float z;
+    } Vector3f;
+}

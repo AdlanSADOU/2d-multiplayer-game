@@ -6,7 +6,8 @@
 */
 
 #pragma once
-#include <Nuts/GameObject.hpp>
+
+#include "Nuts/GameObject.hpp"
 
 #include "Ecs/Components/Components.hpp"
 #include "Ecs/Systems/ConnectionSystem.hpp"
@@ -50,7 +51,7 @@ public:
             scene.SetSystemSignature<SClientsSystem>(sig);
         }
 
-        GameObject serverConnector("serverConnector");
+        nuts::GameObject serverConnector("serverConnector");
         serverConnector.AddComponent<ConnectionComponent>();
     }
 

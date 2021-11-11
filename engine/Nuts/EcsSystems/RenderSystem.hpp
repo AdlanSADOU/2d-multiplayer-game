@@ -27,7 +27,7 @@ class RenderSystem : public System
             {
                 auto const& spriteComponent = scene.GetComponent<SpriteComponent>(entity);
 
-                window.draw(spriteComponent.sprite);
+                window.draw(spriteComponent.sprite.GetSprite());
             }
         }
 };

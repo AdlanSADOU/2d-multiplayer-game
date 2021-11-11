@@ -9,30 +9,35 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-class Texture
+
+namespace nuts
 {
-    public:
-        Texture::Texture()
-        {
+    class Texture
+    {
+        public:
 
-        }
+            Texture()
+            {
 
-        Texture::~Texture()
-        {
+            }
 
-        }
+            ~Texture()
+            {
 
-        void LoadFromFile(const std::string &path)
-        {
-            _texture.loadFromFile(path.c_str());
-        }
+            }
 
-        sf::Texture GetTexture() const
-        {
-            return (this->_texture);
-        }
+            bool LoadFromFile(const std::string &path)
+            {
+                return (_texture.loadFromFile(path.c_str()));
+            }
 
-    protected:
-    private:
-        sf::Texture _texture;
-};
+            sf::Texture &GetTexture()
+            {
+                return (this->_texture);
+            }
+
+        protected:
+        private:
+            sf::Texture _texture;
+    };
+} // namespace nuts

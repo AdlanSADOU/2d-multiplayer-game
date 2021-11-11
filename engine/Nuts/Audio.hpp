@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace NutsAudio
+namespace nuts
 {
     class Music
     {

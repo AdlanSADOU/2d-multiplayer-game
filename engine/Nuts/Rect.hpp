@@ -7,18 +7,21 @@
 
 #pragma once
 
-typedef struct IntRect
+namespace nuts
 {
-    int left;
-    int top;
-    int width;
-    int height;
-};
+    typedef struct
+    {
+        int left;
+        int top;
+        int width;
+        int height;
+    } IntRect;
 
-typedef struct FloatRect
-{
-    float left;
-    float top;
-    float width;
-    float height;
-};
+    typedef struct
+    {
+        float left;
+        float top;
+        float width;
+        float height;
+    } FloatRect;
+}
