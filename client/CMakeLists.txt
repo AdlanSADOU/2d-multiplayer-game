@@ -15,7 +15,7 @@ if(UNIX)
   add_custom_command(TARGET rtype_client POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
   ${CMAKE_CURRENT_SOURCE_DIR}/../resources
-  ${CMAKE_CURRENT_BINARY_DIR}/Debug/resources
+  ${CMAKE_CURRENT_BINARY_DIR}/resources
   )
 endif()
 
