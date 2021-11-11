@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "Ecs/Components/Components.hpp"
+#include "Components/Components.hpp"
 #include <iostream>
 #include <vector>
 
@@ -56,5 +56,4 @@ public:
             gScene.InvokeEvent(clienConnectedEvent);
         }
     }
-
 };

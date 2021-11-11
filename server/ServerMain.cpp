@@ -5,8 +5,7 @@
 ** ServerMain.cpp
 */
 
-#include <Server.hpp>
-#include "Ecs/EcsServer.hpp"
+#include "EcsServer.hpp"
 
 int main(int argc, char const *argv[])
 {

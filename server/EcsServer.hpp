@@ -8,9 +8,9 @@
 #pragma once
 #include <Nuts/GameObject.hpp>
 
-#include "Ecs/Components/Components.hpp"
-#include "Ecs/Systems/ConnectionSystem.hpp"
-#include "Ecs/Systems/SClientsSystem.hpp"
+#include "Components/Components.hpp"
+#include "Systems/ConnectionSystem.hpp"
+#include "Systems/SClientsSystem.hpp"
 
 Scene gScene;
 
