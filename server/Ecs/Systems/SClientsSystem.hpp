@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Nuts/EcsCore/Event.hpp"
+#include "SClient.hpp"
 
 class SClientsSystem : public System {
 private:

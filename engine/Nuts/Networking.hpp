@@ -83,6 +83,7 @@ public:
         sf::Socket::Status status;
         if ((status = _tcpSock->send(packet)) != sf::Socket::Status::Done)
             std::cerr << "ERROR:TCP: unable to send\n";
+        return status;
     }
 
     sf::Socket::Status UdpSend(sf::Packet& packet, sf::IpAddress& remoteIp, sf::Uint16 remotePort)
@@ -103,7 +104,6 @@ public:
 };
 
 // Router & Dispatcher
-typedef class Dispatcher;
 
 /**
  * @brief Router class must be inherited by a Dispatcher class
@@ -111,8 +111,9 @@ typedef class Dispatcher;
  * That's why Dispatcher is forward declared here
  */
 class Router {
+// typedef class Dispatcher;
 protected:
-    typedef void (Dispatcher::*MessageFuncPtr)(sf::Packet& packet);
+    typedef void (*MessageFuncPtr)(sf::Packet& packet);
     std::array<MessageFuncPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
 
     void addCallback(MsgTypes rpcType, MessageFuncPtr callback)

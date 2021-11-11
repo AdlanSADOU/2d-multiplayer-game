@@ -14,9 +14,6 @@
 #include <thread>
 #include <vector>
 
-#include "Dispatcher.hpp"
-#include "Lobby.hpp"
-#include "SClientManager.hpp"
 
 class Server : ServerInterface {
 private:
