@@ -9,8 +9,10 @@
 
 #include "ComponentManager.hpp"
 #include "EntityManager.hpp"
+#include "EventManager.h"
 #include "SystemManager.hpp"
 #include "Types.hpp"
+
 #include <memory>
 
 class Scene {
@@ -18,6 +20,7 @@ private:
     std::unique_ptr<ComponentManager> _ComponentManager;
     std::unique_ptr<EntityManager> _EntityManager;
     std::unique_ptr<SystemManager> _SystemManager;
+    std::unique_ptr<EventManager> _EventManager;
 
 public:
     void Init()
@@ -25,6 +28,7 @@ public:
         _ComponentManager = std::make_unique<ComponentManager>();
         _EntityManager = std::make_unique<EntityManager>();
         _SystemManager = std::make_unique<SystemManager>();
+        _EventManager = std::make_unique<EventManager>();
     }
 
     // Entity methods
@@ -96,5 +100,14 @@ public:
     void SetSystemSignature(EntitySignature signature)
     {
         _SystemManager->SetSignature<T>(signature);
+    }
+
+    void AddEventCallback(EventType eventType, Callback callback) {
+        _EventManager->AddEventCallback(eventType, callback);
+    }
+
+    void InvokeEvent(EventType eventType)
+    {
+        _EventManager->InvokeEvent(eventType);
     }
 };
