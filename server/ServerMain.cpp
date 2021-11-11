@@ -6,8 +6,25 @@
 */
 
 #include <Server.hpp>
+#include "Ecs/EcsServer.hpp"
 
-int main()
+int main(int argc, char const *argv[])
+{
+    EcsServer server;
+
+    server.Init();
+    server.Start(55001, sf::IpAddress::getLocalAddress());
+
+    while (1)
+    {
+        server.GetConnectionSystem()->Accept();
+    }
+
+    return 0;
+}
+
+
+int Oldmain()
 {
     Server server;
 

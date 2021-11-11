@@ -5,18 +5,27 @@
 ** main.cpp
 */
 
+<<<<<<< HEAD
 #include "src/RType.hpp"
+=======
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
+>>>>>>> 6627752 (added: Event system)
 
 Scene scene;
 
 int main()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     RType rtype;
     rtype.Init();
     rtype.Run();
 =======
     sf::IpAddress serverIp = sf::IpAddress::LocalHost;
+=======
+    sf::IpAddress serverIp = sf::IpAddress::getLocalAddress();
+>>>>>>> 6627752 (added: Event system)
     sf::Uint16 serverPort = 55001;
 
     sf::TcpSocket tcpSock;
@@ -28,6 +37,10 @@ int main()
 
     Nuts nuts;
     nuts.InitWindow("R-TYPE", 700, 200);
+
+    sf::Music m;
+    if (!m.openFromFile("./resources/awesomeness.wav"))
+        return -1; // error
 
     /**
 	 * Scene is a global instance holding references to all managers:
@@ -68,6 +81,7 @@ int main()
     // GameLoop
     while (nuts.IsRunning()) {
         float start = testClock.getElapsedTime().asSeconds();
+        m.play();
 
         nuts.HandleInput();
 
