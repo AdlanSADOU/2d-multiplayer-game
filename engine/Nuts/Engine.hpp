@@ -8,76 +8,86 @@
 #pragma once
 
 #include "EcsComponents/TransformComponent.hpp"
+
+#include "Input.hpp"
+
 #include <SFML/Graphics.hpp>
-#include <Input.hpp>
 
-class Engine {
-    public:
-        sf::RenderWindow window;
-
+namespace nuts
+{
+    class Engine
+    {
         private:
-            sf::Keyboard::Key pressedKey;
-            sf::Keyboard::Key downKey;
+            nuts::Key pressedKey;
+            nuts::Key downKey;
             bool isRunning;
 
-    public:
-        void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
-        {
-            window.create({ width, height, 32 }, windowName);
-            isRunning = true;
-        };
+        public:
+            sf::RenderWindow window;
 
-        void Clear()
-        {
-            window.clear();
-        };
+            void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
+            {
+                window.create({width, height, 32}, windowName);
+                isRunning = true;
+            }
 
-        void Present()
-        {
-            window.display();
-        }
+            void SetFramerateLimit(unsigned int limit)
+            {
+                window.setFramerateLimit(limit);
+            }
 
-        bool IsRunning()
-        {
-            return window.isOpen();
-        }
+            void Clear(uint8_t r = 0U, uint8_t g = 0U, uint8_t b = 0U, uint8_t a = 255U)
+            {
+                window.clear({r, g, b, a});
+            }
 
-        void CloseWindow()
-        {
-            window.close();
-        }
+            void Present()
+            {
+                window.display();
+            }
 
-        void HandleInput()
-        {
-            sf::Event event;
-            pressedKey = sf::Keyboard::Unknown;
+            bool IsRunning()
+            {
+                return window.isOpen();
+            }
 
-            while (window.pollEvent(event)) {
-                if (event.type == sf::Event::Closed)
-                    window.close();
+            void CloseWindow()
+            {
+                window.close();
+            }
 
-                if (event.type == sf::Event::KeyPressed) {
-                    pressedKey = event.key.code;
-                    downKey = event.key.code;
+            void HandleEvent()
+            {
+                sf::Event event;
+                pressedKey = nuts::Unknown;
+
+                while (window.pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window.close();
+
+                    if (event.type == sf::Event::KeyPressed) {
+                        pressedKey = (nuts::Key)event.key.code;
+                        downKey = (nuts::Key)event.key.code;
+                    }
+                    if (event.type == sf::Event::KeyReleased) {
+                        downKey = nuts::Unknown;
+                    }
                 }
-                if (event.type == sf::Event::KeyReleased) {
-                    downKey = sf::Keyboard::Unknown;
-                }
-            };
-        }
+            }
 
+            bool GetKeyPressed(nuts::Key key)
+            {
+                if (key == pressedKey)
+                    return true;
+                return false;
+            }
 
-    bool GetKeyPressed(nuts::Key key)
-    {
-        if (key == pressedKey)
-            return true;
-        return false;
-    }
+            bool GetKeyDown(nuts::Key key)
+            {
+                if (key == downKey)
+                    return true;
+                return false;
+            }
+    };
 
-    bool GetKeyDown(sf::Keyboard::Key key)
-    {
-        if (key == downKey)
-            return true;
-        return false;
-    }
-};
+} // namespace nuts

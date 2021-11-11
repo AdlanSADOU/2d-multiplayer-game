@@ -9,7 +9,12 @@
 
 #include "TransformComponent.hpp"
 #include "VelocityComponent.hpp"
+
+#include "Nuts/Clock.hpp"
+
 #include "System.hpp"
+
+#include <iostream>
 
 extern Scene scene;
 
@@ -19,22 +24,25 @@ class TransformSystem : public System
 
     public:
 
-        void Init() {
-            scene.AddEventCallback(NutsInput::Left, BIND_CALLBACK(&TransformSystem::OnLeftkeyPressed, this));
+        void Init()
+        {
+            scene.AddEventCallback(nuts::Key::Left, BIND_CALLBACK(&TransformSystem::OnLeftkeyPressed, this));
         }
 
-        void OnLeftkeyPressed(Event &event) {
+        void OnLeftkeyPressed(Event &event)
+        {
             std::cout << "Left key pressed!"<< std::endl;
         }
 
-        void Update() {
+        void Update(nuts::Clock deltaClock)
+        {
             for (auto const &entity : _entities)
             {
-                sf::Vector2f position = scene.GetComponent<TransformComponent>(entity).position;
-                sf::Vector2f velocity = scene.GetComponent<VelocityComponent>(entity).velocity;
+                nuts::Vector2f pos = scene.GetComponent<TransformComponent>(entity).position;
+                nuts::Vector2f vel = scene.GetComponent<VelocityComponent>(entity).velocity;
                 auto &spriteComponent = scene.GetComponent<SpriteComponent>(entity);
 
-                spriteComponent.sprite.setPosition(position + velocity);
+                spriteComponent.sprite.GetSprite().setPosition({(pos.x + vel.x) * deltaClock.GetElapsedTimeAsSeconds(), (pos.y + vel.y) * deltaClock.GetElapsedTimeAsSeconds()});
             }
         }
 };

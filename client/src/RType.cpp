@@ -7,6 +7,8 @@
 
 #include "RType.hpp"
 
+#include "Nuts/Input.hpp"
+
 RType::RType()
 {
 }
@@ -17,8 +19,8 @@ RType::~RType()
 
 void RType::Init()
 {
-    _nuts.InitWindow("R-Type", 800, 600);
-    _nuts.SetFramerateLimit(60);
+    _engine.InitWindow("R-Type", 800, 600);
+    _engine.SetFramerateLimit(60);
 
     scene.Init();
     scene.RegisterComponent<TransformComponent>();
@@ -27,6 +29,7 @@ void RType::Init()
 
     _renderSystem = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
+    _animationSystem = scene.RegisterSystem<AnimationSystem>();
 
     EntitySignature transformSig;
     transformSig.set(scene.GetComponentType<TransformComponent>());
@@ -37,22 +40,30 @@ void RType::Init()
     renderSig.set(scene.GetComponentType<SpriteComponent>());
     scene.SetSystemSignature<RenderSystem>(renderSig);
 
+    EntitySignature animationSig;
+    animationSig.set(scene.GetComponentType<SpriteComponent>());
+    scene.SetSystemSignature<AnimationSystem>(animationSig);
+
     _transformSystem->Init();
+    _monster.Init();
+    _deltaClock.Restart();
 }
 
 void RType::Run()
 {
-    while (_nuts.IsRunning()) {
-        _nuts.Clear();
-        _nuts.HandleEvent();
+    while (_engine.IsRunning()) {
+        _engine.Clear();
+        _engine.HandleEvent();
 
-        if (_nuts.GetKeyPressed(NutsInput::Left)) {
-            scene.InvokeEvent(NutsInput::Left);
+        if (_engine.GetKeyPressed(nuts::Key::Left)) {
+            scene.InvokeEvent(nuts::Key::Left);
         }
 
-        _transformSystem.get()->Update();
-        _renderSystem.get()->Update(_nuts.window);
+        _transformSystem.get()->Update(_deltaClock);
+        _animationSystem.get()->Update(_deltaClock);
+        _renderSystem.get()->Update(_engine.window);
 
-        _nuts.Present();
+        _engine.Present();
+        _deltaClock.Restart();
     }
 }

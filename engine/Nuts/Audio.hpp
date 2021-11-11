@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace NutsAudio
+namespace nuts
 {
     class Music
     {
@@ -61,4 +61,4 @@ namespace NutsAudio
                 _music.setPitch(pitch);
             }
     };
-} // namespace NutsAudio
+}

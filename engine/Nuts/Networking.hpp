@@ -16,7 +16,7 @@
 #include <iostream>
 #include <memory>
 
-using ClientID = std::int32_t;
+using ClientID = sf::Int8;
 using MsgType = sf::Uint8;
 
 enum class MsgTypes : sf::Uint8 {
@@ -104,6 +104,7 @@ public:
 };
 
 // Router & Dispatcher
+typedef class Dispatcher;
 
 /**
  * @brief Router class must be inherited by a Dispatcher class
@@ -111,9 +112,8 @@ public:
  * That's why Dispatcher is forward declared here
  */
 class Router {
-// typedef class Dispatcher;
 protected:
-    typedef void (*MessageFuncPtr)(sf::Packet& packet);
+    typedef void (Dispatcher::*MessageFuncPtr)(sf::Packet& packet);
     std::array<MessageFuncPtr, MAX_MSG_TYPES> _remoteProcedureCalls {};
 
     void addCallback(MsgTypes rpcType, MessageFuncPtr callback)

@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "Nuts/Vect.hpp"
 
 struct VelocityComponent {
-    sf::Vector2f velocity;
+    nuts::Vector2f velocity;
 };

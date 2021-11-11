@@ -5,22 +5,41 @@
 ** ServerMain.cpp
 */
 
-#include "EcsServer.hpp"
+#include <Server.hpp>
+#include "Ecs/EcsServer.hpp"
 
 int main(int argc, char const *argv[])
 {
     EcsServer server;
-    sf::Uint16 port = 55001;
 
     server.Init();
-    server.Start(port, sf::IpAddress::getLocalAddress());
+    server.Start(55001, sf::IpAddress::getLocalAddress());
 
+    while (1)
+    {
+        server.GetConnectionSystem()->Accept();
+    }
 
     return 0;
 }
 
 
-// int Oldmain()
+int Oldmain()
+{
+    EcsServer server;
+
+    server.Init();
+    server.Start(55001, sf::IpAddress::getLocalAddress());
+
+    while (1)
+    {
+        server.GetConnectionSystem()->Accept();
+    }
+
+    return 0;
+}
+
+// int main()
 // {
 //     Server server;
 
