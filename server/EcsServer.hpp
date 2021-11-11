@@ -8,9 +8,9 @@
 #pragma once
 #include <Nuts/GameObject.hpp>
 
-#include "Ecs/Components/Components.hpp"
-#include "Ecs/Systems/ConnectionSystem.hpp"
-#include "Ecs/Systems/SClientsSystem.hpp"
+#include "Components/Components.hpp"
+#include "Systems/ConnectionSystem.hpp"
+#include "Systems/SClientsSystem.hpp"
 
 Scene scene;
 
@@ -57,5 +57,10 @@ public:
     void Start(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
     {
         _connectionSystem->Init(port, address);
+
+        while (1) {
+            _connectionSystem->Accept();
+            _sClientSystem->ReceiveTcp();
+        }
     }
 };

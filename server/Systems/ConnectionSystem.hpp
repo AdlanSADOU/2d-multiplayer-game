@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include "Ecs/Components/Components.hpp"
+#include "Components/Components.hpp"
 #include <iostream>
+#include <vector>
 
 class ConnectionSystem : public System {
 private:
@@ -22,6 +23,7 @@ public:
         _conn = scene.GetComponent<ConnectionComponent>(*entity);
 
         _conn.listener = std::make_shared<sf::TcpListener>();
+        _conn.listener->setBlocking(false);
 
         if (_conn.listener->listen(port, address) != sf::Socket::Status::Done) {
             std::cout << "[Server]: Failed to listen on " << address << ":" << port << std::endl;
@@ -48,13 +50,10 @@ public:
     {
         if (_conn.listener->accept(*_tmpSocket) == sf::Socket::Done) {
             std::cout << "connection request\n";
-            Event connEvent(Events::Net::CLIENT_CONN);
-            connEvent.SetParam<std::int32_t>(0, 12);
-            scene.InvokeEvent(connEvent);
-        }
-    }
 
-    void ReceiveTcp()
-    {
+            Event clienConnectedEvent(Events::Net::CLIENT_CONNECT);
+            clienConnectedEvent.SetParam<std::shared_ptr<sf::TcpSocket>>(0, _tmpSocket);
+            scene.InvokeEvent(clienConnectedEvent);
+        }
     }
 };

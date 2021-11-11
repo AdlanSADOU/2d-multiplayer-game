@@ -13,9 +13,9 @@ struct SClientComponent {
     std::shared_ptr<sf::TcpSocket> tcpSock;
     sf::Uint16 updPort;
     sf::IpAddress ip;
-    ClientID uuid;
+    ClientID id;
     std::uint8_t lobbyID;
-    bool connected;
+    bool IsConnected;
     bool IsInLobby;
 };
 
