@@ -36,7 +36,7 @@ class RTypeMonster : public nuts::GameObject
         void Init() {
             this->Create("Monster");
 
-            _texture.LoadFromFile("/home/cram/Tek3/B-CPP-501-NCE-5-1-rtype-adlan.sadou/resources/sprites/r-typesheet3.gif");
+            _texture.LoadFromFile("./resources/sprites/r-typesheet3.gif");
 
             this->AddComponent<TransformComponent>();
             this->AddComponent<SpriteComponent>();

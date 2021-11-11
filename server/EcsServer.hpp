@@ -50,7 +50,8 @@ public:
             scene.SetSystemSignature<SClientsSystem>(sig);
         }
 
-        GameObject serverConnector("serverConnector");
+        nuts::GameObject serverConnector;
+        serverConnector.Create("");
         serverConnector.AddComponent<ConnectionComponent>();
     }
 

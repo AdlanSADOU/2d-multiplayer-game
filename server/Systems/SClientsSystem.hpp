@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "Nuts/EcsCore/Event.hpp"
+#include <Nuts/EcsCore/Event.hpp>
+#include <Nuts/GameObject.hpp>
 
 class SClientsSystem : public System {
 private:
-    std::vector<GameObject> _clients;
 
 public:
     SClientsSystem()
@@ -30,7 +30,7 @@ public:
         auto tcpSocket = e.GetParam<std::shared_ptr<sf::TcpSocket>>(0);
         tcpSocket->setBlocking(false);
 
-        GameObject tmpClient("name");
+        nuts::GameObject tmpClient("name");
         tmpClient.AddComponent<SClientComponent>();
 
         auto& clientComponent = tmpClient.GetComponent<SClientComponent>();
@@ -40,7 +40,6 @@ public:
         clientComponent.lobbyID = 0;
         clientComponent.id = clientId;
 
-        _clients.push_back(tmpClient);
 
         std::cout << "[SERVER]: client connected ID:" << clientId << " TCP:" << clientComponent.ip << ":" << clientComponent.tcpSock->getRemotePort() << std::endl;
 
