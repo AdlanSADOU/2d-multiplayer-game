@@ -7,11 +7,24 @@
 
 #pragma once
 
-class RTypeMenu {
-    public:
-        RTypeMenu();
-        ~RTypeMenu();
+#include <Nuts/UI/Widget.hpp>
 
-    protected:
-    private:
+class RTypeMenu
+{
+    struct WidgetMenu
+    {
+        nuts::UI::Widget _background;
+        nuts::UI::Widget _panel;
+    };
+
+public:
+    WidgetMenu _widgetMenu;
+
+    RTypeMenu();
+    ~RTypeMenu();
+
+    void Init();
+
+protected:
+private:
 };

@@ -23,6 +23,8 @@
 
 #include "Nuts/Networking.hpp"
 
+#include "RTypeMenu.hpp"
+
 // #include "engine/Nuts/GameObject.hpp"
 
 class RTypeMonster : public nuts::GameObject
@@ -80,6 +82,7 @@ class RType : public Net::INetClient
 
     protected:
     private:
+        RTypeMenu _menu;
 
         // TEST A SUPPRIMER APRES
         RTypeMonster _monster;

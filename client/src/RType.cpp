@@ -26,6 +26,7 @@ void RType::Init()
     scene.RegisterComponent<TransformComponent>();
     scene.RegisterComponent<SpriteComponent>();
     scene.RegisterComponent<VelocityComponent>();
+    scene.RegisterComponent<WidgetComponent>();
 
     _renderSystem    = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
@@ -51,6 +52,8 @@ void RType::Init()
     scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
 
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
+
+    _menu.Init();
 }
 
 void RType::Run()
@@ -74,6 +77,8 @@ void RType::Run()
         _renderSystem.get()->Update(_engine.window);
 
         INetClient::Update();
+        _menu._widgetMenu._background.TEST_DRAW(_engine.window);
+        _menu._widgetMenu._panel.TEST_DRAW(_engine.window);
 
         _engine.Present();
         _deltaClock.Restart();

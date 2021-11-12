@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(rtype_client
 ClientMain.cpp
 src/RType.cpp
+src/RTypeMenu.cpp
 src/RTypeNetCallbacks.cpp)
 
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
