@@ -11,6 +11,7 @@
 
 RType::RType()
 {
+
 }
 
 RType::~RType()
@@ -47,6 +48,10 @@ void RType::Init()
     _transformSystem->Init();
     _monster.Init();
     _deltaClock.Restart();
+
+    scene.AddEventCallback(Events::Net::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
+
+    NetConnect(sf::IpAddress::getLocalAddress(), 55001);
 }
 
 void RType::Run()
@@ -62,6 +67,8 @@ void RType::Run()
         _transformSystem.get()->Update(_deltaClock);
         _animationSystem.get()->Update(_deltaClock);
         _renderSystem.get()->Update(_engine.window);
+
+        NetUpdate();
 
         _engine.Present();
         _deltaClock.Restart();

@@ -13,23 +13,24 @@
 #include "SystemManager.hpp"
 #include "Types.hpp"
 
+#include <iostream>
 #include <memory>
 
 class Scene
 {
     private:
         std::unique_ptr<ComponentManager> _ComponentManager;
-        std::unique_ptr<EntityManager> _EntityManager;
-        std::unique_ptr<SystemManager> _SystemManager;
-        std::unique_ptr<EventManager> _EventManager;
+        std::unique_ptr<EntityManager>    _EntityManager;
+        std::unique_ptr<SystemManager>    _SystemManager;
+        std::unique_ptr<EventManager>     _EventManager;
 
     public:
         void Init()
         {
             _ComponentManager = std::make_unique<ComponentManager>();
-            _EntityManager = std::make_unique<EntityManager>();
-            _SystemManager = std::make_unique<SystemManager>();
-            _EventManager = std::make_unique<EventManager>();
+            _EntityManager    = std::make_unique<EntityManager>();
+            _SystemManager    = std::make_unique<SystemManager>();
+            _EventManager     = std::make_unique<EventManager>();
         }
 
         // Entity methods
@@ -79,7 +80,7 @@ class Scene
         }
 
         template <typename T>
-        T& GetComponent(Entity entity)
+        T &GetComponent(Entity entity)
         {
             return _ComponentManager->GetComponent<T>(entity);
         }
@@ -103,7 +104,12 @@ class Scene
             _SystemManager->SetSignature<T>(signature);
         }
 
-        void AddEventCallback(EventType eventType, Callback callback) {
+        void AddEventCallback(EventType eventType, Callback callback)
+        {
+#ifdef _DEBUG
+            std::cout << "Added Callback EvenType: "
+                      << eventType << "\n";
+#endif
             _EventManager->AddEventCallback(eventType, callback);
         }
 

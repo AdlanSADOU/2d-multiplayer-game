@@ -12,68 +12,41 @@
 #include <functional>
 #include <list>
 #include <unordered_map>
+#include <SFML/Config.hpp>
 
-using EventType = std::size_t;
+using EventType   = std::int32_t;
 using ParameterId = std::int32_t;
+
 #define BIND_CALLBACK(_callback, _classInstance) (std::bind(_callback, _classInstance, std::placeholders::_1))
-
-#if !defined(HASH)
-static std::hash<std::string> strHasher;
-#define HASH(x) (strHasher("x"))
-#endif
-
-namespace Events::Window
-{
-    const EventType QUIT = HASH(Window::QUIT);
-    const EventType RESIZED = HASH(Window::RESIZED);
-}
-
-namespace Events::Net {
-const EventType CLIENT_CONNECT = HASH(Net::CLIENT_CONNECT);
-const EventType CLIENT_DISCONNECT = HASH(Net::CLIENT_DISCONNECT);
-const EventType CLIENT_ID = HASH(Net::CLIENT_ID);
-const EventType CLIENTS_PRINT = HASH(Net::CLIENTS_PRINT);
-const EventType UDP_INFO = HASH(Net::UDP_INFO);
-const EventType UDP_OK = HASH(Net::UDP_OK);
-const EventType LOBBY_LOAD = HASH(Net::LOBBY_LOAD);
-const EventType LOBBY_LIST = HASH(Net::LOBBY_LIST);
-const EventType LOBBY_CREATE = HASH(Net::LOBBY_CREATE);
-const EventType LOBBY_JOIN = HASH(Net::LOBBY_JOIN);
-const EventType LOBBY_CLIENTS = HASH(Net::LOBBY_CLIENTS);
-const EventType LOBBY_QUIT = HASH(Net::LOBBY_QUIT);
-const EventType LOBBY_READY = HASH(Net::LOBBY_READY);
-const EventType LOBBY_READY_OK = HASH(Net::LOBBY_READY_OK);
-const EventType LOBBY_CANCEL = HASH(Net::LOBBY_CANCEL);
-const EventType LOBBY_CANCEL_OK = HASH(Net::LOBBY_CANCEL_OK);
-}
 
 class Event
 {
-    private:
-        EventType _eventType;
-        std::unordered_map<ParameterId, std::any> _parameters {};
+private:
+    EventType _eventType;
 
-    public:
-        Event(EventType type)
-        {
-            _eventType = type;
-            // event is added but not called for some reason
-        }
+    std::unordered_map<ParameterId, std::any> _parameters {};
 
-        template <typename ParameterType>
-        void SetParam(ParameterId id, ParameterType value)
-        {
-            _parameters[id] = value;
-        }
+public:
+    Event(EventType type)
+    {
+        _eventType = type;
+        // event is added but not called for some reason
+    }
 
-        template <typename ParameterType>
-        ParameterType GetParam(ParameterId id)
-        {
-            return std::any_cast<ParameterType>(_parameters[id]);
-        }
+    template <typename ParameterType>
+    void SetParam(ParameterId id, ParameterType value)
+    {
+        _parameters[id] = value;
+    }
 
-        EventType GetType() const
-        {
-            return _eventType;
-        }
+    template <typename ParameterType>
+    ParameterType GetParam(ParameterId id)
+    {
+        return std::any_cast<ParameterType>(_parameters[id]);
+    }
+
+    EventType GetType() const
+    {
+        return _eventType;
+    }
 };

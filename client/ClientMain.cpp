@@ -6,6 +6,7 @@
 */
 
 #include "src/RType.hpp"
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -16,7 +17,6 @@ int main()
     RType rtype;
     rtype.Init();
     rtype.Run();
-
 
     return 0;
 }

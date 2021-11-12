@@ -15,8 +15,8 @@ struct SClientComponent {
     sf::IpAddress ip;
     ClientID id;
     std::uint8_t lobbyID;
-    bool IsConnected;
-    bool IsInLobby;
+    bool isConnected = false;
+    bool isInLobby = false;
 };
 
 struct ConnectionComponent {

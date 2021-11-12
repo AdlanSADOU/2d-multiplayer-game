@@ -16,6 +16,6 @@ public:
     sf::IpAddress ip;
     ClientID uuid;
     bool connected;
-    bool IsInLobby;
+    bool isInLobby;
     std::uint8_t lobbyID;
 };

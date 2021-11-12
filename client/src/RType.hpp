@@ -21,6 +21,8 @@
 #include "Nuts/EcsSystems/TransformSystem.hpp"
 #include "Nuts/EcsSystems/AnimationSystem.hpp"
 
+#include "Nuts/Networking.hpp"
+
 // #include "engine/Nuts/GameObject.hpp"
 
 class RTypeMonster : public nuts::GameObject
@@ -57,7 +59,7 @@ class RTypeMonster : public nuts::GameObject
 
 };
 
-class RType
+class RType : public INetworkedClient
 {
 
     enum game_state
@@ -73,8 +75,12 @@ class RType
         void Init();
         void Run();
 
+        void OnNetReceivedId(Event &event);
+
+
     protected:
     private:
+
         // TEST A SUPPRIMER APRES
         RTypeMonster _monster;
         //

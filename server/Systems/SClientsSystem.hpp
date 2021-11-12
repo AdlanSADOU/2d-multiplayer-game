@@ -10,47 +10,57 @@
 #include <Nuts/EcsCore/Event.hpp>
 #include <Nuts/GameObject.hpp>
 
-class SClientsSystem : public System {
+class SClientsSystem : public System
+{
 private:
-
 public:
     SClientsSystem()
     {
         scene.AddEventCallback(Events::Net::CLIENT_CONNECT, BIND_CALLBACK(&SClientsSystem::OnClientConnected, this));
+        scene.AddEventCallback(Events::Net::CLIENTS_PRINT, BIND_CALLBACK(&SClientsSystem::OnPrintConnectedClients, this));
         // scene.AddEventCallback(Events::Net::CLIENT_DISCONNECT, BIND_CALLBACK(&SClientsSystem::OnClientDisconnected, this));
     }
 
     /** TODO(adlan):
     *   just a draft
     */
-    void OnClientConnected(Event& e)
+    void OnClientConnected(Event &e)
     {
         assert(Events::Net::CLIENT_CONNECT == e.GetType() && "wrong event type");
+
         static ClientID clientId = 0;
-        auto tcpSocket = e.GetParam<std::shared_ptr<sf::TcpSocket>>(0);
-        tcpSocket->setBlocking(false);
+
+        auto tmpSocket = e.GetParam<sf::TcpSocket *>(0);
+
+        tmpSocket->setBlocking(false);
 
         nuts::GameObject tmpClient("name");
         tmpClient.AddComponent<SClientComponent>();
 
-        auto& clientComponent = tmpClient.GetComponent<SClientComponent>();
-        clientComponent.tcpSock = tcpSocket;
-        clientComponent.ip = tcpSocket->getRemoteAddress();
-        clientComponent.IsConnected = true;
-        clientComponent.lobbyID = 0;
-        clientComponent.id = clientId;
+        auto &clientComponent   = tmpClient.GetComponent<SClientComponent>();
+        clientComponent.tcpSock = std::make_shared<sf::TcpSocket>();
+        clientComponent.tcpSock.reset(tmpSocket);
+        clientComponent.ip          = tmpSocket->getRemoteAddress();
+        clientComponent.isConnected = true;
+        clientComponent.lobbyID     = 0;
+        clientComponent.id          = clientId;
 
-
-        std::cout << "[SERVER]: client connected ID:" << clientId << " TCP:" << clientComponent.ip << ":" << clientComponent.tcpSock->getRemotePort() << std::endl;
+        std::cout << "\n[SERVER]: client connected ID:" << clientId << " TCP:" << clientComponent.ip << ":" << clientComponent.tcpSock->getRemotePort() << std::endl;
 
         sf::Packet clientIdPacket;
-        clientIdPacket << clientId;
+        clientIdPacket << (Events::Net::CLIENT_ID) << clientId;
+        std::cout << "[Server]: Sent TCP type:"
+                  << Events::Net::CLIENT_ID
+                  << " id:"
+                  << clientId
+                  << "\n";
+
         clientComponent.tcpSock->send(clientIdPacket);
 
         clientId++;
     };
 
-    void OnClientDisconnected(Event& e)
+    void OnClientDisconnected(Event &e)
     {
         assert(Events::Net::CLIENT_DISCONNECT == e.GetType() && "wrong event type");
 
@@ -60,24 +70,55 @@ public:
     void ReceiveTcp()
     {
 
+        sf::Packet remotePacket;
+        EventType  type;
+
         for (Entity clientEntity : _entities) {
 
-            auto& sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
-            auto tcpSock = sClientComp.tcpSock;
-            if (!sClientComp.IsConnected)
-                continue;
+            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
+            auto  tcpSock     = sClientComp.tcpSock;
 
-            sf::Packet remotePacket;
+            if (!sClientComp.isConnected)
+                continue;
 
             sf::Socket::Status status = tcpSock->receive(remotePacket);
             if (status == sf::Socket::Done) {
-                std::cout << "received " << std::endl;
+                remotePacket >> type;
+                std::cout << "\nreceived type:"
+                          << type
+                          << " vs "
+                          << Events::Net::CLIENT_CONNECT
+                          << std::endl;
+
+                scene.InvokeEvent(type);
+
             } else if (status == sf::Socket::Disconnected) {
-                std::cout << "disconnected " << std::endl;
-                sClientComp.IsConnected = false;
+                std::cout << "\ndisconnected\n" << std::endl;
+                sClientComp.isConnected = false;
                 _entities.erase(clientEntity);
                 break;
             }
+        }
+    }
+
+    void OnPrintConnectedClients(Event &event)
+    {
+        std::cout << "\n Connected clients: EventType:"
+                  << event.GetType()
+                  << "\n";
+
+        for (Entity clientEntity : _entities) {
+
+            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
+            auto  tcpSock     = sClientComp.tcpSock;
+
+            std::cout << "[Server]: --> client id:"
+                      << sClientComp.id
+                      << " endpoint:["
+                      << tcpSock->getRemoteAddress()
+                      << ":"
+                      << tcpSock->getRemotePort()
+                      << "]\n";
         }
     }
 };

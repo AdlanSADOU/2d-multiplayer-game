@@ -5,7 +5,10 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(rtype_client ClientMain.cpp src/RType.cpp)
+add_executable(rtype_client
+ClientMain.cpp
+src/RType.cpp
+src/RTypeNetCallbacks.cpp)
 
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

@@ -10,11 +10,12 @@
 #include "Components/Components.hpp"
 #include <iostream>
 #include <vector>
+#include <Nuts/Networking.hpp>
 
 class ConnectionSystem : public System {
 private:
     ConnectionComponent _conn;
-    std::shared_ptr<sf::TcpSocket> _tmpSocket;
+    sf::TcpSocket *_tmpSocket;
 
 public:
     int Init(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
@@ -41,7 +42,7 @@ public:
         _conn.port = port + 1;
         std::cout << "[Server]: UDP socket bound on " << address << ":" << port + 1 << std::endl;
 
-        _tmpSocket = std::make_shared<sf::TcpSocket>();
+        _tmpSocket = new sf::TcpSocket();
 
         return 0;
     }
@@ -52,8 +53,11 @@ public:
             std::cout << "connection request\n";
 
             Event clienConnectedEvent(Events::Net::CLIENT_CONNECT);
-            clienConnectedEvent.SetParam<std::shared_ptr<sf::TcpSocket>>(0, _tmpSocket);
+            clienConnectedEvent.SetParam<sf::TcpSocket *>(0, _tmpSocket);
             scene.InvokeEvent(clienConnectedEvent);
+
+            _tmpSocket = new sf::TcpSocket();
+
         }
     }
 };
