@@ -92,9 +92,12 @@ public:
 
                 scene.InvokeEvent(type);
 
-            } else if (status == sf::Socket::Disconnected) {
-                std::cout << "\ndisconnected\n" << std::endl;
+            } else if (status == sf::Socket::Disconnected) { // TODO: Broadcast
                 sClientComp.isConnected = false;
+                std::cout << "Client id:"
+                          << sClientComp.id
+                          << " disconnected"
+                          << "\n";
                 _entities.erase(clientEntity);
                 break;
             }
