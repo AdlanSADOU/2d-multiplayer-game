@@ -16,9 +16,9 @@ private:
 public:
     SClientsSystem()
     {
-        scene.AddEventCallback(Events::Net::CLIENT_CONNECT, BIND_CALLBACK(&SClientsSystem::OnClientConnected, this));
-        scene.AddEventCallback(Events::Net::CLIENTS_PRINT, BIND_CALLBACK(&SClientsSystem::OnPrintConnectedClients, this));
-        // scene.AddEventCallback(Events::Net::CLIENT_DISCONNECT, BIND_CALLBACK(&SClientsSystem::OnClientDisconnected, this));
+        scene.AddEventCallback(Net::Events::CLIENT_CONNECT, BIND_CALLBACK(&SClientsSystem::OnClientConnected, this));
+        scene.AddEventCallback(Net::Events::CLIENTS_PRINT, BIND_CALLBACK(&SClientsSystem::OnPrintConnectedClients, this));
+        // scene.AddEventCallback(Net::Events::CLIENT_DISCONNECT, BIND_CALLBACK(&SClientsSystem::OnClientDisconnected, this));
     }
 
     /** TODO(adlan):
@@ -26,7 +26,7 @@ public:
     */
     void OnClientConnected(Event &e)
     {
-        assert(Events::Net::CLIENT_CONNECT == e.GetType() && "wrong event type");
+        assert(Net::Events::CLIENT_CONNECT == e.GetType() && "wrong event type");
 
         static ClientID clientId = 0;
 
@@ -48,9 +48,9 @@ public:
         std::cout << "\n[SERVER]: client connected ID:" << clientId << " TCP:" << clientComponent.ip << ":" << clientComponent.tcpSock->getRemotePort() << std::endl;
 
         sf::Packet clientIdPacket;
-        clientIdPacket << (Events::Net::CLIENT_ID) << clientId;
+        clientIdPacket << (Net::Events::CLIENT_ID) << clientId;
         std::cout << "[Server]: Sent TCP type:"
-                  << Events::Net::CLIENT_ID
+                  << Net::Events::CLIENT_ID
                   << " id:"
                   << clientId
                   << "\n";
@@ -62,7 +62,7 @@ public:
 
     void OnClientDisconnected(Event &e)
     {
-        assert(Events::Net::CLIENT_DISCONNECT == e.GetType() && "wrong event type");
+        assert(Net::Events::CLIENT_DISCONNECT == e.GetType() && "wrong event type");
 
         std::cout << "disconnect that fckin client\n";
     };
@@ -87,7 +87,7 @@ public:
                 std::cout << "\nreceived type:"
                           << type
                           << " vs "
-                          << Events::Net::CLIENT_CONNECT
+                          << Net::Events::CLIENT_CONNECT
                           << std::endl;
 
                 scene.InvokeEvent(type);

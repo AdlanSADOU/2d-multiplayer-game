@@ -59,7 +59,7 @@ class RTypeMonster : public nuts::GameObject
 
 };
 
-class RType : public INetworkedClient
+class RType : public Net::INetClient
 {
 
     enum game_state
