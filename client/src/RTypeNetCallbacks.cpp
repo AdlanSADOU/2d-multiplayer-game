@@ -9,5 +9,13 @@
 
 void RType::OnNetReceivedId(Event &event)
 {
-    std::cout << "OnNetReceivedId\n";
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    ClientID id;
+    packet >> id;
+
+    SetLocalClientId(id);
+
+    std::cout << "OnNetReceivedId id:"
+              << GetLocalClientId()
+              << "\n";
 }

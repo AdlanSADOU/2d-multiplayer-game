@@ -29,12 +29,14 @@ using ClientID = std::int32_t;
 namespace Events {
     enum Net
     {
-        CLIENT_CONNECT = 600,
+        CLIENT_CONNECT = 1000,
         CLIENT_DISCONNECT,
         CLIENT_ID,
         CLIENTS_PRINT,
+
         UDP_INFO,
         UDP_OK,
+
         LOBBY_LOAD,
         LOBBY_LIST,
         LOBBY_CREATE,
@@ -105,6 +107,16 @@ public:
     {
         if (_isConnected)
             _tcpSocket.disconnect();
+    }
+
+    void SetLocalClientId(ClientID id)
+    {
+        _clientId = id;
+    }
+
+    ClientID GetLocalClientId() const
+    {
+        return _clientId;
     }
 
     void TcpSend(EventType type, sf::Packet &packet)
