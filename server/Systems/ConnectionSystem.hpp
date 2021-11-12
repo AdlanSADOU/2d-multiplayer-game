@@ -52,7 +52,7 @@ public:
         if (_conn.listener->accept(*_tmpSocket) == sf::Socket::Done) {
             std::cout << "\n[Server]: Incoming Connection\n";
 
-            Event clienConnectedEvent(Events::Net::CLIENT_CONNECT);
+            Event clienConnectedEvent(Net::Events::CLIENT_CONNECT);
             clienConnectedEvent.SetParam<sf::TcpSocket *>(0, _tmpSocket);
             scene.InvokeEvent(clienConnectedEvent);
 

@@ -11,7 +11,6 @@
 
 RType::RType()
 {
-
 }
 
 RType::~RType()
@@ -28,7 +27,7 @@ void RType::Init()
     scene.RegisterComponent<SpriteComponent>();
     scene.RegisterComponent<VelocityComponent>();
 
-    _renderSystem = scene.RegisterSystem<RenderSystem>();
+    _renderSystem    = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
     _animationSystem = scene.RegisterSystem<AnimationSystem>();
 
@@ -49,9 +48,9 @@ void RType::Init()
     _monster.Init();
     _deltaClock.Restart();
 
-    scene.AddEventCallback(Events::Net::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
+    scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
 
-    NetConnect(sf::IpAddress::getLocalAddress(), 55001);
+    INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
 }
 
 void RType::Run()
@@ -64,11 +63,17 @@ void RType::Run()
             scene.InvokeEvent(nuts::Key::Left);
         }
 
+        if (_engine.GetKeyPressed(nuts::Key::P)) {
+            sf::Packet packet;
+            packet << Net::Events::CLIENTS_PRINT;
+            INetClient::TcpSend(packet);
+        }
+
         _transformSystem.get()->Update(_deltaClock);
         _animationSystem.get()->Update(_deltaClock);
         _renderSystem.get()->Update(_engine.window);
 
-        NetUpdate();
+        INetClient::Update();
 
         _engine.Present();
         _deltaClock.Restart();
