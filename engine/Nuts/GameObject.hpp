@@ -14,54 +14,55 @@
 extern Scene scene;
 
 namespace nuts {
-class GameObject {
-protected:
-    std::string _name;
-    Entity _entity;
-
-public:
-    GameObject()
+    class GameObject
     {
-    }
+    protected:
+        std::string _name;
+        Entity      _entity;
 
-    GameObject(std::string name)
-    {
-        Create(name);
-    }
+    public:
+        GameObject()
+        {
+        }
 
-    void Create(std::string name)
-    {
-        _name = name;
-        _entity = scene.CreateEntity();
-    }
+        GameObject(std::string name)
+        {
+            Create(name);
+        }
 
-    template <typename T>
-    void AddComponent()
-    {
-        scene.AddComponent(_entity, T {});
-    }
+        void Create(std::string name)
+        {
+            _name   = name;
+            _entity = scene.CreateEntity();
+        }
 
-    template <typename T>
-    void RemoveComponent()
-    {
-        scene.RemoveComponent<T>(_entity);
-    }
+        template <typename T>
+        void AddComponent()
+        {
+            scene.AddComponent(_entity, T {});
+        }
 
-    template <typename T>
-    T& GetComponent()
-    {
-        return scene.GetComponent<T>(_entity);
-    }
+        template <typename T>
+        void RemoveComponent()
+        {
+            scene.RemoveComponent<T>(_entity);
+        }
 
-    Entity GetEntity() const
-    {
-        return _entity;
-    }
+        template <typename T>
+        T &GetComponent()
+        {
+            return scene.GetComponent<T>(_entity);
+        }
 
-    std::string GetName() const
-    {
-        return _name;
-    }
-};
+        Entity GetEntity() const
+        {
+            return _entity;
+        }
+
+        std::string GetName() const
+        {
+            return _name;
+        }
+    };
 
 } // namespace nuts
