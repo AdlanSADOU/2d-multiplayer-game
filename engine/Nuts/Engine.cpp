@@ -6,6 +6,7 @@
 */
 
 #include "UI/Widget.hpp"
+#include "UI/Button.hpp"
 
 int main()
 {

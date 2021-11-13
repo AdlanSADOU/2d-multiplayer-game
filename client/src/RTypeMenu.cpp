@@ -15,17 +15,31 @@ RTypeMenu::~RTypeMenu()
 {
 }
 
-void RTypeMenu::Init()
+void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
 {
-    _widgetMenu._background = nuts::UI::Widget("Background");
-    _widgetMenu._background.SetImageFromFile("./resources/r_type_logo.png");
-    _widgetMenu._background.SetPosition({ 0, 0 });
+    _engine = engine;
+    nuts::Vector2u winSize = _engine->GetWindowSize();
 
-    _widgetMenu._panel = nuts::UI::Widget("Panel");
-    _widgetMenu._panel.SetImageFromFile("./resources/me.jpg");
-    _widgetMenu._panel.SetParent(_widgetMenu._background);
-    _widgetMenu._panel.SetPosition({ 1, 0 });
+    _widgetMenu.logo = nuts::UI::Widget("Logo");
+    _widgetMenu.logo.SetImageFromFile("./resources/r_type_logo.png");
 
-    _widgetMenu._background.SetScale({.5f, .5f});
-    _widgetMenu._panel.SetScale({ 1, 1 });
+    float lgWidth =_widgetMenu.logo.GetSPrite().GetSprite().getLocalBounds().width;
+    float lgHeight =_widgetMenu.logo.GetSPrite().GetSprite().getLocalBounds().height;
+    _widgetMenu.logo.SetPosition({ winSize.x/2.f - lgWidth/2.f, 0 });
+
+    _widgetMenu.panel = nuts::UI::Widget("Panel");
+    _widgetMenu.panel.SetImageFromFile("./resources/ui/MainPanel02.png");
+    _widgetMenu.panel.SetParent(_widgetMenu.logo);
+
+    float panelWidth =_widgetMenu.panel.GetSPrite().GetSprite().getLocalBounds().width;
+    _widgetMenu.panel.SetPosition({ lgWidth/2.f - panelWidth/2.f, lgHeight - 20 });
+
+    _widgetMenu.btnLobby = nuts::UI::Button("Lobby");
+    _widgetMenu.btnLobby.SetParent(_widgetMenu.panel);
+    _widgetMenu.btnLobby.SetImageFromFile("./resources/ui/Button01.png");
+    _widgetMenu.btnLobby.SetEventType(Events::Btn::BTN_LOBBY_SCREEN);
+
+    float lbBtnWidth =_widgetMenu.btnLobby.GetSPrite().GetSprite().getLocalBounds().width;
+    _widgetMenu.btnLobby.SetPosition({lbBtnWidth/2.f, 20});
+
 }

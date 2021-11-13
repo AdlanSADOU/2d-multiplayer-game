@@ -67,7 +67,7 @@ namespace nuts::UI {
             sprite.SetTexture(*texture);
         }
 
-        void SetPosition(Vector2f position)
+        void SetPosition(const Vector2f position)
         {
             auto &sprite = _gameObject.GetComponent<WidgetComponent>().sprite;
 
@@ -77,8 +77,8 @@ namespace nuts::UI {
                 auto &parentSprite = _parent->GetSPrite();
 
                 Vector2f relativePosition {
-                    position.x + sprite.GetPosition().x + parentSprite.GetPosition().x,
-                    position.y + sprite.GetPosition().y + parentSprite.GetPosition().y
+                    parentSprite.GetPosition().x + position.x,
+                    parentSprite.GetPosition().y + position.y
                 };
 
                 sprite.SetPosition(relativePosition);
@@ -88,22 +88,28 @@ namespace nuts::UI {
                 auto &childSprite = _child->GetSPrite();
 
                 Vector2f relativePosition {
-                    position.x + sprite.GetPosition().x + childSprite.GetPosition().x,
-                    position.y + sprite.GetPosition().y + childSprite.GetPosition().y
+                    sprite.GetPosition().x + position.x,
+                    sprite.GetPosition().y + position.y
                 };
 
                 childSprite.SetPosition(relativePosition);
             }
         }
 
-        void SetScale(Vector2f factors)
+        void SetScale(const Vector2f factors)
         {
             auto &sprite = _gameObject.GetComponent<WidgetComponent>().sprite;
 
             sprite.SetScale(factors);
-            
+
             if (_child)
                 _child->SetScale(factors);
+        }
+
+        void SetOrigin(const nuts::Vector2f &origin)
+        {
+            auto &sprite = _gameObject.GetComponent<WidgetComponent>().sprite;
+            sprite.SetOrigin(origin);
         }
 
         Sprite &GetSPrite()
