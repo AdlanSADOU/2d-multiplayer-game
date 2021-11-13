@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 if (UNIX)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(rtype_client ClientMain.cpp)
+add_executable(rtype_client
+ClientMain.cpp
+src/RType.cpp
+src/RTypeMenu.cpp
+src/RTypeNetCallbacks.cpp)
 
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -15,7 +19,7 @@ if(UNIX)
   add_custom_command(TARGET rtype_client POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
   ${CMAKE_CURRENT_SOURCE_DIR}/../resources
-  ${CMAKE_CURRENT_BINARY_DIR}/Debug/resources
+  ${CMAKE_CURRENT_BINARY_DIR}/resources
   )
 endif()
 

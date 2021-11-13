@@ -43,8 +43,8 @@ server accepts same incoming connection multiple times
 ---
 ## class Dispatcher
     dispacher takes in received packet and which socket type they came from (TCP or UDP)
-    It then extracts the Rpc type and 'routes' to the approriate calls though an array of function pointers
-    the Dispatcher has an array of function pointers indexed by Rpc type
+    It then extracts the MsgType type and 'routes' to the approriate calls though an array of function pointers
+    the Dispatcher has an array of function pointers indexed by MsgType type
     the Dispatcher holds unique references to ClientManager &
     LobbyManager
 
@@ -83,6 +83,33 @@ Once in a lobby clients have a [READY] button, when clicked, server receives a p
 
 When the last client in the lobby clicks the [READY] button, the server receives a [START_GAME] packet, which inits a game session on the server side and broadcasts to all clients data related to the game session. the client can now start to load the necessary sprite assets to start drawing all entities received from the server.
 
+
+
+###### not actually sure about what follows
+Each GameSession could be a thread, that thread has its own UDP socket that only clients belonging to that session can communicate with
+
+
+---
+## Thread workers example & mutex
+https://en.cppreference.com/w/cpp/thread/mutex
+
+    std::vector<std::thread> workers;
+    for (int i = 0; i < 5; i++) {
+        workers.push_back(std::thread([]()
+        {
+            std::cout << "thread function\n";
+        }));
+    }
+
+    std::for_each(workers.begin(), workers.end(), [](std::thread &t)
+    {
+        t.join();
+    });
+
+### threading obeservations
+trying to join workers ouside the class they were pushed
+crashes
+
 ---
 IServer common interface
 - Clients
@@ -108,8 +135,6 @@ IClient common interface
 
 - MessageType<T>
 
-- MessageQueue<T>
-
 - WriteMessageHeader()
 - WriteMessageBody()
 
@@ -118,3 +143,56 @@ IClient common interface
 
 - sendMessage(Connection, Packet)
 - receiveMessage()
+
+# Client/Server Protocol
+https://www.netresec.com/index.ashx?page=RawCap
+---
+                R-TYPE Protocol Description
+
+1. Client/Server internals
+
+    Client and server communicate with uint8 typed MsgTypes enum class:
+    SFML Packet class is used to pass messages between client/server.
+    A given packet always contains at least the message header as
+    the first byte followed by a ClientID that is also 1 byte long,
+    completed by the message body.
+
+2. Anatomy of a packet
+                         (byte)     (byte)
+    packet contains => { MsgType | ClientID | Body }
+
+3. Message Types
+
+    CLIENT_ID   = 1 : server sends clients ID upon accepted TCP connection
+    UDP_INFO    = 2 : upon receiving ID client reponds by sending its UDP bound port
+    UDP_OK      = 3 :
+
+4. Client/Server connection sequence
+
+    [Client]: initiates TCP connection
+    [Server]: accepts   TCP connection
+    [Server]: response.....packet { CLIENT_ID | ClientID }
+    [Client]: response.....packet { UDP_INFO  | ClientID  | clientUdpPort }
+    [Server]: response.....packet { UDP_OK    | ClientID }
+
+5. Lobby
+
+    [Client]: request......packet { LOBBY_LOAD | ClientID }
+    [Server]: response.....packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
+
+        lobby_ids: list of lobby ids to join.
+    if none exist, client receives 0.
+
+    [Client]: request......packet { LOBBY_CREATE | ClientID }
+
+        Server creates lobby with an attributed id.
+
+    [Server]: response.....packet { LOBBY_LIST | ClientID | { lobby_ids } }
+
+        Client refreches lobby list
+
+        Client clicks on specific lobby:
+
+    [Client]: request......packet { LOBBY_JOIN | ClientID | lobby_id }
+
+        Server processes

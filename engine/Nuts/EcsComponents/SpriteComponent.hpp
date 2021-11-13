@@ -7,10 +7,9 @@
 
 #pragma once
 
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include "../Sprite.hpp"
 
 struct SpriteComponent {
-    sf::Texture texture;
-    sf::Sprite sprite;
+    nuts::Sprite sprite;
+    bool isActive = false;
 };

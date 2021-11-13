@@ -1,0 +1,23 @@
+{
+  BasedOnStyle: WebKit,
+  UseTab: Never,
+  IndentWidth: 4,
+  TabWidth: 4,
+  AllowShortIfStatementsOnASingleLine: true,
+  IndentCaseLabels: true,
+  IndentCaseBlocks: true,
+  ColumnLimit: 0,
+  AccessModifierOffset: -4,
+  NamespaceIndentation: All,
+  FixNamespaceComments: false,
+  PointerAlignment: Right,
+
+  BreakBeforeBraces: Custom,
+  BraceWrapping:
+    { AfterFunction: true, AfterClass: false, AfterEnum: false, AfterStruct: false, SplitEmptyFunction: false },
+
+  AlignConsecutiveBitFields: Consecutive,
+  AlignConsecutiveDeclarations: Consecutive,
+  AlignConsecutiveMacros: Consecutive,
+  AlignConsecutiveAssignments: Consecutive,
+}

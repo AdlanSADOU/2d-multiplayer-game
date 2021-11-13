@@ -7,54 +7,62 @@
 
 #pragma once
 
-#include <EcsCore/Scene.hpp>
+#include "EcsCore/Scene.hpp"
+
 #include <string>
 
-extern Scene gScene;
+extern Scene scene;
 
-/** TODO(adlan):
- * GameObjects should handle their own Components
- * it should implement its own array of components
- */
-class GameObject {
-private:
-    std::string _name;
-    Entity _entity;
-
-public:
-    GameObject() {};
-
-    GameObject(std::string name)
+namespace nuts {
+    class GameObject
     {
-        Create(name);
-    };
+    protected:
+        std::string _name;
+        Entity      _entity;
 
-    void Create(std::string name)
-    {
-        _name = name;
-        _entity = gScene.CreateEntity();
-    }
-
-    template <typename T>
-    void AddComponent()
-    {
-        gScene.AddComponent(_entity, T {});
-    };
-
-    template <typename T>
-    void RemoveComponent()
-    {
-
+    public:
+        GameObject()
+        {
         }
 
-    template <typename T>
-    T &GetComponent()
-    {
-        return gScene.GetComponent<T>(_entity);
-    }
+        GameObject(std::string name)
+        {
+            Create(name);
+        }
 
-        Entity GetEntity()
+        void Create(std::string name)
+        {
+            _name   = name;
+            _entity = scene.CreateEntity();
+        }
+
+        template <typename T>
+        void AddComponent()
+        {
+            scene.AddComponent(_entity, T {});
+        }
+
+        template <typename T>
+        void RemoveComponent()
+        {
+            scene.RemoveComponent<T>(_entity);
+        }
+
+        template <typename T>
+        T &GetComponent()
+        {
+            return scene.GetComponent<T>(_entity);
+        }
+
+        Entity GetEntity() const
         {
             return _entity;
         }
-};
+
+        std::string GetName() const
+        {
+            return _name;
+        }
+    };
+
+} // namespace nuts

@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "Nuts/Vect.hpp"
 
 struct TransformComponent {
-    sf::Vector2f position;
+    nuts::Vector2f position;
     float angle;
     float scale;
 };

@@ -9,12 +9,30 @@
 
 #include <SFML/System.hpp>
 
-namespace Input
-{
-    enum Key
-    {
+namespace nuts {
+
+    enum Button {
+        Left, ///< The left mouse button
+        Right, ///< The right mouse button
+        Middle, ///< The middle (wheel) mouse button
+        XButton1, ///< The first extra mouse button
+        XButton2, ///< The second extra mouse button
+
+        ButtonCount ///< Keep last -- the total number of mouse buttons
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse wheels
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Wheel {
+        VerticalWheel, ///< The vertical mouse wheel
+        HorizontalWheel ///< The horizontal mouse wheel
+    };
+
+    enum Key {
         Unknown = -1, ///< Unhandled key
-        A = 0, ///< The A key
+        A       = 0, ///< The A key
         B, ///< The B key
         C, ///< The C key
         D, ///< The D key
@@ -85,10 +103,10 @@ namespace Input
         Subtract, ///< The - key (minus, usually from numpad)
         Multiply, ///< The * key
         Divide, ///< The / key
-        Left, ///< Left arrow
-        Right, ///< Right arrow
-        Up, ///< Up arrow
-        Down, ///< Down arrow
+        LeftArrow, ///< Left arrow
+        RightArrow, ///< Right arrow
+        UpArrow, ///< Up arrow
+        DownArrow, ///< Down arrow
         Numpad0, ///< The numpad 0 key
         Numpad1, ///< The numpad 1 key
         Numpad2, ///< The numpad 2 key
@@ -117,13 +135,5 @@ namespace Input
         Pause, ///< The Pause key
 
         KeyCount, ///< Keep last -- the total number of keyboard keys
-
-        // Deprecated values:
-
-        Dash = Hyphen, ///< \deprecated Use Hyphen instead
-        BackSpace = Backspace, ///< \deprecated Use Backspace instead
-        BackSlash = Backslash, ///< \deprecated Use Backslash instead
-        SemiColon = Semicolon, ///< \deprecated Use Semicolon instead
-        Return = Enter ///< \deprecated Use Enter instead
     };
 }

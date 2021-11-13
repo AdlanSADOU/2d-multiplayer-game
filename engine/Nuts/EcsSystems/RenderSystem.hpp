@@ -10,29 +10,26 @@
 #include "SpriteComponent.hpp"
 #include "System.hpp"
 
-extern Scene gScene;
+extern Scene scene;
 
-/**
-* Derives from System, which has a reference to all entities.
-* RenderSystem iterates over every entity that has at least a
-* TransformComponent & SpriteComponent and draws them
-**/
 class RenderSystem : public System
 {
     private:
 
     public:
 
-        void Init() {
+        void Init()
+        {
 
         }
 
-        void Update(sf::RenderWindow &window) {
+        void Update(sf::RenderWindow &window)
+        {
             for (auto const &entity : _entities)
             {
-                auto const& spriteComponent = gScene.GetComponent<SpriteComponent>(entity);
+                auto const& spriteComponent = scene.GetComponent<SpriteComponent>(entity);
 
-                window.draw(spriteComponent.sprite);
+                window.draw(spriteComponent.sprite.GetSprite());
             }
         }
 };
