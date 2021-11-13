@@ -10,6 +10,7 @@
 #include <SFML/Audio.hpp>
 
 #include <iostream>
+#include <memory>
 
 namespace nuts
 {
@@ -26,30 +27,24 @@ namespace nuts
             sf::SoundBuffer _sound_buffer;
 
         public:
-
-            SoundBuffer() {
-
-            };
-
-            ~SoundBuffer() {
-
-            };
-
-            SoundBuffer(const std::string &path)
+            SoundBuffer()
             {
-                if (!_sound_buffer.loadFromFile(path)) {
-                    std::cout << "Error loading sound_buffer file" << std::endl;
-                }
-            }
+
+            };
+
+            ~SoundBuffer()
+            {
+
+            };
 
             bool LoadFromFile(const std::string &path)
             {
                 return (_sound_buffer.loadFromFile(path));
             }
 
-            sf::SoundBuffer &GetSoundBuffer()
+            const sf::SoundBuffer &GetSoundBuffer()
             {
-                return (this->_sound_buffer);
+                return (_sound_buffer);
             }
     };
 
@@ -59,12 +54,21 @@ namespace nuts
             sf::Sound _sound;
 
         public:
-            Sound() {};
+            Sound() {
+                // std::cout << "Sound class created" << std::endl;
+            };
 
-            ~Sound() {};
+            ~Sound() {
+                // std::cout << "Sound class destroyed" << std::endl;
+            };
+
+            Sound(nuts::SoundBuffer &buf) {
+                _sound.setBuffer(buf.GetSoundBuffer());
+            };
 
             void Play()
             {
+                // std::cout << "Playing sound" << std::endl;
                 _sound.play();
             }
 
@@ -80,6 +84,7 @@ namespace nuts
 
             void SetSoundBuffer(const sf::SoundBuffer &buf)
             {
+                // std::cout << "Setting buffer" << std::endl;
                 _sound.setBuffer(buf);
             }
 
@@ -93,7 +98,10 @@ namespace nuts
                 _sound.setPitch(pitch);
             }
 
-
+            const sf::SoundBuffer *GetBufferFromSound()
+            {
+                return (_sound.getBuffer());
+            }
     };
 
     class Music

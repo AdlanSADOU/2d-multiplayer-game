@@ -18,7 +18,7 @@ namespace nuts
 
             Texture()
             {
-
+                
             }
 
             ~Texture()
@@ -28,10 +28,10 @@ namespace nuts
 
             bool LoadFromFile(const std::string &path)
             {
-                return (_texture.loadFromFile(path.c_str()));
+                return (_texture.loadFromFile(path));
             }
 
-            sf::Texture &GetTexture()
+            const sf::Texture &GetTexture()
             {
                 return (this->_texture);
             }

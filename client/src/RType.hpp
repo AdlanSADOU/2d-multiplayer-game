@@ -17,12 +17,10 @@
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
-#include "Nuts/EcsComponents/SoundComponent.hpp"
 
 #include "Nuts/EcsSystems/AnimationSystem.hpp"
 #include "Nuts/EcsSystems/RenderSystem.hpp"
 #include "Nuts/EcsSystems/TransformSystem.hpp"
-#include "Nuts/EcsSystems/SoundSystem.hpp"
 
 #include "Nuts/Networking.hpp"
 
@@ -34,7 +32,6 @@ class RTypeMonster : public nuts::GameObject
 {
     private:
         nuts::Texture _texture;
-        nuts::SoundBuffer _sound_buffer;
 
     public:
         RTypeMonster() {};
@@ -43,18 +40,14 @@ class RTypeMonster : public nuts::GameObject
         void Init()
         {
             this->Create("Monster");
-
             _texture.LoadFromFile("./resources/sprites/r-typesheet3.gif");
-            _sound_buffer.LoadFromFile("./resources/sounds/explosion.wav");
 
             this->AddComponent<TransformComponent>();
             this->AddComponent<SpriteComponent>();
             this->AddComponent<VelocityComponent>();
-            this->AddComponent<SoundComponent>();
 
             TransformComponent &transformComponent = GetComponent<TransformComponent>();
             SpriteComponent &spriteComponent = GetComponent<SpriteComponent>();
-            SoundComponent &soundComponent = GetComponent<SoundComponent>();
 
             spriteComponent.sprite.SetTexture(_texture);
             spriteComponent.sprite.SetTextureRect({ 0, 0, 16, 14 });
@@ -65,9 +58,6 @@ class RTypeMonster : public nuts::GameObject
             spriteComponent.sprite.SetFrameTime(0.000005);
 
             transformComponent.position = { 0, 0 };
-
-            soundComponent.sound.SetSoundBuffer(_sound_buffer.GetSoundBuffer());
-            soundComponent.sound.Play();
         }
 };
 
@@ -103,5 +93,4 @@ class RType : public Net::INetClient
         std::shared_ptr<RenderSystem>    _renderSystem;
         std::shared_ptr<TransformSystem> _transformSystem;
         std::shared_ptr<AnimationSystem> _animationSystem;
-        std::shared_ptr<SoundSystem> _soundSystem;
 };

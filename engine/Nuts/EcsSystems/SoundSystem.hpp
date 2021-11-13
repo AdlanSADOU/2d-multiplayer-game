@@ -21,17 +21,12 @@ class SoundSystem : public System
     public:
         void Init()
         {
-            scene.AddEventCallback(nuts::Key::B, BIND_CALLBACK(&SoundSystem::PlaySound, this));
+            scene.AddEventCallback(nuts::Key::F, BIND_CALLBACK(&SoundSystem::PlaySound, this));
         }
 
         void PlaySound(Event &event)
         {
-            std::cout << "Wtf ??" << std::endl;
-            for (auto const &entity : _entities)
-            {
-                auto &soundComponent = scene.GetComponent<SoundComponent>(entity);
-                soundComponent.sound.Play();
-            }
+            
         }
 
         void Update()
