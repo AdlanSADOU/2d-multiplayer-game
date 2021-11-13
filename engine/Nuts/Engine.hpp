@@ -16,9 +16,9 @@
 namespace nuts {
     class Engine {
     private:
-        nuts::Key      pressedKey;
-        nuts::Key      downKey;
-        nuts::Button   mouseButton;
+        nuts::Key    pressedKey;
+        nuts::Key    downKey;
+        nuts::Button mouseButton = nuts::Button::Middle;
         nuts::Vector2i mousePos;
 
         bool isRunning;
@@ -61,6 +61,7 @@ namespace nuts {
         {
             sf::Event event;
             pressedKey = nuts::Unknown;
+            mouseButton = nuts::Button::Middle;
 
             while (window.pollEvent(event)) {
                 if (event.type == sf::Event::Closed)
@@ -77,7 +78,7 @@ namespace nuts {
                     mouseButton = (nuts::Button)event.mouseButton.button;
                 }
                 if (event.type == sf::Event::MouseMoved) {
-                    mousePos = { event.mouseButton.x, event.mouseButton.y };
+                    mousePos = { event.mouseMove.x, event.mouseMove.y };
                 }
             }
         }
@@ -98,14 +99,15 @@ namespace nuts {
 
         bool IsMouseBtnPressed(nuts::Button mouseBtn)
         {
-            return mouseButton & mouseBtn;
+            return (mouseButton == mouseBtn);
         }
 
-        Vector2i GetMousePos() const {
+        nuts::Vector2i GetMousePos() const
+        {
             return mousePos;
         }
 
-        Vector2u GetWindowSize() const
+        nuts::Vector2u GetWindowSize() const
         {
             return { window.getSize().x, window.getSize().y };
         }

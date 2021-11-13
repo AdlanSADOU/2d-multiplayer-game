@@ -52,6 +52,8 @@ void RType::Init()
     _deltaClock.Restart();
 
     scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
+    scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnLobbyScreenBtn, this));
+
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
 
     _menu.Init(_engine);
@@ -81,8 +83,11 @@ void RType::Run()
         _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
         _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
         _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
-        if (_menu._widgetMenu.btnLobby.IsClicked(_engine->GetMousePos())) {
-            printf("CLICKED");
+
+        if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
+            && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+            _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+
         }
 
         _engine->Present();

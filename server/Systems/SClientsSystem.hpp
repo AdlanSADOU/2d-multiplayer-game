@@ -10,15 +10,70 @@
 #include <Nuts/EcsCore/Event.hpp>
 #include <Nuts/GameObject.hpp>
 
-class SClientsSystem : public System
-{
+class SClientsSystem : public System {
 private:
 public:
     SClientsSystem()
     {
         scene.AddEventCallback(Net::Events::CLIENT_CONNECT, BIND_CALLBACK(&SClientsSystem::OnClientConnected, this));
         scene.AddEventCallback(Net::Events::CLIENTS_PRINT, BIND_CALLBACK(&SClientsSystem::OnPrintConnectedClients, this));
+        scene.AddEventCallback(Net::Events::LOBBY_LOAD, BIND_CALLBACK(&SClientsSystem::OnLobbyLoad, this));
         // scene.AddEventCallback(Net::Events::CLIENT_DISCONNECT, BIND_CALLBACK(&SClientsSystem::OnClientDisconnected, this));
+    }
+
+    void ReceiveTcp()
+    {
+
+        sf::Packet remotePacket;
+        EventType  type;
+
+        for (Entity clientEntity : _entities) {
+
+            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
+            auto  tcpSock     = sClientComp.tcpSock;
+
+            if (!sClientComp.isConnected)
+                continue;
+
+            sf::Socket::Status status = tcpSock->receive(remotePacket);
+            if (status == sf::Socket::Done) {
+                remotePacket >> type;
+
+                Event remoteEvent(type);
+                remoteEvent.SetParam<sf::Packet>(0, remotePacket);
+                scene.InvokeEvent(remoteEvent);
+
+            } else if (status == sf::Socket::Disconnected) { // TODO: Broadcast
+                sClientComp.isConnected = false;
+                std::cout << "Client id:"
+                          << sClientComp.id
+                          << " disconnected"
+                          << "\n";
+                _entities.erase(clientEntity);
+                break;
+            }
+        }
+    }
+
+    void OnPrintConnectedClients(Event &event)
+    {
+        std::cout << "\n Connected clients: EventType:"
+                  << event.GetType()
+                  << "\n";
+
+        for (Entity clientEntity : _entities) {
+
+            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
+            auto  tcpSock     = sClientComp.tcpSock;
+
+            std::cout << "[Server]: --> client id:"
+                      << sClientComp.id
+                      << " endpoint:["
+                      << tcpSock->getRemoteAddress()
+                      << ":"
+                      << tcpSock->getRemotePort()
+                      << "]\n";
+        }
     }
 
     /** TODO(adlan):
@@ -67,61 +122,15 @@ public:
         std::cout << "disconnect that fckin client\n";
     };
 
-    void ReceiveTcp()
+    void OnLobbyLoad(Event &e)
     {
+        sf::Packet packet = e.GetParam<sf::Packet>(0);
+        ClientID   remoteCliendId;
+        packet >> remoteCliendId;
 
-        sf::Packet remotePacket;
-        EventType  type;
+        std::cout << "[Server] Client ["
+                  << remoteCliendId
+                  << "] wants Lobby list\n";
 
-        for (Entity clientEntity : _entities) {
-
-            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
-            auto  tcpSock     = sClientComp.tcpSock;
-
-            if (!sClientComp.isConnected)
-                continue;
-
-            sf::Socket::Status status = tcpSock->receive(remotePacket);
-            if (status == sf::Socket::Done) {
-                remotePacket >> type;
-                std::cout << "\nreceived type:"
-                          << type
-                          << " vs "
-                          << Net::Events::CLIENT_CONNECT
-                          << std::endl;
-
-                scene.InvokeEvent(type);
-
-            } else if (status == sf::Socket::Disconnected) { // TODO: Broadcast
-                sClientComp.isConnected = false;
-                std::cout << "Client id:"
-                          << sClientComp.id
-                          << " disconnected"
-                          << "\n";
-                _entities.erase(clientEntity);
-                break;
-            }
-        }
-    }
-
-    void OnPrintConnectedClients(Event &event)
-    {
-        std::cout << "\n Connected clients: EventType:"
-                  << event.GetType()
-                  << "\n";
-
-        for (Entity clientEntity : _entities) {
-
-            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
-            auto  tcpSock     = sClientComp.tcpSock;
-
-            std::cout << "[Server]: --> client id:"
-                      << sClientComp.id
-                      << " endpoint:["
-                      << tcpSock->getRemoteAddress()
-                      << ":"
-                      << tcpSock->getRemotePort()
-                      << "]\n";
-        }
     }
 };

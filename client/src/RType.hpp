@@ -75,6 +75,7 @@ public:
     void Run();
 
     void OnNetReceivedId(Event &event);
+    void OnLobbyScreenBtn(Event &event);
 
 protected:
 private:
