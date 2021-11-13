@@ -7,11 +7,29 @@
 
 #pragma once
 
-class RTypeMenu {
-    public:
-        RTypeMenu();
-        ~RTypeMenu();
+#include <Nuts/Engine.hpp>
+#include <Nuts/UI/Button.hpp>
+#include <Nuts/UI/Widget.hpp>
 
-    protected:
-    private:
+#include "UIEvents.hpp"
+
+class RTypeMenu {
+    struct WidgetMenu {
+        nuts::UI::Widget logo;
+        nuts::UI::Widget panel;
+        nuts::UI::Button btnLobby;
+        nuts::UI::Button btnQuit;
+    };
+
+public:
+    std::shared_ptr<nuts::Engine> _engine;
+    WidgetMenu                    _widgetMenu;
+
+    RTypeMenu();
+    ~RTypeMenu();
+
+    void Init(std::shared_ptr<nuts::Engine> engine);
+
+protected:
+private:
 };

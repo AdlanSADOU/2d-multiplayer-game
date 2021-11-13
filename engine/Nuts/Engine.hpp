@@ -13,81 +13,104 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace nuts
-{
-    class Engine
-    {
-        private:
-            nuts::Key pressedKey;
-            nuts::Key downKey;
-            bool isRunning;
+namespace nuts {
+    class Engine {
+    private:
+        nuts::Key    pressedKey;
+        nuts::Key    downKey;
+        nuts::Button mouseButton = nuts::Button::Middle;
+        nuts::Vector2i mousePos;
 
-        public:
-            sf::RenderWindow window;
+        bool isRunning;
 
-            void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
-            {
-                window.create({width, height, 32}, windowName);
-                isRunning = true;
-            }
+    public:
+        sf::RenderWindow window;
 
-            void SetFramerateLimit(unsigned int limit)
-            {
-                window.setFramerateLimit(limit);
-            }
+        void InitWindow(char const *windowName, std::uint32_t width, std::uint32_t height)
+        {
+            window.create({ width, height, 32 }, windowName);
+            isRunning = true;
+        }
 
-            void Clear(uint8_t r = 0U, uint8_t g = 0U, uint8_t b = 0U, uint8_t a = 255U)
-            {
-                window.clear({r, g, b, a});
-            }
+        void SetFramerateLimit(unsigned int limit)
+        {
+            window.setFramerateLimit(limit);
+        }
 
-            void Present()
-            {
-                window.display();
-            }
+        void Clear(uint8_t r = 0U, uint8_t g = 0U, uint8_t b = 0U, uint8_t a = 255U)
+        {
+            window.clear({ r, g, b, a });
+        }
 
-            bool IsRunning()
-            {
-                return window.isOpen();
-            }
+        void Present()
+        {
+            window.display();
+        }
 
-            void CloseWindow()
-            {
-                window.close();
-            }
+        bool IsRunning()
+        {
+            return window.isOpen();
+        }
 
-            void HandleEvent()
-            {
-                sf::Event event;
-                pressedKey = nuts::Unknown;
+        void CloseWindow()
+        {
+            window.close();
+        }
 
-                while (window.pollEvent(event)) {
-                    if (event.type == sf::Event::Closed)
-                        window.close();
+        void HandleEvent()
+        {
+            sf::Event event;
+            pressedKey = nuts::Unknown;
+            mouseButton = nuts::Button::Middle;
 
-                    if (event.type == sf::Event::KeyPressed) {
-                        pressedKey = (nuts::Key)event.key.code;
-                        downKey = (nuts::Key)event.key.code;
-                    }
-                    if (event.type == sf::Event::KeyReleased) {
-                        downKey = nuts::Unknown;
-                    }
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+
+                if (event.type == sf::Event::KeyPressed) {
+                    pressedKey = (nuts::Key)event.key.code;
+                    downKey    = (nuts::Key)event.key.code;
+                }
+                if (event.type == sf::Event::KeyReleased) {
+                    downKey = nuts::Unknown;
+                }
+                if (event.type == sf::Event::MouseButtonPressed) {
+                    mouseButton = (nuts::Button)event.mouseButton.button;
+                }
+                if (event.type == sf::Event::MouseMoved) {
+                    mousePos = { event.mouseMove.x, event.mouseMove.y };
                 }
             }
+        }
 
-            bool GetKeyPressed(nuts::Key key)
-            {
-                if (key == pressedKey)
-                    return true;
-                return false;
-            }
+        bool IsKeyPressed(nuts::Key key)
+        {
+            if (key == pressedKey)
+                return true;
+            return false;
+        }
 
-            bool GetKeyDown(nuts::Key key)
-            {
-                if (key == downKey)
-                    return true;
-                return false;
-            }
+        bool IsKeyDown(nuts::Key key)
+        {
+            if (key == downKey)
+                return true;
+            return false;
+        }
+
+        bool IsMouseBtnPressed(nuts::Button mouseBtn)
+        {
+            return (mouseButton == mouseBtn);
+        }
+
+        nuts::Vector2i GetMousePos() const
+        {
+            return mousePos;
+        }
+
+        nuts::Vector2u GetWindowSize() const
+        {
+            return { window.getSize().x, window.getSize().y };
+        }
     };
 
 } // namespace nuts

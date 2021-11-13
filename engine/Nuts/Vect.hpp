@@ -17,6 +17,12 @@ namespace nuts
 
     typedef struct
     {
+        unsigned int x;
+        unsigned int y;
+    } Vector2u;
+
+    typedef struct
+    {
         float x;
         float y;
     } Vector2f;

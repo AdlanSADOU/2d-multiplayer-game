@@ -8,15 +8,34 @@
 #pragma once
 
 #include <any>
-#include <cstdint>
 #include <functional>
 #include <list>
 #include <unordered_map>
+#include <string>
 #include <SFML/Config.hpp>
 
-using EventType   = std::int32_t;
+using EventType   = sf::Uint64;
 using ParameterId = std::int32_t;
 
+
+#if !defined(HASH)
+
+/**
+ * @brief The string hasher is used in the context of the Event system to
+ * avoid having to keep track of enum values for different event types.
+ * The hasher solves this by attributing a "unique" size_t value based on
+ * the namespace + event name of the EventType.
+ * The downside is that, for network events, size_t is quite large.
+ *
+ * @see Nuts/Networking.hpp
+ */
+static const std::hash<std::string> strHasher;
+#define HASH(x) (strHasher(#x))
+#endif
+
+/**
+ * @brief Bind class member function pointer to its class instance
+ */
 #define BIND_CALLBACK(_callback, _classInstance) (std::bind(_callback, _classInstance, std::placeholders::_1))
 
 class Event

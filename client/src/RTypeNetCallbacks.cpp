@@ -19,3 +19,10 @@ void RType::OnNetReceivedId(Event &event)
               << GetLocalClientId()
               << "\n";
 }
+
+void RType::OnLobbyScreenBtn(Event &event)
+{
+    sf::Packet packet;
+    packet << Net::Events::LOBBY_LOAD << GetLocalClientId();
+    Net::INetClient::TcpSend(packet);
+}

@@ -21,37 +21,28 @@
 
 using ClientID = std::int32_t;
 
-#if !defined(HASH)
-// static const std::hash<char *> strHasher; // TODO: <char *> but <std::string> produces one hash
-// #define HASH(x) (strHasher("x"))
-#endif
-
 namespace Net {
 
-    enum Events
-    {
-        CLIENT_CONNECT = 1000,
-        CLIENT_DISCONNECT,
-        CLIENT_ID,
-        CLIENTS_PRINT,
+    namespace Events {
+        const EventType CLIENT_CONNECT    = HASH(Events::CLIENT_CONNECT);
+        const EventType CLIENT_DISCONNECT = HASH(Events::CLIENT_DISCONNECT);
+        const EventType CLIENT_ID         = HASH(Events::CLIENT_ID);
+        const EventType CLIENTS_PRINT     = HASH(Events::CLIENTS_PRINT);
+        const EventType UDP_INFO          = HASH(Events::UDP_INFO);
+        const EventType UDP_OK            = HASH(Events::UDP_OK);
+        const EventType LOBBY_LOAD        = HASH(Events::LOBBY_LOAD);
+        const EventType LOBBY_LIST        = HASH(Events::LOBBY_LIST);
+        const EventType LOBBY_CREATE      = HASH(Events::LOBBY_CREATE);
+        const EventType LOBBY_JOIN        = HASH(Events::LOBBY_JOIN);
+        const EventType LOBBY_CLIENTS     = HASH(Events::LOBBY_CLIENTS);
+        const EventType LOBBY_QUIT        = HASH(Events::LOBBY_QUIT);
+        const EventType LOBBY_READY       = HASH(Events::LOBBY_READY);
+        const EventType LOBBY_READY_OK    = HASH(Events::LOBBY_READY_OK);
+        const EventType LOBBY_CANCEL      = HASH(Events::LOBBY_CANCEL);
+        const EventType LOBBY_CANCEL_OK   = HASH(Events::LOBBY_CANCEL_OK);
+    }
 
-        UDP_INFO,
-        UDP_OK,
-
-        LOBBY_LOAD,
-        LOBBY_LIST,
-        LOBBY_CREATE,
-        LOBBY_JOIN,
-        LOBBY_CLIENTS,
-        LOBBY_QUIT,
-        LOBBY_READY,
-        LOBBY_READY_OK,
-        LOBBY_CANCEL,
-        LOBBY_CANCEL_OK,
-    };
-
-    class INetClient
-    {
+    class INetClient {
     private:
         sf::TcpSocket _tcpSocket;
         sf::UdpSocket _udpSocket;

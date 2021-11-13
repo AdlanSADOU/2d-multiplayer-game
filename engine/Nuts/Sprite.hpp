@@ -58,6 +58,16 @@ namespace nuts
             }
 
             /**
+             * @brief Get the position of the sprite
+             *
+             * @param pos
+             */
+            nuts::Vector2f GetPosition() const
+            {
+                return {_sprite.getPosition().x, _sprite.getPosition().y};
+            }
+
+            /**
              * @brief Set the origin of the sprite
              *
              * @param origin
