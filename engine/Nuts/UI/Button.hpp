@@ -30,9 +30,9 @@ namespace nuts::UI {
             _type = type;
         }
 
-        void InvokeEvent(Event &event)
+        void InvokeEvent(Event event)
         {
-            printf("invoked\n");
+            std::cout << "invoked eventType: " << event.GetType() << "\n";
             scene.InvokeEvent(event);
         }
 
