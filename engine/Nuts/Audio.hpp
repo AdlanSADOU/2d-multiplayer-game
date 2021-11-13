@@ -13,20 +13,110 @@
 
 namespace nuts
 {
+    enum AudioStatus
+    {
+        Stopped,
+        Paused,
+        Playing
+    };
+
+    class SoundBuffer
+    {
+        private:
+            sf::SoundBuffer _sound_buffer;
+
+        public:
+
+            SoundBuffer() {
+
+            };
+
+            ~SoundBuffer() {
+
+            };
+
+            SoundBuffer(const std::string &path)
+            {
+                if (!_sound_buffer.loadFromFile(path)) {
+                    std::cout << "Error loading sound_buffer file" << std::endl;
+                }
+            }
+
+            bool LoadFromFile(const std::string &path)
+            {
+                return (_sound_buffer.loadFromFile(path));
+            }
+
+            sf::SoundBuffer &GetSoundBuffer()
+            {
+                return (this->_sound_buffer);
+            }
+    };
+
+    class Sound
+    {
+        private:
+            sf::Sound _sound;
+
+        public:
+            Sound() {};
+
+            ~Sound() {};
+
+            void Play()
+            {
+                _sound.play();
+            }
+
+            void Pause()
+            {
+                _sound.pause();
+            }
+
+            void Stop()
+            {
+                _sound.stop();
+            }
+
+            void SetSoundBuffer(const sf::SoundBuffer &buf)
+            {
+                _sound.setBuffer(buf);
+            }
+
+            void SetVolume(const float volume)
+            {
+                _sound.setVolume(volume);
+            }
+
+            void SetPitch(const float pitch)
+            {
+                _sound.setPitch(pitch);
+            }
+
+
+    };
+
     class Music
     {
         private:
             sf::Music _music;
 
         public:
-            Music::Music(const std::string &path)
+            Music() {};
+
+            Music(const std::string &path)
             {
                 if (!_music.openFromFile(path)) {
                     std::cout << "Error loading music file" << std::endl;
                 }
             }
 
-            Music::~Music()
+            bool OpenFromFile(const std::string &path)
+            {
+                return (_music.openFromFile(path));
+            }
+
+            ~Music()
             {
                 _music.~Music();
             }

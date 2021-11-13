@@ -106,10 +106,10 @@ class Scene
 
         void AddEventCallback(EventType eventType, Callback callback)
         {
-#ifdef _DEBUG
-            std::cout << "Added Callback EvenType: "
-                      << eventType << "\n";
-#endif
+        #ifdef _DEBUG
+                    std::cout << "Added Callback EvenType: "
+                            << eventType << "\n";
+        #endif
             _EventManager->AddEventCallback(eventType, callback);
         }
 
