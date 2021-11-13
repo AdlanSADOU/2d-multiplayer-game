@@ -39,5 +39,16 @@ namespace nuts::UI {
         {
             scene.InvokeEvent(eventType);
         }
+
+        bool IsClicked(const Vector2i mousePos)
+        {
+            auto sprite = Widget::GetSPrite().GetSprite();
+            auto btnPos = Widget::GetSPrite().GetPosition();
+
+            std::cout << "mousePos :[" << mousePos.x << ":" << mousePos.y << "]\n"
+                      << "BtnPos   :[" << btnPos.x << ":" << btnPos.y << "]\n";
+
+            return sprite.getGlobalBounds().contains({ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) });
+        }
     };
 }

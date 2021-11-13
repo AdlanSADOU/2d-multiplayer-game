@@ -36,7 +36,6 @@ namespace nuts::UI {
 
         void Create(std::string name)
         {
-
             _name = name;
             _gameObject.Create(name);
             _gameObject.AddComponent<WidgetComponent>();

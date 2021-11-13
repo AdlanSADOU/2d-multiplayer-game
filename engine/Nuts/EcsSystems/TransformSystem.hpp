@@ -26,7 +26,7 @@ class TransformSystem : public System
 
         void Init()
         {
-            scene.AddEventCallback(nuts::Key::Left, BIND_CALLBACK(&TransformSystem::OnLeftkeyPressed, this));
+            scene.AddEventCallback(nuts::Key::LeftArrow, BIND_CALLBACK(&TransformSystem::OnLeftkeyPressed, this));
         }
 
         void OnLeftkeyPressed(Event &event)

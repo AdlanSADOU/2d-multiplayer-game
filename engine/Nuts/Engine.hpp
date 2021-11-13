@@ -16,9 +16,12 @@
 namespace nuts {
     class Engine {
     private:
-        nuts::Key pressedKey;
-        nuts::Key downKey;
-        bool      isRunning;
+        nuts::Key      pressedKey;
+        nuts::Key      downKey;
+        nuts::Button   mouseButton;
+        nuts::Vector2i mousePos;
+
+        bool isRunning;
 
     public:
         sf::RenderWindow window;
@@ -70,6 +73,12 @@ namespace nuts {
                 if (event.type == sf::Event::KeyReleased) {
                     downKey = nuts::Unknown;
                 }
+                if (event.type == sf::Event::MouseButtonPressed) {
+                    mouseButton = (nuts::Button)event.mouseButton.button;
+                }
+                if (event.type == sf::Event::MouseMoved) {
+                    mousePos = { event.mouseButton.x, event.mouseButton.y };
+                }
             }
         }
 
@@ -85,6 +94,15 @@ namespace nuts {
             if (key == downKey)
                 return true;
             return false;
+        }
+
+        bool IsMouseBtnPressed(nuts::Button mouseBtn)
+        {
+            return mouseButton & mouseBtn;
+        }
+
+        Vector2i GetMousePos() const {
+            return mousePos;
         }
 
         Vector2u GetWindowSize() const

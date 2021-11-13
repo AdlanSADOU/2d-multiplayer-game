@@ -63,8 +63,8 @@ void RType::Run()
         _engine->Clear();
         _engine->HandleEvent();
 
-        if (_engine->IsKeyPressed(nuts::Key::Left)) {
-            scene.InvokeEvent(nuts::Key::Left);
+        if (_engine->IsKeyPressed(nuts::Key::LeftArrow)) {
+            scene.InvokeEvent(nuts::Key::LeftArrow);
         }
 
         if (_engine->IsKeyPressed(nuts::Key::P)) {
@@ -81,6 +81,9 @@ void RType::Run()
         _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
         _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
         _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
+        if (_menu._widgetMenu.btnLobby.IsClicked(_engine->GetMousePos())) {
+            printf("CLICKED");
+        }
 
         _engine->Present();
         _deltaClock.Restart();
