@@ -12,8 +12,9 @@
 #include <list>
 #include <unordered_map>
 #include <string>
+#include <SFML/Config.hpp>
 
-using EventType   = std::size_t;
+using EventType   = sf::Uint64;
 using ParameterId = std::int32_t;
 
 
