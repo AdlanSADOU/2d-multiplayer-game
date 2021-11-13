@@ -26,7 +26,11 @@ class SoundSystem : public System
 
         void PlaySound(Event &event)
         {
-            
+            for (auto const &entity : _entities)
+            {
+                auto &soundComponent = scene.GetComponent<SoundComponent>(entity);
+                soundComponent.sound.Play();
+            }
         }
 
         void Update()

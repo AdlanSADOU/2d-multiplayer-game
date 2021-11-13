@@ -51,7 +51,7 @@ namespace nuts
     class Sound
     {
         private:
-            sf::Sound _sound;
+            sf::Sound *_sound = nullptr;
 
         public:
             Sound() {
@@ -63,44 +63,45 @@ namespace nuts
             };
 
             Sound(nuts::SoundBuffer &buf) {
-                _sound.setBuffer(buf.GetSoundBuffer());
+                _sound = new sf::Sound();
+                _sound->setBuffer(buf.GetSoundBuffer());
             };
 
             void Play()
             {
                 // std::cout << "Playing sound" << std::endl;
-                _sound.play();
+                _sound->play();
             }
 
             void Pause()
             {
-                _sound.pause();
+                _sound->pause();
             }
 
             void Stop()
             {
-                _sound.stop();
+                _sound->stop();
             }
 
             void SetSoundBuffer(const sf::SoundBuffer &buf)
             {
-                // std::cout << "Setting buffer" << std::endl;
-                _sound.setBuffer(buf);
+                _sound = new sf::Sound();
+                _sound->setBuffer(buf);
             }
 
             void SetVolume(const float volume)
             {
-                _sound.setVolume(volume);
+                _sound->setVolume(volume);
             }
 
             void SetPitch(const float pitch)
             {
-                _sound.setPitch(pitch);
+                _sound->setPitch(pitch);
             }
 
             const sf::SoundBuffer *GetBufferFromSound()
             {
-                return (_sound.getBuffer());
+                return (_sound->getBuffer());
             }
     };
 

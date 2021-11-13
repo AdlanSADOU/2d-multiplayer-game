@@ -29,10 +29,12 @@ void RType::Init()
     scene.RegisterComponent<SpriteComponent>();
     scene.RegisterComponent<VelocityComponent>();
     scene.RegisterComponent<WidgetComponent>();
+    scene.RegisterComponent<SoundComponent>();
 
     _renderSystem    = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
     _animationSystem = scene.RegisterSystem<AnimationSystem>();
+    _soundSystem     = scene.RegisterSystem<SoundSystem>();
 
     EntitySignature transformSig;
     transformSig.set(scene.GetComponentType<TransformComponent>());
@@ -47,7 +49,13 @@ void RType::Init()
     animationSig.set(scene.GetComponentType<SpriteComponent>());
     scene.SetSystemSignature<AnimationSystem>(animationSig);
 
+    EntitySignature soundSig;
+    soundSig.set(scene.GetComponentType<SoundComponent>());
+    scene.SetSystemSignature<SoundSystem>(soundSig);
+
     _monster.Init();
+    _soundSystem->Init();
+
     _transformSystem->Init();
     _deltaClock.Restart();
 
@@ -86,7 +94,7 @@ void RType::Run()
         if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
             && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
             _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
-
+            scene.InvokeEvent(nuts::Key::F);
         }
 
         _engine->Present();
