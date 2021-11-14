@@ -17,7 +17,7 @@ Scene scene;
 class EcsServer {
 private:
     std::shared_ptr<ConnectionSystem> _connectionSystem;
-    std::shared_ptr<SClientsSystem> _sClientSystem;
+    std::shared_ptr<SClientsSystem>   _sClientSystem;
 
 public:
     std::shared_ptr<ConnectionSystem> GetConnectionSystem() const
@@ -32,6 +32,7 @@ public:
 
     void Init()
     {
+
         scene.Init();
         scene.RegisterComponent<SClientComponent>();
         scene.RegisterComponent<ConnectionComponent>();
@@ -53,14 +54,18 @@ public:
         nuts::GameObject serverConnector;
         serverConnector.Create("");
         serverConnector.AddComponent<ConnectionComponent>();
+
+        // scene.AddEventCallback(Net::Events::CLIENT_UDP, BIND_CALLBACK())
     }
 
-    void Start(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
+    void Start(unsigned short port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         _connectionSystem->Init(port, address);
 
         while (1) {
             _connectionSystem->Accept();
+            _connectionSystem->ReceiveUdp();
+
             _sClientSystem->ReceiveTcp();
         }
     }

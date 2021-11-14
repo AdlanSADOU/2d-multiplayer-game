@@ -8,20 +8,20 @@
 #pragma once
 
 #include "Components/Components.hpp"
+#include <Nuts/Networking.hpp>
 #include <iostream>
 #include <vector>
-#include <Nuts/Networking.hpp>
 
 class ConnectionSystem : public System {
 private:
     ConnectionComponent _conn;
-    sf::TcpSocket *_tmpSocket;
+    sf::TcpSocket *     _tmpSocket;
 
 public:
-    int Init(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
+    int Init(unsigned short port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         std::set<Entity>::iterator entity = _entities.find(0);
-        _conn = scene.GetComponent<ConnectionComponent>(*entity);
+        _conn                             = scene.GetComponent<ConnectionComponent>(*entity);
 
         _conn.listener = std::make_shared<sf::TcpListener>();
         _conn.listener->setBlocking(false);
@@ -38,6 +38,7 @@ public:
         if (_conn.udpSock->bind(port + 1, address) != sf::Socket::Done) {
             std::cout << "[Server]: UDP socket failed to bind on " << address << ":" << port << std::endl;
         }
+        _conn.udpSock->setBlocking(false);
 
         _conn.port = port + 1;
         std::cout << "[Server]: UDP socket bound on " << address << ":" << port + 1 << std::endl;
@@ -57,7 +58,24 @@ public:
             scene.InvokeEvent(clienConnectedEvent);
 
             _tmpSocket = new sf::TcpSocket();
+        }
+    }
 
+    void ReceiveUdp()
+    {
+        sf::Packet remotePacket;
+        EventType  type;
+
+        sf::IpAddress  remoteAddress;
+        unsigned short remotePort;
+
+        sf::Socket::Status status = _conn.udpSock->receive(remotePacket, remoteAddress, remotePort);
+        if (status == sf::Socket::Done) {
+            remotePacket >> type;
+
+            Event remoteEvent(type);
+            remoteEvent.SetParam<sf::Packet>(0, remotePacket);
+            scene.InvokeEvent(remoteEvent);
         }
     }
 };

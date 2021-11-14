@@ -10,7 +10,7 @@
 void RType::OnNetReceivedId(Event &event)
 {
     sf::Packet packet = event.GetParam<sf::Packet>(0);
-    ClientID id;
+    ClientID   id;
     packet >> id;
 
     SetLocalClientId(id);
@@ -18,11 +18,54 @@ void RType::OnNetReceivedId(Event &event)
     std::cout << "OnNetReceivedId id:"
               << GetLocalClientId()
               << "\n";
+
+    sf::Packet udpInfoPacket;
+    udpInfoPacket << Net::Events::CLIENT_UDP
+                  << GetLocalClientId()
+                  << Net::INetClient::GetLocalUdpPort();
+
+    Net::INetClient::UdpSend(udpInfoPacket);
+
+    sf::Packet lpacket;
+    lpacket << Net::Events::MATCHM_INIT
+            << GetLocalClientId();
+
+    Net::INetClient::TcpSend(lpacket);
 }
 
-void RType::OnLobbyScreenBtn(Event &event)
+void RType::OnQuickPlayBtn(Event &event)
 {
-    sf::Packet packet;
-    packet << Net::Events::LOBBY_LOAD << GetLocalClientId();
-    Net::INetClient::TcpSend(packet);
+    /** TODO(adlan):
+    * if already connected, just relaunch matchmaking
+    */
+    if (INetClient::IsConnected()) return;
+
+    INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
+}
+
+void RType::OnNewClient(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    ClientID   id;
+    sf::Int32  gameId;
+
+    packet >> id >> gameId;
+
+    std::cout << "[Client]: Client  "
+              << id
+              << " joined game "
+              << gameId
+              << "\n";
+}
+
+void RType::OnClientQuit(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    ClientID   id;
+    sf::Int32  gameId;
+
+    packet >> id >> gameId;
+
+    std::cout << "[Client]: Player " << id
+              << " quit game " << gameId << "\n";
 }

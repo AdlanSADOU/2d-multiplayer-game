@@ -75,7 +75,9 @@ public:
     void Run();
 
     void OnNetReceivedId(Event &event);
-    void OnLobbyScreenBtn(Event &event);
+    void OnQuickPlayBtn(Event &event);
+    void OnNewClient(Event &event);
+    void OnClientQuit(Event &event);
 
 protected:
 private:

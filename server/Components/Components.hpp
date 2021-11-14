@@ -14,9 +14,9 @@ struct SClientComponent {
     sf::Uint16 updPort;
     sf::IpAddress ip;
     ClientID id;
-    std::uint8_t lobbyID;
+    std::uint8_t gameId;
     bool isConnected = false;
-    bool isInLobby = false;
+    bool isGame = false;
 };
 
 struct ConnectionComponent {
