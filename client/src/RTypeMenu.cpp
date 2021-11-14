@@ -32,10 +32,10 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     _widgetMenu.btnLobby.SetParent(_widgetMenu.panel);
     _widgetMenu.btnLobby.SetEventType(Events::Btn::BTN_LOBBY_SCREEN);
 
-    float lgWidth    = _widgetMenu.logo.GetSPrite().GetSprite().getLocalBounds().width;
-    float lgHeight   = _widgetMenu.logo.GetSPrite().GetSprite().getLocalBounds().height;
-    float panelWidth = _widgetMenu.panel.GetSPrite().GetSprite().getLocalBounds().width;
-    float lbBtnWidth = _widgetMenu.btnLobby.GetSPrite().GetSprite().getLocalBounds().width;
+    float lgWidth    = _widgetMenu.logo.GetSprite().GetSprite().getLocalBounds().width;
+    float lgHeight   = _widgetMenu.logo.GetSprite().GetSprite().getLocalBounds().height;
+    float panelWidth = _widgetMenu.panel.GetSprite().GetSprite().getLocalBounds().width;
+    float lbBtnWidth = _widgetMenu.btnLobby.GetSprite().GetSprite().getLocalBounds().width;
 
     _widgetMenu.logo.SetPosition({ winSize.x / 2.f - lgWidth / 2.f, 0 });
     _widgetMenu.panel.SetPosition({ lgWidth / 2.f - panelWidth / 2.f, lgHeight - 20 });
