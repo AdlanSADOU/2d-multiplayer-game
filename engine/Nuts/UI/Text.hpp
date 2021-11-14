@@ -95,7 +95,7 @@ namespace nuts
                 _text.setLineSpacing(spacingFactor);
             }
 
-            const std::string &GetString()
+            const std::string GetString()
             {
                 return (_text.getString());
             }
