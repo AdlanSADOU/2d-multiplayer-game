@@ -61,12 +61,12 @@ class RTypeMonster : public nuts::GameObject
             spriteComponent.sprite.SetLooped(true);
             spriteComponent.sprite.SetFirstFrame({ 0, 0, 16, 14 });
             spriteComponent.sprite.SetFrameCount(12);
-            spriteComponent.sprite.SetFrameTime(0.000005);
+            spriteComponent.sprite.SetFrameTime(0.070);
+            spriteComponent.sprite.InitAnimationClock();
 
             transformComponent.position = { 0, 0 };
 
             soundComponent.sound.SetSoundBuffer(_buffer.GetSoundBuffer());
-            soundComponent.sound.Play();
         }
 };
 

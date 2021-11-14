@@ -16,6 +16,7 @@
 #include "Texture.hpp"
 #include "Rect.hpp"
 #include "Vect.hpp"
+#include "Clock.hpp"
 
 #include <iostream>
 
@@ -27,6 +28,7 @@ namespace nuts
     {
         private:
             sf::Sprite _sprite;
+            nuts::Clock *_animation_clock = nullptr;
 
             bool _is_animated = false;
             bool _is_looping = false;
@@ -190,12 +192,12 @@ namespace nuts
             {
                 _current_frame.left += _current_frame.width;
 
-                if (_current_frame.left >= _current_frame.width * (_frame_count - 1)) {
+                if (_current_frame.left >= _current_frame.width * (_frame_count)) {
                     if (_is_looping) {
                         _current_frame.left = _first_frame.left;
                     }
                     else {
-                        _current_frame.left = _current_frame.width * (_frame_count - 1);
+                        _current_frame.left = _current_frame.width * (_frame_count);
                     }
                 }
 
@@ -263,6 +265,21 @@ namespace nuts
             nuts::IntRect GetFirstFrame() const
             {
                 return (_first_frame);
+            }
+
+            void InitAnimationClock()
+            {
+                _animation_clock = new nuts::Clock();
+            }
+
+            nuts::Clock *GetAnimationClock()
+            {
+                return (_animation_clock);
+            }
+
+            float ResetAnimationClock()
+            {
+                return (_animation_clock->Restart());
             }
     };
 }
