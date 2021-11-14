@@ -20,6 +20,13 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     _engine                = engine;
     nuts::Vector2u winSize = _engine->GetWindowSize();
 
+    _font.LoadFromFile("./resources/fonts/arial.ttf");
+
+    _widgetMenu.btnLobby.GetText().SetFont(_font);
+    _widgetMenu.btnLobby.GetText().SetString("Hellooooooooo");
+    _widgetMenu.btnLobby.GetText().SetCharacterSize(40);
+    _widgetMenu.btnLobby.GetText().SetFillColor((nuts::Color){255, 255, 255, 255});
+
     _widgetMenu.logo     = nuts::UI::Widget("Logo");
     _widgetMenu.panel    = nuts::UI::Widget("Panel");
     _widgetMenu.btnLobby = nuts::UI::Button("Lobby");
@@ -40,4 +47,5 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     _widgetMenu.logo.SetPosition({ winSize.x / 2.f - lgWidth / 2.f, 0 });
     _widgetMenu.panel.SetPosition({ lgWidth / 2.f - panelWidth / 2.f, lgHeight - 20 });
     _widgetMenu.btnLobby.SetPosition({ lbBtnWidth / 2.f, 20 });
+    _widgetMenu.btnLobby.GetText().SetPosition({0, 0});
 }

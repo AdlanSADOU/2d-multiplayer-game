@@ -9,6 +9,7 @@
 
 #include "Nuts/Engine.hpp"
 #include "Nuts/Audio.hpp"
+#include "Nuts/UI/Text.hpp"
 
 #include "Nuts/EcsCore/Scene.hpp"
 

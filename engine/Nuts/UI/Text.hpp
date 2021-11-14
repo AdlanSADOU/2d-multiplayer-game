@@ -9,7 +9,10 @@
 
 #include <SFML/Graphics/Text.hpp>
 
+#include "../Rect.hpp"
 #include "../Color.hpp"
+
+#include <iostream>
 
 namespace nuts
 {
@@ -60,7 +63,7 @@ namespace nuts
                 _text.setFont(font.GetFont());
             }
 
-            void SetString(const std::string &string)
+            void SetString(const std::string string)
             {
                 _text.setString(string);
             }
@@ -70,32 +73,59 @@ namespace nuts
                 _text.setOutlineColor({color.r, color.g, color.b, color.a});
             }
 
-            void SetFillColor(nuts::Color &color)
+            void SetFillColor(nuts::Color color)
             {
                 _text.setFillColor({color.r, color.g, color.b, color.a});
             }
 
-            void SetCharacterSize(unsigned int size)
+            void SetCharacterSize(const unsigned int size)
             {
                 _text.setCharacterSize(size);
             }
 
-            void SetOutlineThickness(float thickness)
+            void SetOutlineThickness(const float thickness)
             {
                 _text.setOutlineThickness(thickness);
             }
 
-            void SetLetterSpacing(float spacingFactor)
+            void SetLetterSpacing(const float spacingFactor)
             {
                 _text.setLetterSpacing(spacingFactor);
             }
 
-            void SetLineSpacing(float spacingFactor)
+            void SetLineSpacing(const float spacingFactor)
             {
                 _text.setLineSpacing(spacingFactor);
             }
 
-            const std::string &GetString()
+            void SetPosition(const nuts::Vector2f &pos)
+            {
+                _text.setPosition({pos.x, pos.y});
+            }
+
+            void SetRotation(const float angle)
+            {
+                _text.setRotation(angle);
+            }
+
+            void SetOrigin(const nuts::Vector2f &origin)
+            {
+                _text.setOrigin({origin.x, origin.y});
+            }
+
+            nuts::FloatRect GetLocalBounds()
+            {
+                sf::FloatRect rect = _text.getLocalBounds();
+                return ((nuts::FloatRect){rect.left, rect.top, rect.width, rect.height});
+            }
+
+            nuts::FloatRect GetGlobalBounds()
+            {
+                sf::FloatRect rect = _text.getGlobalBounds();
+                return ((nuts::FloatRect){rect.left, rect.top, rect.width, rect.height});
+            }
+
+            const std::string GetString()
             {
                 return (_text.getString());
             }
@@ -103,6 +133,12 @@ namespace nuts
             const sf::Font *GetFont()
             {
                 return (_text.getFont());
+            }
+
+            void Draw(sf::RenderWindow &window)
+            {
+                std::cout << GetString() << std::endl;
+                window.draw(_text);
             }
     };
 }

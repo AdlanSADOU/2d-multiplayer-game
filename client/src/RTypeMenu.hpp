@@ -10,26 +10,31 @@
 #include <Nuts/Engine.hpp>
 #include <Nuts/UI/Button.hpp>
 #include <Nuts/UI/Widget.hpp>
+#include <Nuts/UI/Text.hpp>
 
 #include "UIEvents.hpp"
 
-class RTypeMenu {
-    struct WidgetMenu {
+class RTypeMenu
+{
+    struct WidgetMenu
+    {
         nuts::UI::Widget logo;
         nuts::UI::Widget panel;
         nuts::UI::Button btnLobby;
         nuts::UI::Button btnQuit;
     };
 
-public:
-    std::shared_ptr<nuts::Engine> _engine;
-    WidgetMenu                    _widgetMenu;
+    private:
+        nuts::Font _font;
 
-    RTypeMenu();
-    ~RTypeMenu();
+    public:
+        std::shared_ptr<nuts::Engine> _engine;
+        WidgetMenu                    _widgetMenu;
 
-    void Init(std::shared_ptr<nuts::Engine> engine);
+        RTypeMenu();
+        ~RTypeMenu();
 
-protected:
-private:
+        void Init(std::shared_ptr<nuts::Engine> engine);
+
+
 };

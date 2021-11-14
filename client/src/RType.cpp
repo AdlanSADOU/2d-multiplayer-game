@@ -86,16 +86,18 @@ void RType::Run()
         _animationSystem.get()->Update(_deltaClock);
         _renderSystem.get()->Update(_engine->window);
 
-        INetClient::Update();
-        _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
 
         if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
             && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
             _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
             scene.InvokeEvent(nuts::Key::F);
         }
+
+        INetClient::Update();
+        _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
+        _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
+        _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
+        _menu._widgetMenu.btnLobby.GetText().Draw(_engine->window);
 
         _engine->Present();
         _deltaClock.Restart();
