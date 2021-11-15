@@ -35,6 +35,4 @@ class RTypeMenu
         ~RTypeMenu();
 
         void Init(std::shared_ptr<nuts::Engine> engine);
-
-
 };

@@ -66,6 +66,12 @@ namespace nuts::UI {
             sprite.SetTexture(*texture);
         }
 
+        const nuts::Vector2f GetPosition()
+        {
+            auto &sprite = _gameObject.GetComponent<WidgetComponent>().sprite;
+            return (sprite.GetPosition());
+        }
+
         void SetPosition(const Vector2f position)
         {
             auto &sprite = _gameObject.GetComponent<WidgetComponent>().sprite;

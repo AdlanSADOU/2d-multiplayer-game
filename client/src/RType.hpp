@@ -87,6 +87,7 @@ class RType : public Net::INetClient
 
         void OnNetReceivedId(Event &event);
         void OnLobbyScreenBtn(Event &event);
+        void OnBtnQuit(Event &event);
 
     protected:
     private:

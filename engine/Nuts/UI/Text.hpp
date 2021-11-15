@@ -55,7 +55,7 @@ namespace nuts
 
             ~Text()
             {
-
+                std::cout << "Text destroyed" << std::endl;
             }
 
             void SetFont(nuts::Font &font)
@@ -137,7 +137,6 @@ namespace nuts
 
             void Draw(sf::RenderWindow &window)
             {
-                std::cout << GetString() << std::endl;
                 window.draw(_text);
             }
     };

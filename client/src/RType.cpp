@@ -61,9 +61,16 @@ void RType::Init()
 
     scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
     scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnLobbyScreenBtn, this));
+    scene.AddEventCallback(Events::Btn::BTN_QUIT, BIND_CALLBACK(&RType::OnBtnQuit, this));
+
 
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
     _menu.Init(_engine);
+}
+
+void RType::OnBtnQuit(Event &event)
+{
+    _engine->CloseWindow();
 }
 
 void RType::Run()
@@ -93,11 +100,18 @@ void RType::Run()
             scene.InvokeEvent(nuts::Key::F);
         }
 
+        if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
+            && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+            _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
+        }
+
         INetClient::Update();
         _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
         _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
         _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
         _menu._widgetMenu.btnLobby.GetText().Draw(_engine->window);
+        _menu._widgetMenu.btnQuit.TEST_DRAW(_engine->window);
+        _menu._widgetMenu.btnQuit.GetText().Draw(_engine->window);
 
         _engine->Present();
         _deltaClock.Restart();
