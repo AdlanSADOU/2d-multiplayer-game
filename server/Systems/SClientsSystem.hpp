@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include "GameInstance.hpp"
+#include "Matchmaker.hpp"
 #include <Nuts/EcsCore/Event.hpp>
 #include <Nuts/GameObject.hpp>
 
 class SClientsSystem : public System {
 private:
-    std::vector<std::shared_ptr<GameInstance>> _gameInstances;
+    std::vector<std::shared_ptr<Matchmaker>> _gameInstances;
 
 public:
     SClientsSystem()
@@ -148,6 +148,12 @@ public:
 
         packet >> remoteCliendId >> remoteClientUdpPort;
 
+        for (Entity clientEntity : _entities) {
+            auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
+            if (sClientComp.id == remoteCliendId)
+                sClientComp.updPort = remoteClientUdpPort;
+        }
+
         std::cout << "[Server] Client ["
                   << remoteCliendId
                   << "] sent has UDP port ["
@@ -168,7 +174,7 @@ public:
 
         static sf::Int32 gameIds = 0;
         // if (_gameInstances.size() == 0) {
-        //     _gameInstances.push_back(std::make_shared<GameInstance>(gameIds++));
+        //     _gameInstances.push_back(std::make_shared<Matchmaker>(gameIds++));
         // }
 
         std::int32_t nonRunningInstanceIdx = -1;
@@ -184,7 +190,7 @@ public:
 
         if (nonRunningInstanceIdx == -1) {
             nonRunningInstanceIdx = gameIds;
-            _gameInstances.push_back(std::make_shared<GameInstance>(gameIds++));
+            _gameInstances.push_back(std::make_shared<Matchmaker>(gameIds++));
         }
 
         if (!_gameInstances[nonRunningInstanceIdx]->IsRunning()

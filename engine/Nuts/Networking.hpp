@@ -11,6 +11,8 @@
 #pragma warning(disable : 4091)
 #endif //_WIN32
 
+#define NET_LOG 1
+
 #include <SFML/Network.hpp>
 #include <array>
 #include <iostream>
@@ -61,22 +63,32 @@ namespace Net {
             if (_tcpSocket.receive(packet) == sf::Socket::Done) {
                 EventType type;
                 packet >> type;
-                std::cout << "[Net]: received TCP EventType:" << type << "\n";
 
                 Event event(type);
                 event.SetParam<sf::Packet>(0, packet);
                 scene.InvokeEvent(event);
+
+#if defined(NET_LOG)
+                std::cout << "[Net]: received TCP EventType:" << type << "\n";
+#endif // NET_LOG
             }
         }
 
         void UdpReceive()
         {
             sf::Packet packet {};
-            EventType  type {};
-            packet >> type;
 
             if (_udpSocket.receive(packet, _remoteServerIp, _remoteGameUdpPort) == sf::Socket::Done) {
+                EventType type {};
+                packet >> type;
+
+                Event event(type);
+                event.SetParam<sf::Packet>(0, packet);
+                scene.InvokeEvent(event);
+
+#if defined(NET_LOG)
                 std::cout << "[Net]: received UDP " << packet << "\n";
+#endif // NET_LOG
             }
         }
 

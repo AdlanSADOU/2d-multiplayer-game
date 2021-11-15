@@ -15,10 +15,6 @@ void RType::OnNetReceivedId(Event &event)
 
     SetLocalClientId(id);
 
-    std::cout << "OnNetReceivedId id:"
-              << GetLocalClientId()
-              << "\n";
-
     sf::Packet udpInfoPacket;
     udpInfoPacket << Net::Events::CLIENT_UDP
                   << GetLocalClientId()
@@ -68,4 +64,15 @@ void RType::OnClientQuit(Event &event)
 
     std::cout << "[Client]: Player " << id
               << " quit game " << gameId << "\n";
+}
+
+void RType::OnInitialGameInfo(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    std::string   lol;
+
+    packet >> lol;
+
+    std::cout << "[Client]: server said " << lol << "\n";
+
 }

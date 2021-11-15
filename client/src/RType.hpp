@@ -78,6 +78,7 @@ public:
     void OnQuickPlayBtn(Event &event);
     void OnNewClient(Event &event);
     void OnClientQuit(Event &event);
+    void OnInitialGameInfo(Event &event);
 
 protected:
 private:
