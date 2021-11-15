@@ -98,6 +98,7 @@ public:
 
             std::thread th(&Game::Run, &game, _clients, _gameId);
             th.join();
+            std::cout << "Matchmaker _client.size() after move: " << _clients.size() << "\n";
         }
     }
 

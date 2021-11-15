@@ -24,6 +24,7 @@
 #include "Nuts/Networking.hpp"
 
 #include "RTypeMenu.hpp"
+#include "RTypeGame.hpp"
 
 // #include "engine/Nuts/GameObject.hpp"
 
@@ -62,8 +63,9 @@ public:
 
 class RType : public Net::INetClient {
 
-    enum game_state {
+    enum GameState {
         MENU,
+        MATCHM,
         GAME
     };
 
@@ -80,6 +82,7 @@ public:
     void OnClientQuit(Event &event);
     void OnInitialGameInfo(Event &event);
 
+    GameState _state = GameState::MENU;
 protected:
 private:
     RTypeMenu _menu;

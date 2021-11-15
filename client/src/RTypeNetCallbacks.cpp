@@ -36,7 +36,9 @@ void RType::OnQuickPlayBtn(Event &event)
     */
     if (INetClient::IsConnected()) return;
 
-    INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
+    if (INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001))
+        _state = GameState::MATCHM;
+
 }
 
 void RType::OnNewClient(Event &event)

@@ -11,20 +11,22 @@
 
 struct SClientComponent {
     std::shared_ptr<sf::TcpSocket> tcpSock;
-    sf::Uint16 updPort;
+
+    sf::Uint16    updPort;
     sf::IpAddress ip;
-    ClientID id;
-    std::uint8_t gameId;
-    bool isConnected = false;
-    bool isGame = false;
+    ClientID      id;
+    std::uint8_t  gameId;
+    bool          isConnected = false;
+    bool          isGame      = false;
 };
 
 struct ConnectionComponent {
     std::shared_ptr<sf::TcpListener> listener;
-    std::shared_ptr<sf::UdpSocket> udpSock;
-    std::shared_ptr<sf::TcpSocket> tcpSock;
+    std::shared_ptr<sf::UdpSocket>   udpSock;
+    std::shared_ptr<sf::TcpSocket>   tcpSock;
+
     sf::IpAddress ipAdress;
-    sf::Uint16 port;
-    bool isConnected; // unused by server
-    bool isRunning; // unused by client
+    sf::Uint16    port;
+    bool          isConnected; // unused by server
+    bool          isRunning; // unused by client
 };

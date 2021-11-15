@@ -14,10 +14,13 @@
 
 Scene scene;
 
+#define FRAMERATE (1 / 30.f)
+
 class EcsServer {
 private:
     std::shared_ptr<ConnectionSystem> _connectionSystem;
     std::shared_ptr<SClientsSystem>   _sClientSystem;
+    sf::Clock                         deltaClock;
 
 public:
     std::shared_ptr<ConnectionSystem> GetConnectionSystem() const
@@ -54,19 +57,25 @@ public:
         nuts::GameObject serverConnector;
         serverConnector.Create("");
         serverConnector.AddComponent<ConnectionComponent>();
-
-        // scene.AddEventCallback(Net::Events::CLIENT_UDP, BIND_CALLBACK())
     }
 
     void Start(unsigned short port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         _connectionSystem->Init(port, address);
+        sf::Time dt;
+        sf::Time acc;
 
         while (1) {
-            _connectionSystem->Accept();
-            _connectionSystem->ReceiveUdp();
+            dt = deltaClock.restart();
+            acc += dt;
 
-            _sClientSystem->ReceiveTcp();
+            if (acc.asSeconds() > FRAMERATE) {
+                _connectionSystem->Accept();
+                _connectionSystem->ReceiveUdp();
+
+                _sClientSystem->ReceiveTcp();
+                acc = sf::Time::Zero;
+            }
         }
     }
 };

@@ -82,14 +82,25 @@ void RType::Run()
         _renderSystem.get()->Update(_engine->window);
 
         INetClient::Update();
-        _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
 
-        if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
-            && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
-            _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+        switch (_state) {
+            case GameState::MENU:
+                _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
 
+                if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
+                    && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+                    _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+                }
+                break;
+
+            case GameState::MATCHM: break;
+
+            case GameState::GAME: break;
+
+            default:
+                break;
         }
 
         _engine->Present();
