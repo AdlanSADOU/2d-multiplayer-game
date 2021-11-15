@@ -18,7 +18,7 @@
 #define threadID __gthread_t
 #endif
 
-#define NET_LOG 1
+#define NET_LOG 0
 
 #include <SFML/Network.hpp>
 #include <array>
@@ -74,10 +74,6 @@ namespace Net {
                 Event event(type);
                 event.SetParam<sf::Packet>(0, packet);
                 scene.InvokeEvent(event);
-
-#if defined(NET_LOG)
-                std::cout << "[Net]: received TCP EventType:" << type << "\n";
-#endif // NET_LOG
             }
         }
 
@@ -92,10 +88,6 @@ namespace Net {
                 Event event(type);
                 event.SetParam<sf::Packet>(0, packet);
                 scene.InvokeEvent(event);
-
-#if defined(NET_LOG)
-                std::cout << "[Net]: received UDP " << packet << "\n";
-#endif // NET_LOG
             }
         }
 

@@ -19,7 +19,7 @@ void RType::OnNetReceivedId(Event &event)
     udpInfoPacket << Net::Events::CLIENT_UDP
                   << GetLocalClientId()
                   << Net::INetClient::GetLocalUdpPort();
-    std::cout << "[Client]: sent port :" << GetLocalUdpPort();
+
     Net::INetClient::TcpSend(udpInfoPacket);
 
     sf::Packet lpacket;
@@ -38,7 +38,6 @@ void RType::OnQuickPlayBtn(Event &event)
 
     if (INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001))
         _state = GameState::MATCHM;
-
 }
 
 void RType::OnNewClient(Event &event)
@@ -49,11 +48,11 @@ void RType::OnNewClient(Event &event)
 
     packet >> id >> gameId;
 
-    std::cout << "[Client]: Client  "
+    std::cout << "[Client]: Client ["
               << id
-              << " joined game "
+              << "] joined game ["
               << gameId
-              << "\n";
+              << "]\n";
 }
 
 void RType::OnClientQuit(Event &event)
@@ -64,17 +63,22 @@ void RType::OnClientQuit(Event &event)
 
     packet >> id >> gameId;
 
-    std::cout << "[Client]: Player " << id
-              << " quit game " << gameId << "\n";
+    std::cout << "[Client]: Player [" << id
+              << "] quit game [" << gameId << "]\n";
 }
 
 void RType::OnInitialGameInfo(Event &event)
 {
-    sf::Packet packet = event.GetParam<sf::Packet>(0);
-    std::string   lol;
+    sf::Packet  packet = event.GetParam<sf::Packet>(0);
 
-    packet >> lol;
+    std::vector<ClientID> clientIds;
 
-    std::cout << "[Client]: server said " << lol << "\n";
+    while (!packet.endOfPacket()) {
+        ClientID tmpId;
+        packet >> tmpId;
+
+        clientIds.push_back(tmpId);
+
+    }
 
 }

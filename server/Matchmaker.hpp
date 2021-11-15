@@ -36,7 +36,12 @@ public:
             std::cout << "ThreadId[" << threadID() << "]: Launching game with "
                       << client->ip << ":" << client->updPort << "\n";
 
-            packet << Net::Events::INITIAL_GAME_INFO << "LETS PLAYYYYY\n";
+            packet << Net::Events::INITIAL_GAME_INFO;
+            for (auto &client : _clients)
+            {
+                packet << client->id;
+            }
+
             _socket.send(packet, client->ip, client->updPort);
         }
     }
@@ -56,7 +61,7 @@ public:
     Matchmaker(sf::Int32 gameId)
     {
         _gameId = gameId;
-        std::cout << "[Server] New game instance | id: " << gameId << "\n";
+        std::cout << "[Server] New game instance | id [" << gameId << "]\n";
 
         scene.AddEventCallback(Net::Events::CLIENT_DISCONNECT, BIND_CALLBACK(&Matchmaker::OnClientDisconnected, this));
     }
@@ -98,7 +103,6 @@ public:
 
             std::thread th(&Game::Run, &game, _clients, _gameId);
             th.join();
-            std::cout << "Matchmaker _client.size() after move: " << _clients.size() << "\n";
         }
     }
 
@@ -136,7 +140,7 @@ public:
         std::cout << "[Server|Game " << _gameId << "]:"
                   << " Player "
                   << disc_clienId
-                  << " Quit game "
+                  << " quit game "
                   << "\n";
     }
 };

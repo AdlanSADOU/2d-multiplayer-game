@@ -155,12 +155,6 @@ public:
                 break;
             }
         }
-
-        std::cout << "[Server] Client ["
-                  << remoteCliendId
-                  << "] sent has UDP port ["
-                  << remoteClientUdpPort
-                  << "]\n";
     }
 
     // TODO:
@@ -169,10 +163,6 @@ public:
         sf::Packet packet = e.GetParam<sf::Packet>(0);
         ClientID   remoteCliendId;
         packet >> remoteCliendId;
-
-        std::cout << "[Server] Client ["
-                  << remoteCliendId
-                  << "] Initiated Matchmaking\n";
 
         static sf::Int32 gameIds = 0;
         // if (_gameInstances.size() == 0) {
@@ -193,6 +183,10 @@ public:
         if (nonRunningInstanceIdx == -1) {
             nonRunningInstanceIdx = gameIds;
             _gameInstances.push_back(std::make_shared<Matchmaker>(gameIds++));
+
+            std::cout << "[Server] Client ["
+                      << remoteCliendId
+                      << "] Initiated Matchmaking\n";
         }
 
         if (!_gameInstances[nonRunningInstanceIdx]->IsRunning()
@@ -202,14 +196,6 @@ public:
                 _gameInstances[nonRunningInstanceIdx]->AddClient(client);
             }
         }
-
-        // if (_gameInstances.size() > 0) {
-
-        //     for (auto game : _gameInstances) {
-        //         if (!game->IsRunning() && game->GetConnectedClientsNum() < MAX_CLIENTS) {
-        //         }
-        //     }
-        // }
     }
 
     // TODO:
