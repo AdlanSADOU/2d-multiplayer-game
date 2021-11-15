@@ -48,10 +48,10 @@ namespace Net {
         sf::UdpSocket _udpSocket;
 
         sf::IpAddress  _remoteGameIp;
-        unsigned short _remoteGameUdpPort;
+        sf::Uint16 _remoteGameUdpPort;
 
         sf::IpAddress  _remoteServerIp;
-        unsigned short _remoteServerPort;
+        sf::Uint16 _remoteServerPort;
 
         ClientID _clientId    = -1;
         bool     _isConnected = false;
@@ -136,9 +136,9 @@ namespace Net {
             this->UdpReceive();
         }
 
-        bool Connect(sf::IpAddress serverIp, int serverPort)
+        bool Connect(sf::IpAddress serverIp, sf::Uint16 serverPort)
         {
-            if (_tcpSocket.connect(serverIp, static_cast<unsigned short>(serverPort)) != sf::Socket::Done) {
+            if (_tcpSocket.connect(serverIp, serverPort) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to connect to ["
                           << serverIp << ":"
                           << serverPort << "]\n";
@@ -185,14 +185,14 @@ namespace Net {
 
         void UdpSend(sf::Packet &packet)
         {
-            if (!_isConnected) return;
+            // if (!_isConnected) return;
 
             if (_udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to send TCP packet\n";
             }
         }
 
-        void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, unsigned short gamePort)
+        void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, sf::Uint16 gamePort)
         {
             _remoteGameIp      = gameIp;
             _remoteGameUdpPort = gamePort;

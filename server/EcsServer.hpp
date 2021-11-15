@@ -12,6 +12,8 @@
 #include "Systems/ConnectionSystem.hpp"
 #include "Systems/SClientsSystem.hpp"
 
+#include <thread>
+
 Scene scene;
 
 #define FRAMERATE (1 / 30.f)
@@ -59,7 +61,7 @@ public:
         serverConnector.AddComponent<ConnectionComponent>();
     }
 
-    void Start(unsigned short port, const sf::IpAddress &address = sf::IpAddress::Any)
+    void Start(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         _connectionSystem->Init(port, address);
         sf::Time dt;

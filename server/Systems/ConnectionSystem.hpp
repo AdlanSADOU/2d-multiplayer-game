@@ -18,7 +18,7 @@ private:
     sf::TcpSocket *     _tmpSocket;
 
 public:
-    int Init(unsigned short port, const sf::IpAddress &address = sf::IpAddress::Any)
+    int Init(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         std::set<Entity>::iterator entity = _entities.find(0);
         _conn                             = scene.GetComponent<ConnectionComponent>(*entity);
@@ -63,19 +63,19 @@ public:
 
     void ReceiveUdp()
     {
-        sf::Packet remotePacket;
-        EventType  type;
+            sf::Packet remotePacket;
+            EventType  type;
 
-        sf::IpAddress  remoteAddress;
-        unsigned short remotePort;
+            sf::IpAddress remoteAddress;
+            sf::Uint16    remotePort;
 
-        sf::Socket::Status status = _conn.udpSock->receive(remotePacket, remoteAddress, remotePort);
-        if (status == sf::Socket::Done) {
-            remotePacket >> type;
+            sf::Socket::Status status = _conn.udpSock->receive(remotePacket, remoteAddress, remotePort);
+            if (status == sf::Socket::Done) {
+                remotePacket >> type;
 
-            Event remoteEvent(type);
-            remoteEvent.SetParam<sf::Packet>(0, remotePacket);
-            scene.InvokeEvent(remoteEvent);
+                Event remoteEvent(type);
+                remoteEvent.SetParam<sf::Packet>(0, remotePacket);
+                scene.InvokeEvent(remoteEvent);
         }
     }
 };

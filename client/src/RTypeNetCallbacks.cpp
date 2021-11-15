@@ -19,8 +19,8 @@ void RType::OnNetReceivedId(Event &event)
     udpInfoPacket << Net::Events::CLIENT_UDP
                   << GetLocalClientId()
                   << Net::INetClient::GetLocalUdpPort();
-
-    Net::INetClient::UdpSend(udpInfoPacket);
+    std::cout << "[Client]: sent port :" << GetLocalUdpPort();
+    Net::INetClient::TcpSend(udpInfoPacket);
 
     sf::Packet lpacket;
     lpacket << Net::Events::MATCHM_INIT

@@ -143,15 +143,17 @@ public:
     {
         sf::Packet packet = e.GetParam<sf::Packet>(0);
 
-        ClientID       remoteCliendId;
-        unsigned short remoteClientUdpPort;
+        ClientID   remoteCliendId;
+        sf::Uint16 remoteClientUdpPort;
 
         packet >> remoteCliendId >> remoteClientUdpPort;
 
         for (Entity clientEntity : _entities) {
             auto &sClientComp = scene.GetComponent<SClientComponent>(clientEntity);
-            if (sClientComp.id == remoteCliendId)
+            if (sClientComp.id == remoteCliendId) {
                 sClientComp.updPort = remoteClientUdpPort;
+                break;
+            }
         }
 
         std::cout << "[Server] Client ["
