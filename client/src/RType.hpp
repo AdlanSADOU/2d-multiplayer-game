@@ -93,7 +93,6 @@ class RType : public Net::INetClient
         void OnLobbyScreenBtn(Event &event);
         void OnBtnQuit(Event &event);
 
-        void OnNetReceivedId(Event &event);
         void OnQuickPlayBtn(Event &event);
         void OnNewClient(Event &event);
         void OnClientQuit(Event &event);
@@ -104,6 +103,8 @@ class RType : public Net::INetClient
     protected:
     private:
         RTypeMenu _menu;
+
+        RTypeMonster _monster;
 
         nuts::Clock _deltaClock;
 

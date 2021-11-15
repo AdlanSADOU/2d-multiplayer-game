@@ -65,6 +65,7 @@ void RType::Init()
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RType::OnInitialGameInfo, this));
 
     scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnQuickPlayBtn, this));
+    scene.AddEventCallback(Events::Btn::BTN_QUIT, BIND_CALLBACK(&RType::OnBtnQuit, this));
 
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
     _menu.Init(_engine);
@@ -106,6 +107,11 @@ void RType::Run()
                 if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
                     _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+                }
+
+                if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
+                    && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+                    _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
                 }
                 break;
 
