@@ -9,6 +9,7 @@
 
 #include "Nuts/Engine.hpp"
 #include "Nuts/Audio.hpp"
+#include "Nuts/UI/Text.hpp"
 
 #include "Nuts/EcsCore/Scene.hpp"
 
@@ -86,6 +87,7 @@ class RType : public Net::INetClient
 
         void OnNetReceivedId(Event &event);
         void OnLobbyScreenBtn(Event &event);
+        void OnBtnQuit(Event &event);
 
     protected:
     private:

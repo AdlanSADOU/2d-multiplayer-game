@@ -34,9 +34,14 @@ namespace nuts::UI
                 _text.SetString(text);
             }
 
-            void SetFont(nuts::Font &font)
+            void SetTextFont(nuts::Font &font)
             {
                 _text.SetFont(font);
+            }
+
+            nuts::Text &GetText()
+            {
+                return (_text);
             }
 
             void SetEventType(EventType type)
