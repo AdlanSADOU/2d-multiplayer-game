@@ -33,7 +33,6 @@ class Scene
             _EventManager     = std::make_unique<EventManager>();
         }
 
-        // Entity methods
         Entity CreateEntity()
         {
             return _EntityManager->CreateEntity();
@@ -48,7 +47,6 @@ class Scene
             _SystemManager->EntityDestroyed(entity);
         }
 
-        // Component methods
         template <typename T>
         void RegisterComponent()
         {
@@ -91,7 +89,6 @@ class Scene
             return _ComponentManager->GetComponentType<T>();
         }
 
-        // System methods
         template <typename T>
         std::shared_ptr<T> RegisterSystem()
         {
@@ -106,10 +103,6 @@ class Scene
 
         void AddEventCallback(EventType eventType, Callback callback)
         {
-#ifdef _DEBUG
-            std::cout << "Added Callback EvenType: "
-                      << eventType << "\n";
-#endif
             _EventManager->AddEventCallback(eventType, callback);
         }
 

@@ -58,7 +58,7 @@ public:
                 remoteEvent.SetParam<sf::Packet>(0, remotePacket);
                 scene.InvokeEvent(remoteEvent);
 
-            } else if (status == sf::Socket::Disconnected) { // TODO: Broadcast
+            } else if (status == sf::Socket::Disconnected) {
                 Event remoteEvent(Net::Events::CLIENT_DISCONNECT);
 
                 remotePacket << sClientComp.id;
@@ -121,12 +121,6 @@ public:
 
         sf::Packet clientIdPacket;
         clientIdPacket << (Net::Events::CLIENT_ID) << clientId;
-        std::cout << "[Server]: Sent TCP type:"
-                  << Net::Events::CLIENT_ID
-                  << " id:"
-                  << clientId
-                  << "\n";
-
         clientComponent.tcpSock->send(clientIdPacket);
 
         clientId++;

@@ -76,7 +76,6 @@ class ComponentArray : public IComponentArray
         *  @see entity
         *
         */
-
         void RemoveData(Entity entity)
         {
             assert(_EntityToArrayIndexMap.find(entity) != _EntityToArrayIndexMap.end() && "Removing non-existent component.");
