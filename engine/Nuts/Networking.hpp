@@ -7,13 +7,15 @@
 
 #pragma once
 
+#include <thread>
+
 #ifdef _WIN32
 #pragma warning(disable : 4091)
-using threadID = __threadid;
+#define threadID __threadid
 #endif
 
 #ifdef __unix
-using threadID = __gthread_t;
+#define threadID __gthread_t
 #endif
 
 #define NET_LOG 1
