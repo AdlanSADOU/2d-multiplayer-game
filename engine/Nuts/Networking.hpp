@@ -7,9 +7,14 @@
 
 #pragma once
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #pragma warning(disable : 4091)
-#endif //_WIN32
+using threadID = __threadid;
+#endif
+
+#ifdef __unix
+using threadID = __gthread_t;
+#endif
 
 #define NET_LOG 1
 
@@ -47,11 +52,11 @@ namespace Net {
         sf::TcpSocket _tcpSocket;
         sf::UdpSocket _udpSocket;
 
-        sf::IpAddress  _remoteGameIp;
-        sf::Uint16 _remoteGameUdpPort;
+        sf::IpAddress _remoteGameIp;
+        sf::Uint16    _remoteGameUdpPort;
 
-        sf::IpAddress  _remoteServerIp;
-        sf::Uint16 _remoteServerPort;
+        sf::IpAddress _remoteServerIp;
+        sf::Uint16    _remoteServerPort;
 
         ClientID _clientId    = -1;
         bool     _isConnected = false;

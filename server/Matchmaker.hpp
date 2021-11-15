@@ -24,7 +24,7 @@ private:
 public:
     Game() {};
 
-    void Run(std::vector<std::shared_ptr<SClientComponent>> &clients, std::int32_t gameId)
+    void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
     {
         _clients = std::move(clients);
         _gameId  = gameId;
@@ -33,7 +33,7 @@ public:
         for (auto &client : _clients) {
             sf::Packet packet;
 
-            std::cout << "ThreadId[" << __threadid() << "]: Launching game with "
+            std::cout << "ThreadId[" << threadID() << "]: Launching game with "
                       << client->ip << ":" << client->updPort << "\n";
 
             packet << Net::Events::INITIAL_GAME_INFO << "LETS PLAYYYYY\n";
