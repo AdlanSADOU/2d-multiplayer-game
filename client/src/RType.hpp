@@ -7,26 +7,27 @@
 
 #pragma once
 
-#include "Nuts/Engine.hpp"
 #include "Nuts/Audio.hpp"
+#include "Nuts/Engine.hpp"
 #include "Nuts/UI/Text.hpp"
 
 #include "Nuts/EcsCore/Scene.hpp"
 
 #include "Nuts/Clock.hpp"
 
+#include "Nuts/EcsComponents/SoundComponent.hpp"
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
-#include "Nuts/EcsComponents/SoundComponent.hpp"
 
 #include "Nuts/EcsSystems/AnimationSystem.hpp"
 #include "Nuts/EcsSystems/RenderSystem.hpp"
-#include "Nuts/EcsSystems/TransformSystem.hpp"
 #include "Nuts/EcsSystems/SoundSystem.hpp"
+#include "Nuts/EcsSystems/TransformSystem.hpp"
 
 #include "Nuts/Networking.hpp"
 
+#include "RTypeGame.hpp"
 #include "RTypeMenu.hpp"
 
 // #include "engine/Nuts/GameObject.hpp"
@@ -34,7 +35,7 @@
 class RTypeMonster : public nuts::GameObject
 {
     private:
-        nuts::Texture _texture;
+        nuts::Texture     _texture;
         nuts::SoundBuffer _buffer;
 
     public:
@@ -53,8 +54,8 @@ class RTypeMonster : public nuts::GameObject
             this->AddComponent<SoundComponent>();
 
             TransformComponent &transformComponent = GetComponent<TransformComponent>();
-            SpriteComponent &spriteComponent = GetComponent<SpriteComponent>();
-            SoundComponent &soundComponent = GetComponent<SoundComponent>();
+            SpriteComponent &   spriteComponent    = GetComponent<SpriteComponent>();
+            SoundComponent &    soundComponent     = GetComponent<SoundComponent>();
 
             spriteComponent.sprite.SetTexture(_texture);
             spriteComponent.sprite.SetTextureRect({ 0, 0, 16, 14 });
@@ -73,8 +74,11 @@ class RTypeMonster : public nuts::GameObject
 
 class RType : public Net::INetClient
 {
-    enum game_state {
+
+    enum GameState
+    {
         MENU,
+        MATCHM,
         GAME
     };
 
@@ -89,13 +93,17 @@ class RType : public Net::INetClient
         void OnLobbyScreenBtn(Event &event);
         void OnBtnQuit(Event &event);
 
+        void OnNetReceivedId(Event &event);
+        void OnQuickPlayBtn(Event &event);
+        void OnNewClient(Event &event);
+        void OnClientQuit(Event &event);
+        void OnInitialGameInfo(Event &event);
+
+        GameState _state = GameState::MENU;
+
     protected:
     private:
         RTypeMenu _menu;
-
-        // TEST A SUPPRIMER APRES
-        RTypeMonster _monster;
-        //
 
         nuts::Clock _deltaClock;
 

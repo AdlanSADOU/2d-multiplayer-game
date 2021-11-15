@@ -12,12 +12,17 @@
 #include "Systems/ConnectionSystem.hpp"
 #include "Systems/SClientsSystem.hpp"
 
+#include <thread>
+
 Scene scene;
+
+#define FRAMERATE (1 / 30.f)
 
 class EcsServer {
 private:
     std::shared_ptr<ConnectionSystem> _connectionSystem;
-    std::shared_ptr<SClientsSystem> _sClientSystem;
+    std::shared_ptr<SClientsSystem>   _sClientSystem;
+    sf::Clock                         deltaClock;
 
 public:
     std::shared_ptr<ConnectionSystem> GetConnectionSystem() const
@@ -32,6 +37,7 @@ public:
 
     void Init()
     {
+
         scene.Init();
         scene.RegisterComponent<SClientComponent>();
         scene.RegisterComponent<ConnectionComponent>();
@@ -55,13 +61,23 @@ public:
         serverConnector.AddComponent<ConnectionComponent>();
     }
 
-    void Start(unsigned short port, const sf::IpAddress& address = sf::IpAddress::Any)
+    void Start(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         _connectionSystem->Init(port, address);
+        sf::Time dt;
+        sf::Time acc;
 
         while (1) {
-            _connectionSystem->Accept();
-            _sClientSystem->ReceiveTcp();
+            dt = deltaClock.restart();
+            acc += dt;
+
+            if (acc.asSeconds() > FRAMERATE) {
+                _connectionSystem->Accept();
+                _connectionSystem->ReceiveUdp();
+
+                _sClientSystem->ReceiveTcp();
+                acc = sf::Time::Zero;
+            }
         }
     }
 };

@@ -11,11 +11,11 @@
 
 class SClient {
 public:
-    sf::TcpSocket* tcp;
-    sf::Uint16 updPort;
-    sf::IpAddress ip;
-    ClientID uuid;
-    bool connected;
-    bool isInLobby;
-    std::uint8_t lobbyID;
+    sf::TcpSocket *tcp;
+    sf::Uint16     updPort;
+    sf::IpAddress  ip;
+    ClientID       uuid;
+    bool           connected;
+    bool           isInLobby;
+    std::uint8_t   lobbyID;
 };

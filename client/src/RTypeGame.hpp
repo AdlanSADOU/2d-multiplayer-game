@@ -7,11 +7,22 @@
 
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 class RTypeGame {
-    public:
-        RTypeGame();
-        ~RTypeGame();
-    
-    protected:
-    private:
+    enum PlayerColor {
+        BLUE = 0,
+        RED,
+        YELLOW,
+        GREEN
+    };
+
+public:
+    RTypeGame();
+    ~RTypeGame();
+
+    void Draw(sf::RenderWindow window);
+
+protected:
+private:
 };

@@ -1,19 +1,56 @@
 # Remarks
+- ditch Lobby
 
-- working conan profile:
-```
-[settings]
-os=Windows
-os_build=Windows
-arch=x86_64
-arch_build=x86_64
-compiler=Visual Studio
-compiler.version=16
-build_type=Debug #or Release
-[options]
-[build_requires]
-[env]
-```
+CLIENT_ID       : server sends
+MATCHM_OK       : server responds
+GAMEID          : server responds
+GAMEID_OK       : client responds
+INITIAL_GAME_INFO : server sends
+
+CLIENT_UDP      : client sends
+MATCHM_INIT     : client sends
+MATCHM_PLAY     : client sends
+
+[Quick Play] ==>
+- [client] connect
+
+- [server]  accept - respond with CLIENT_ID|clientId
+
+- [client]  store id -
+            UdpSend(sIp, sPort+1, CLIENT_UDP|ClienId|UdpPort)
+            respond with MATCHM_INIT|clientId
+
+- [server]  onMATCHM_INIT:
+            Machmaking is running?:
+                YES: Matchm.addClient(SClient)
+                    Broadcast("new client joined")
+                    Send(MATCHM_OK|ClienId)
+
+                NO: create new Machmacking
+                    Matchm.addClient(SClient)
+                    Send(MATCHM_OK|ClienId)
+
+- [client]  onMATCHM_OK:
+            screen shows: "Waiting for players..."
+            with blurred background
+            players can click on [Play] or wait for others
+                [Play] Send(MATCHM_PLAY|ClientId)
+
+- [server]  onMATCHM_PLAY: inits new Game thread
+            pushes all clients from Matchm to Game
+            binds Game udpSock
+            tcpBroadCast(GAMEID|gameId)
+
+- [client]  onGAMEID:
+            store gameId
+            TcpSend(GAMEID_OK|gameId|clienId)
+
+- [server] TcpSend(INITIAL_GAME_INFO|color|InitialGamePos)
+           UdpBroadcast(UDP_INFO)
+
+now clients can start sendind input commands in Udp
+
+## Matchmaking
 
 # Notes
 VSCODE: possible conflicts for includes between c_cpp_configuration.json
@@ -30,29 +67,14 @@ cmake build static libraries:
 https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Shared%20Libraries.html
 https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
 
+
+
 # Server Issues
 server accepts same incoming connection multiple times
   [really an issue? we can just not register it]
 
 # TODO sever
-## class Server
-- Init()
-- IsRunning()
-- Listen()
-- Accept()
----
-## class Dispatcher
-    dispacher takes in received packet and which socket type they came from (TCP or UDP)
-    It then extracts the MsgType type and 'routes' to the approriate calls though an array of function pointers
-    the Dispatcher has an array of function pointers indexed by MsgType type
-    the Dispatcher holds unique references to ClientManager &
-    LobbyManager
 
-    - shared_ptr<ClientManager>
-    - shared_ptr<LobbyManager>
-    - std::array<(void)(*func)> RemoteProcedureCalls
-    - Route()
----
 
 # TODO Engine
 sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
@@ -110,89 +132,6 @@ https://en.cppreference.com/w/cpp/thread/mutex
 trying to join workers ouside the class they were pushed
 crashes
 
----
-IServer common interface
-- Clients
-
-- TcpListener
-
-- TcpSocket
-- UdpSocket
-
-- Listen()
-- virtual Accept()
-
-- sendMessage()
-- receiveMessage()
-
-IClient common interface
-- clientId
-
-- TcpSocket
-- UdpSocket
-
-- ConnectToServer()
-
-- MessageType<T>
-
-- WriteMessageHeader()
-- WriteMessageBody()
-
-- ReadMessageHeader()
-- ReadMessageBody()
-
-- sendMessage(Connection, Packet)
-- receiveMessage()
 
 # Client/Server Protocol
 https://www.netresec.com/index.ashx?page=RawCap
----
-                R-TYPE Protocol Description
-
-1. Client/Server internals
-
-    Client and server communicate with uint8 typed MsgTypes enum class:
-    SFML Packet class is used to pass messages between client/server.
-    A given packet always contains at least the message header as
-    the first byte followed by a ClientID that is also 1 byte long,
-    completed by the message body.
-
-2. Anatomy of a packet
-                         (byte)     (byte)
-    packet contains => { MsgType | ClientID | Body }
-
-3. Message Types
-
-    CLIENT_ID   = 1 : server sends clients ID upon accepted TCP connection
-    UDP_INFO    = 2 : upon receiving ID client reponds by sending its UDP bound port
-    UDP_OK      = 3 :
-
-4. Client/Server connection sequence
-
-    [Client]: initiates TCP connection
-    [Server]: accepts   TCP connection
-    [Server]: response.....packet { CLIENT_ID | ClientID }
-    [Client]: response.....packet { UDP_INFO  | ClientID  | clientUdpPort }
-    [Server]: response.....packet { UDP_OK    | ClientID }
-
-5. Lobby
-
-    [Client]: request......packet { LOBBY_LOAD | ClientID }
-    [Server]: response.....packet { LOBBY_LIST | ClientID | lobby1, lobby2, ... }
-
-        lobby_ids: list of lobby ids to join.
-    if none exist, client receives 0.
-
-    [Client]: request......packet { LOBBY_CREATE | ClientID }
-
-        Server creates lobby with an attributed id.
-
-    [Server]: response.....packet { LOBBY_LIST | ClientID | { lobby_ids } }
-
-        Client refreches lobby list
-
-        Client clicks on specific lobby:
-
-    [Client]: request......packet { LOBBY_JOIN | ClientID | lobby_id }
-
-        Server processes

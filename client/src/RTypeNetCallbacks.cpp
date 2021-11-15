@@ -10,19 +10,71 @@
 void RType::OnNetReceivedId(Event &event)
 {
     sf::Packet packet = event.GetParam<sf::Packet>(0);
-    ClientID id;
+    ClientID   id;
     packet >> id;
 
     SetLocalClientId(id);
 
-    std::cout << "OnNetReceivedId id:"
-              << GetLocalClientId()
+    sf::Packet udpInfoPacket;
+    udpInfoPacket << Net::Events::CLIENT_UDP
+                  << GetLocalClientId()
+                  << Net::INetClient::GetLocalUdpPort();
+    std::cout << "[Client]: sent port :" << GetLocalUdpPort();
+    Net::INetClient::TcpSend(udpInfoPacket);
+
+    sf::Packet lpacket;
+    lpacket << Net::Events::MATCHM_INIT
+            << GetLocalClientId();
+
+    Net::INetClient::TcpSend(lpacket);
+}
+
+void RType::OnQuickPlayBtn(Event &event)
+{
+    /** TODO(adlan):
+    * if already connected, just relaunch matchmaking
+    */
+    if (INetClient::IsConnected()) return;
+
+    if (INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001))
+        _state = GameState::MATCHM;
+
+}
+
+void RType::OnNewClient(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    ClientID   id;
+    sf::Int32  gameId;
+
+    packet >> id >> gameId;
+
+    std::cout << "[Client]: Client  "
+              << id
+              << " joined game "
+              << gameId
               << "\n";
 }
 
-void RType::OnLobbyScreenBtn(Event &event)
+void RType::OnClientQuit(Event &event)
 {
-    sf::Packet packet;
-    packet << Net::Events::LOBBY_LOAD << GetLocalClientId();
-    Net::INetClient::TcpSend(packet);
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    ClientID   id;
+    sf::Int32  gameId;
+
+    packet >> id >> gameId;
+
+    std::cout << "[Client]: Player " << id
+              << " quit game " << gameId << "\n";
+}
+
+void RType::OnInitialGameInfo(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+    std::string   lol;
+
+    packet >> lol;
+
+    std::cout << "[Client]: server said " << lol << "\n";
+
 }

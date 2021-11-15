@@ -60,9 +60,11 @@ void RType::Init()
     _deltaClock.Restart();
 
     scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
-    scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnLobbyScreenBtn, this));
-    scene.AddEventCallback(Events::Btn::BTN_QUIT, BIND_CALLBACK(&RType::OnBtnQuit, this));
+    scene.AddEventCallback(Net::Events::NEW_CLIENT, BIND_CALLBACK(&RType::OnNewClient, this));
+    scene.AddEventCallback(Net::Events::CLIENT_QUIT, BIND_CALLBACK(&RType::OnClientQuit, this));
+    scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RType::OnInitialGameInfo, this));
 
+    scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnQuickPlayBtn, this));
 
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
     _menu.Init(_engine);
@@ -93,16 +95,28 @@ void RType::Run()
         _animationSystem.get()->Update(_deltaClock);
         _renderSystem.get()->Update(_engine->window);
 
+        INetClient::Update();
 
-        if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
-            && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
-            _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
-            scene.InvokeEvent(nuts::Key::F);
-        }
+        switch (_state) {
+            case GameState::MENU:
+                _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
 
-        if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
-            && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
-            _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
+                if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
+                    && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+                    _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+                }
+                break;
+
+            case GameState::MATCHM:
+                break;
+
+            case GameState::GAME:
+                break;
+
+            default:
+                break;
         }
 
         INetClient::Update();
