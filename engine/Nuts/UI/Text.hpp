@@ -55,7 +55,7 @@ namespace nuts
 
             ~Text()
             {
-                std::cout << "Text destroyed" << std::endl;
+
             }
 
             void SetFont(nuts::Font &font)
@@ -63,7 +63,7 @@ namespace nuts
                 _text.setFont(font.GetFont());
             }
 
-            void SetString(const std::string string)
+            void SetString(const std::string &string)
             {
                 _text.setString(string);
             }
