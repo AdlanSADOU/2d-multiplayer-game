@@ -30,11 +30,20 @@ std::vector<RTypeMMPlayer> &RTypeMatchmaking::GetPlayers()
     return (this->_players);
 }
 
-
-
-void RTypeMatchmaking::Init()
+void RTypeMatchmaking::Draw()
 {
+
+}
+
+void RTypeMatchmaking::Init(std::shared_ptr<nuts::Engine> engine)
+{
+    _engine = engine;
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
 
+    _tPlayers.emplace_back(nuts::Text(_players[0].GetName(), 12, _font));
+    _tPlayers.emplace_back(nuts::Text(_players[1].GetName(), 12, _font));
+    _tPlayers.emplace_back(nuts::Text(_players[2].GetName(), 12, _font));
+    _tPlayers.emplace_back(nuts::Text(_players[3].GetName(), 12, _font));
 
+    
 }

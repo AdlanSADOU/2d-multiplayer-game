@@ -53,6 +53,13 @@ namespace nuts
 
             }
 
+            Text(const std::string &text, const unsigned int size, nuts::Font &font)
+            {
+                this->SetFont(font);
+                this->SetString(text);
+                this->SetCharacterSize(size);
+            }
+
             ~Text()
             {
 

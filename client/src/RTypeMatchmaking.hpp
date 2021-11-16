@@ -8,8 +8,10 @@
 #pragma once
 
 #include <iostream>
-
 #include <vector>
+#include <memory>
+
+#include "Nuts/Engine.hpp"
 
 #include "Text.hpp"
 
@@ -60,7 +62,9 @@ class RTypeMatchmaking
 {
     private:
         std::vector<RTypeMMPlayer> _players;
-        
+        std::shared_ptr<nuts::Engine> _engine;
+
+        std::vector<nuts::Text> _tPlayers;
 
         nuts::Font _font;
 
@@ -68,7 +72,8 @@ class RTypeMatchmaking
         RTypeMatchmaking();
         ~RTypeMatchmaking();
 
-        void Init();
+        void Draw();
+        void Init(std::shared_ptr<nuts::Engine> engine);
 
         std::vector<RTypeMMPlayer> &GetPlayers();
 
