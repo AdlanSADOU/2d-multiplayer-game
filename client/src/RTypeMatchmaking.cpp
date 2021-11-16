@@ -30,9 +30,11 @@ std::vector<RTypeMMPlayer> &RTypeMatchmaking::GetPlayers()
     return (this->_players);
 }
 
+
+
 void RTypeMatchmaking::Init()
 {
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
-    
+
 
 }

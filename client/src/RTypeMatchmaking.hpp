@@ -61,6 +61,7 @@ class RTypeMatchmaking
     private:
         std::vector<RTypeMMPlayer> _players;
         
+
         nuts::Font _font;
 
     public:
