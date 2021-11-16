@@ -16,8 +16,10 @@ RType::RType()
 RType::~RType()
 {
 }
+nuts::Font _font;
+nuts::Text mytext;
 
-void RType::Init()
+void       RType::Init()
 {
     _engine = std::make_shared<nuts::Engine>();
 
@@ -29,10 +31,12 @@ void RType::Init()
     scene.RegisterComponent<SpriteComponent>();
     scene.RegisterComponent<VelocityComponent>();
     scene.RegisterComponent<WidgetComponent>();
+    scene.RegisterComponent<SoundComponent>();
 
     _renderSystem    = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
     _animationSystem = scene.RegisterSystem<AnimationSystem>();
+    _soundSystem     = scene.RegisterSystem<SoundSystem>();
 
     EntitySignature transformSig;
     transformSig.set(scene.GetComponentType<TransformComponent>());
@@ -47,8 +51,14 @@ void RType::Init()
     animationSig.set(scene.GetComponentType<SpriteComponent>());
     scene.SetSystemSignature<AnimationSystem>(animationSig);
 
-    _transformSystem->Init();
+    EntitySignature soundSig;
+    soundSig.set(scene.GetComponentType<SoundComponent>());
+    scene.SetSystemSignature<SoundSystem>(soundSig);
+
     _monster.Init();
+    _soundSystem->Init();
+
+    _transformSystem->Init();
     _deltaClock.Restart();
 
     scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
@@ -57,8 +67,18 @@ void RType::Init()
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RType::OnInitialGameInfo, this));
 
     scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnQuickPlayBtn, this));
+    scene.AddEventCallback(Events::Btn::BTN_QUIT, BIND_CALLBACK(&RType::OnBtnQuit, this));
+
+    _font.loadFromFile("./resources/fonts/CollegiateBlackFLF.ttf");
+    mytext = nuts::Text(L"LOL", _font, 30);
+    mytext.setStyle(sf::Text::Regular);
 
     _menu.Init(_engine);
+}
+
+void RType::OnBtnQuit(Event &event)
+{
+    _engine->CloseWindow();
 }
 
 void RType::Run()
@@ -88,16 +108,28 @@ void RType::Run()
                 _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
                 _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
                 _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
+                // _engine->window.draw(*_menu._widgetMenu.btnLobby.GetText());
+                // _engine->window.draw(_menu._widgetMenu.btnQuit.GetText());
+                // _menu._widgetMenu.btnQuit.GetText().Draw(_engine->window);
 
-                if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
-                    && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
-                    _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
-                }
+                // if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
+                //     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+                //     _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+                // }
+
+                // if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
+                //     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
+                //     _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
+                // }
+
+                _engine->window.draw(mytext);
                 break;
 
-            case GameState::MATCHM: break;
+            case GameState::MATCHM:
+                break;
 
-            case GameState::GAME: break;
+            case GameState::GAME:
+                break;
 
             default:
                 break;

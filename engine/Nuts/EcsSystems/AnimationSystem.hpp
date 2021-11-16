@@ -32,9 +32,10 @@ class AnimationSystem : public System
             {
                 nuts::Sprite &sprite = scene.GetComponent<SpriteComponent>(entity).sprite;
 
-                if (sprite.IsAnimated() && sprite.ShouldGetNextFrame(deltaClock.GetElapsedTimeAsSeconds())) {
+                if (sprite.IsAnimated() && sprite.ShouldGetNextFrame(sprite.GetAnimationClock()->GetElapsedTimeAsSeconds())) {
                     sprite.NextFrame();
                     sprite.SetTextureRect(sprite.GetCurrentFrame());
+                    sprite.ResetAnimationClock();
                 }
             }
         }

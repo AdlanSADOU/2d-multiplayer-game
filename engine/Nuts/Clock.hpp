@@ -42,9 +42,15 @@ namespace nuts
                 return (_clock.getElapsedTime().asMicroseconds());
             }
 
-            void Restart()
+            /**
+             * @brief This function puts the time counter back to zero and
+             * returns the time elapsed as seconds
+             *
+             * @return float
+             */
+            float Restart()
             {
-                _clock.restart();
+                return (_clock.restart().asSeconds());
             }
     };
 }

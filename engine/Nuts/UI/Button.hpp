@@ -5,47 +5,68 @@
 ** Button.hpp
 */
 
+#pragma once
+
 #include "Widget.hpp"
+#include "Text.hpp"
 
 extern Scene scene;
 
-namespace nuts::UI {
+namespace nuts::UI
+{
+    class Button : public Widget
+    {
+        private:
+            EventType _type;
+            nuts::Text *_text;
 
-    class Button : public Widget {
-    private:
-        EventType _type;
+        public:
+            Button() {};
+            ~Button() {};
 
-    public:
-        Button() {};
-        ~Button() {};
+            Button(std::string name) : Widget(name)
+            {
+                Create(name);
+                _text = new nuts::Text();
+            }
 
-        Button(std::string name)
-            : Widget(name)
-        {
-            Create(name);
-        }
+            void SetText(const std::string &text)
+            {
+                _text->setString(text);
+            }
 
-        void SetEventType(EventType type)
-        {
-            _type = type;
-        }
+            void SetTextFont(nuts::Font &font)
+            {
+                _text->setFont(font);
+            }
 
-        void InvokeEvent(Event event)
-        {
-            scene.InvokeEvent(event);
-        }
+            nuts::Text *GetText()
+            {
+                return (_text);
+            }
 
-        void InvokeEvent(EventType eventType)
-        {
-            scene.InvokeEvent(eventType);
-        }
+            void SetEventType(EventType type)
+            {
+                _type = type;
+            }
 
-        bool IsHovered(const nuts::Vector2i mousePos)
-        {
-            auto sprite = Widget::GetSPrite().GetSprite();
-            auto btnPos = Widget::GetSPrite().GetPosition();
+            void InvokeEvent(Event event)
+            {
+                std::cout << "invoked eventType: " << event.GetType() << "\n";
+                scene.InvokeEvent(event);
+            }
 
-            return sprite.getGlobalBounds().contains({ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) });
-        }
+            void InvokeEvent(EventType eventType)
+            {
+                scene.InvokeEvent(eventType);
+            }
+
+            bool IsHovered(const nuts::Vector2i mousePos)
+            {
+                auto sprite = Widget::GetSprite().GetSprite();
+                auto btnPos = Widget::GetSprite().GetPosition();
+
+                return sprite.getGlobalBounds().contains({ static_cast<float>(mousePos.x), static_cast<float>(mousePos.y) });
+            }
     };
 }
