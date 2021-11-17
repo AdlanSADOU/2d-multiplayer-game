@@ -27,7 +27,8 @@ target_link_directories(rtype_client PUBLIC ${SFML_LIBS_DIR_DEBUG})
 target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
 
 target_compile_options(rtype_client PRIVATE /W1)
-    file(GLOB SFML_DLLS ${SFML_LIBS_DIR_DEBUG}/*.dll)
+
+    file(GLOB SFML_DLLS "${SFML_LIBS_DIR_DEBUG}/*.dll")
     foreach(myDll IN LISTS SFML_DLLS)
         add_custom_command(
             TARGET rtype_client POST_BUILD
@@ -35,7 +36,7 @@ target_compile_options(rtype_client PRIVATE /W1)
             COMMENT "Copy DLL: ${myDll}\n")
         endforeach()
 
-    file(GLOB EXT_DLLS ${SFML_EXT_LIBS_DIR}/*.dll)
+    file(GLOB EXT_DLLS "${SFML_EXT_LIBS_DIR}/*.dll")
     foreach(myDll IN LISTS EXT_DLLS)
         add_custom_command(
             TARGET rtype_client POST_BUILD
