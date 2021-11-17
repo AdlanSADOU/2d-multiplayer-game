@@ -170,7 +170,7 @@ class RTypeMatchmaking
             _menu.panel.SetPosition({ winSize.x / 2.f - panelWidth / 2.f, winSize.y / 2.f - panelHeight / 2.f});
             nuts::Vector2f panelPos = _menu.panel.GetPosition();
 
-            _menu.startBtn.SetPosition({panelPos.x + btnWidth / 2, panelHeight + 125});
+            _menu.startBtn.SetPosition({panelWidth / 2 - btnWidth / 2, panelHeight + 10});
 
             nuts::Vector2f stBtnPos = _menu.startBtn.GetPosition();
             nuts::FloatRect textStBtn = _menu.startBtn.GetText().GetLocalBounds();
