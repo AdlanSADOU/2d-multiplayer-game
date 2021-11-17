@@ -55,7 +55,7 @@ void RType::Init()
     soundSig.set(scene.GetComponentType<SoundComponent>());
     scene.SetSystemSignature<SoundSystem>(soundSig);
 
-    _monster.Init();
+    // _monster.Init();
     _soundSystem->Init();
 
     _transformSystem->Init();

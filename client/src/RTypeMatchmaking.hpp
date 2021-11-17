@@ -70,6 +70,11 @@ class RTypeMMPlayer
 
 class RTypeMatchmaking
 {
+    struct WidgetMenu
+    {
+        nuts::UI::Widget panel;
+        nuts::UI::Button startBtn;
+    };
 
     private:
         std::shared_ptr<nuts::Engine> _engine;
@@ -81,6 +86,7 @@ class RTypeMatchmaking
         nuts::Text _tNReady;
         std::vector<nuts::Text> _tPlayers;
 
+        WidgetMenu _menu;
 
     public:
         RTypeMatchmaking()
@@ -101,18 +107,21 @@ class RTypeMatchmaking
         void Draw()
         {
             int x = 0;
+            _menu.panel.TEST_DRAW(_engine->window);
+            _menu.startBtn.TEST_DRAW(_engine->window);
+            _menu.startBtn.GetText().Draw(_engine->window);
             for (auto &player : _tPlayers) {
-                player.Draw(_engine->window);
                 nuts::FloatRect pPos = player.GetGlobalBounds();
                 nuts::Text tmp;
                 if (_players[x].GetState() == RTypeMMPlayer::MPlayerState::READY) {
                      tmp = _tReady;
-                    tmp.SetPosition({pPos.left + pPos.width + 50, pPos.top});
                 }
                 else {
                     tmp = _tNReady;
-                    tmp.SetPosition({pPos.left + pPos.width + 50, pPos.top});
                 }
+                player.Draw(_engine->window);
+                tmp.SetPosition({pPos.left + pPos.width + 15, pPos.top});
+                tmp.SetCharacterSize(8);
                 tmp.Draw(_engine->window);
             }
         }
@@ -121,6 +130,8 @@ class RTypeMatchmaking
         {
             _engine = engine;
             _font.LoadFromFile("./resources/fonts/arcade.ttf");
+            nuts::Vector2u winSize = _engine->GetWindowSize();
+
 
             _players.emplace_back(RTypeMMPlayer("Player 1"));
             _players.emplace_back(RTypeMMPlayer("Player 2"));
@@ -138,9 +149,39 @@ class RTypeMatchmaking
             _tReady = nuts::Text("Ready", 12, _font);
             _tReady.SetFillColor({0, 255, 0, 255});
 
-            float y = 0;
+            _menu.panel = nuts::UI::Widget("Panel");
+            _menu.panel.SetImageFromFile("./resources/ui/MainPanel02.png");
+            _menu.startBtn = nuts::UI::Button("Start");
+            _menu.startBtn.SetImageFromFile("./resources/ui/Button01.png");
+
+            _menu.startBtn.GetText().SetFont(_font);
+            _menu.startBtn.GetText().SetString("Play");
+            _menu.startBtn.GetText().SetCharacterSize(11);
+            _menu.startBtn.GetText().SetFillColor({255, 255, 255, 255});
+
+            _menu.startBtn.SetParent(_menu.panel);
+            _menu.startBtn.SetEventType(::Events::Btn::BTN_START);
+
+            float panelWidth = _menu.panel.GetSprite().GetSprite().getLocalBounds().width;
+            float panelHeight = _menu.panel.GetSprite().GetSprite().getLocalBounds().height;
+            float btnWidth = _menu.startBtn.GetSprite().GetSprite().getLocalBounds().width;
+            float btnHeight = _menu.startBtn.GetSprite().GetSprite().getLocalBounds().height;
+
+            _menu.panel.SetPosition({ winSize.x / 2.f - panelWidth / 2.f, winSize.y / 2.f - panelHeight / 2.f});
+            nuts::Vector2f panelPos = _menu.panel.GetPosition();
+
+            _menu.startBtn.SetPosition({panelPos.x + btnWidth / 2, panelHeight + 125});
+
+            nuts::Vector2f stBtnPos = _menu.startBtn.GetPosition();
+            nuts::FloatRect textStBtn = _menu.startBtn.GetText().GetLocalBounds();
+
+            _menu.startBtn.GetText().SetPosition({stBtnPos.x + btnWidth / 2 - textStBtn.width / 2, stBtnPos.y + btnHeight / 2 - textStBtn.height / 2});
+
+            float y = 50;
             for (auto &player : _tPlayers) {
-                player.SetPosition({50, y += 50});
+                auto pLBounds = player.GetLocalBounds();
+                player.SetPosition({panelPos.x + pLBounds.width / 2, panelPos.y + y});
+                y += 90;
             }
         }
 };
