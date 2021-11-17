@@ -11,7 +11,7 @@
 
 RType::RType()
 {
-    
+
 }
 
 RType::~RType()
@@ -71,6 +71,7 @@ void RType::Init()
 
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
     _menu.Init(_engine);
+    _matchMaking.Init(_engine);
 }
 
 void RType::OnBtnQuit(Event &event)
@@ -102,10 +103,6 @@ void RType::Run()
 
         switch (_state) {
             case GameState::MENU:
-                _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
-                _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
-                _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
-
                 if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
                     _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
@@ -113,11 +110,19 @@ void RType::Run()
 
                 if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
-                    _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
+                        _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
                 }
+
+                _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.btnLobby.GetText().Draw(_engine->window);
+                _menu._widgetMenu.btnQuit.TEST_DRAW(_engine->window);
+                _menu._widgetMenu.btnQuit.GetText().Draw(_engine->window);
                 break;
 
             case GameState::MATCHM:
+                _matchMaking.Draw();
                 break;
 
             case GameState::GAME:
@@ -128,12 +133,6 @@ void RType::Run()
         }
 
         INetClient::Update();
-        _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.btnLobby.GetText().Draw(_engine->window);
-        _menu._widgetMenu.btnQuit.TEST_DRAW(_engine->window);
-        _menu._widgetMenu.btnQuit.GetText().Draw(_engine->window);
 
         _engine->Present();
         _deltaClock.Restart();
