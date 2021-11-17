@@ -11,10 +11,12 @@
 
 RType::RType()
 {
+    
 }
 
 RType::~RType()
 {
+
 }
 
 void RType::Init()
