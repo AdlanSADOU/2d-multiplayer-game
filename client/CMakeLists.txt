@@ -23,6 +23,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../resources
 ${CMAKE_CURRENT_BINARY_DIR}/resources)
 
 if(MSVC)
+
 target_link_directories(rtype_client PUBLIC ${SFML_LIBS_DIR_DEBUG})
 target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
 

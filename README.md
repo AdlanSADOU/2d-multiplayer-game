@@ -31,3 +31,11 @@ cd SFML
 cmake -G “Unix Makefiles”
 cmake --build .
 ```
+
+## Pour ne pas track SFML dans l'extension Git
+
+Ajoutez ces 2 lignes dans ```.vscode/settings.json```
+```json
+    "git.ignoreSubmodules": true,
+    "git.ignoredRepositories": ["SFML"],
+```
