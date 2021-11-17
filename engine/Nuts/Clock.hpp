@@ -52,5 +52,10 @@ namespace nuts
             {
                 return (_clock.restart().asSeconds());
             }
+
+            sf::Clock &GetClock()
+            {
+                return (_clock);
+            }
     };
 }

@@ -72,6 +72,7 @@ void RType::Init()
     INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001);
     _menu.Init(_engine);
     _matchMaking.Init(_engine);
+    _game.Init(_engine);
 }
 
 void RType::OnBtnQuit(Event &event)
@@ -126,15 +127,16 @@ void RType::Run()
                 break;
 
             case GameState::GAME:
+                _game.Update();
+                _game.Draw();
                 break;
 
             default:
                 break;
         }
+        _deltaClock.Restart();
 
         INetClient::Update();
-
         _engine->Present();
-        _deltaClock.Restart();
     }
 }

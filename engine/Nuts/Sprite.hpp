@@ -281,5 +281,16 @@ namespace nuts
             {
                 return (_animation_clock->Restart());
             }
+
+            nuts::FloatRect GetGlobalBounds()
+            {
+                sf::FloatRect rect = _sprite.getGlobalBounds();
+                nuts::FloatRect res;
+                res.left = rect.left;
+                res.top = rect.top;
+                res.width = rect.width;
+                res.height = rect.height;
+                return (res);
+            }
     };
 }

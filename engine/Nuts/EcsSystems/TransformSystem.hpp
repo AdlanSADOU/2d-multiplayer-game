@@ -36,13 +36,19 @@ class TransformSystem : public System
 
         void Update(nuts::Clock deltaClock)
         {
-            for (auto const &entity : _entities)
-            {
-                nuts::Vector2f pos = scene.GetComponent<TransformComponent>(entity).position;
-                nuts::Vector2f vel = scene.GetComponent<VelocityComponent>(entity).velocity;
+            for (auto const &entity : _entities) {
                 auto &spriteComponent = scene.GetComponent<SpriteComponent>(entity);
 
-                spriteComponent.sprite.GetSprite().setPosition({(pos.x + vel.x) * deltaClock.GetElapsedTimeAsSeconds(), (pos.y + vel.y) * deltaClock.GetElapsedTimeAsSeconds()});
+                if (spriteComponent.isActive) {
+                    auto &tComp = scene.GetComponent<TransformComponent>(entity);
+                    auto &vComp = scene.GetComponent<VelocityComponent>(entity);
+
+                    auto time = deltaClock.GetElapsedTimeAsSeconds();
+                    tComp.position.x = tComp.position.x + (vComp.velocity.x * time);
+                    tComp.position.y = tComp.position.y + (vComp.velocity.y * time);
+
+                    spriteComponent.sprite.SetPosition({(tComp.position.x), (tComp.position.y)});
+                }
             }
         }
 };

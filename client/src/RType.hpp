@@ -67,7 +67,7 @@ class RTypeMonster : public nuts::GameObject
             spriteComponent.sprite.SetFrameTime(0.070);
             spriteComponent.sprite.InitAnimationClock();
 
-            transformComponent.position = { 0, 0 };
+            transformComponent.position = { 100, 20 };
 
             soundComponent.sound.SetSoundBuffer(_buffer.GetSoundBuffer());
         }
@@ -99,12 +99,13 @@ class RType : public Net::INetClient
         void OnClientQuit(Event &event);
         void OnInitialGameInfo(Event &event);
 
-        GameState _state = GameState::MATCHM;
+        GameState _state = GameState::GAME;
 
     protected:
     private:
         RTypeMenu _menu;
         RTypeMatchmaking _matchMaking;
+        RTypeGame _game;
 
         RTypeMonster _monster;
 
