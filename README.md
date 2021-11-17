@@ -3,7 +3,7 @@
 ## Installer les dependances
 
 ```console
-sudo dnf install openal-soft-devel.x86_64 && libvorbis-devel.x86_64 &&flac-devel.x86_64
+sudo dnf install openal-soft-devel.x86_64 && libvorbis-devel.x86_64 && flac-devel.x86_64
 
 git submodule init
 git submodule update
