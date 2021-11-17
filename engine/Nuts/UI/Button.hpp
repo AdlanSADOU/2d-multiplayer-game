@@ -31,12 +31,12 @@ namespace nuts::UI
 
             void SetText(const std::string &text)
             {
-                _text.setString(text);
+                _text.SetString(text);
             }
 
             void SetTextFont(nuts::Font &font)
             {
-                _text.setFont(font);
+                _text.SetFont(font);
             }
 
             nuts::Text &GetText()

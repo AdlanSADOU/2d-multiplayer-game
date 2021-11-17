@@ -78,5 +78,8 @@ void RType::OnInitialGameInfo(Event &event)
         packet >> tmpId;
 
         clientIds.push_back(tmpId);
+
+
+    std::cout << "[Client]: Starting game with playerId:[" << tmpId << "]\n";
     }
 }

@@ -29,6 +29,7 @@
 
 #include "RTypeGame.hpp"
 #include "RTypeMenu.hpp"
+#include "RTypeMatchmaking.hpp"
 
 // #include "engine/Nuts/GameObject.hpp"
 
@@ -39,8 +40,8 @@ class RTypeMonster : public nuts::GameObject
         nuts::SoundBuffer _buffer;
 
     public:
-        RTypeMonster() {};
-        ~RTypeMonster() {};
+        RTypeMonster() {}
+        ~RTypeMonster() {}
 
         void Init()
         {
@@ -103,6 +104,7 @@ class RType : public Net::INetClient
     protected:
     private:
         RTypeMenu _menu;
+        RTypeMatchmaking _matchMaking;
 
         RTypeMonster _monster;
 

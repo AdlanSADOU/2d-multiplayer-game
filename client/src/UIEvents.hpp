@@ -10,4 +10,5 @@
 namespace Events::Btn {
     const EventType BTN_LOBBY_SCREEN = HASH(Events::BTN_LOBBY_SCREEN);
     const EventType BTN_QUIT         = HASH(Events::BTN_QUIT);
+    const EventType BTN_START         = HASH(Events::BTN_START);
 } // namespace nuts::UI

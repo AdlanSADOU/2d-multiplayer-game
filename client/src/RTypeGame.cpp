@@ -9,10 +9,11 @@
 
 RTypeGame::RTypeGame()
 {
-    
+
 }
 
 RTypeGame::~RTypeGame()
 {
 
 }
+
