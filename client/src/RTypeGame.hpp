@@ -17,10 +17,9 @@ class RTypeGame
         PURPLE
     };
 
+    private:
+
     public:
         RTypeGame();
         ~RTypeGame();
-
-    private:
-        
 };
