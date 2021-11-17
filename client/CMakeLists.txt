@@ -13,27 +13,21 @@ src/RTypeNetCallbacks.cpp)
 
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_include_directories(rtype_client PUBLIC ${SFML_INCLUDE_DIR})
 target_link_libraries(rtype_client nuts_engine)
 
-target_link_directories(rtype_client PUBLIC ${SFML_LIB_DIR_DEBUG})
-target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
+target_include_directories(rtype_client PUBLIC ${SFML_INCLUDE_DIR})
 
-if(UNIX)
-  add_custom_command(TARGET rtype_client POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  ${CMAKE_CURRENT_SOURCE_DIR}/../resources
-  ${CMAKE_CURRENT_BINARY_DIR}/resources
-  )
-endif()
+add_custom_command(TARGET rtype_client POST_BUILD
+COMMAND ${CMAKE_COMMAND} -E copy_if_different
+${CMAKE_CURRENT_SOURCE_DIR}/../resources
+${CMAKE_CURRENT_BINARY_DIR}/resources)
 
 if(MSVC)
+target_link_directories(rtype_client PUBLIC ${SFML_LIBS_DIR_DEBUG})
+target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
 
 target_compile_options(rtype_client PRIVATE /W1)
-
-
-
-    file(GLOB SFML_DLLS ../SFML/build/lib/Debug/*.dll)
+    file(GLOB SFML_DLLS ${SFML_LIBS_DIR_DEBUG}/*.dll)
     foreach(myDll IN LISTS SFML_DLLS)
         add_custom_command(
             TARGET rtype_client POST_BUILD
@@ -41,7 +35,7 @@ target_compile_options(rtype_client PRIVATE /W1)
             COMMENT "Copy DLL: ${myDll}\n")
         endforeach()
 
-    file(GLOB EXT_DLLS ../SFML/extlibs/bin/x64/*.dll)
+    file(GLOB EXT_DLLS ${SFML_EXT_LIBS_DIR}/*.dll)
     foreach(myDll IN LISTS EXT_DLLS)
         add_custom_command(
             TARGET rtype_client POST_BUILD
@@ -49,12 +43,13 @@ target_compile_options(rtype_client PRIVATE /W1)
             COMMENT "Copy DLL: ${myDll}\n")
         endforeach()
 
-#   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
   add_custom_command(TARGET rtype_client POST_BUILD
 
   COMMAND ${CMAKE_COMMAND} -E copy_directory
   ${CMAKE_CURRENT_SOURCE_DIR}/../resources
-  ${CMAKE_CURRENT_BINARY_DIR}/Debug/resources
-  )
+  ${CMAKE_CURRENT_BINARY_DIR}/Debug/resources)
 
+elseif(UNIX)
+    target_link_directories(rtype_client PUBLIC ${SFML_LIB_DIR_UNIX})
+    target_link_libraries(rtype_client ${SFML_LIBS_UNIX})
 endif()

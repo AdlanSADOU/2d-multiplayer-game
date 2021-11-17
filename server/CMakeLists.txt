@@ -13,25 +13,29 @@ target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(rtype_server nuts_engine)
 target_include_directories(rtype_server PUBLIC ${SFML_INCLUDE_DIR})
-target_link_directories(rtype_server PUBLIC ${SFML_LIB_DIR_DEBUG})
-target_link_libraries(rtype_server ${SFML_LIBS_DEBUG})
 
 if(MSVC)
-  target_compile_options(rtype_server PRIVATE /W1)
+    target_link_directories(rtype_server PUBLIC ${SFML_LIBS_DIR_DEBUG})
+    target_link_libraries(rtype_server ${SFML_LIBS_DEBUG})
+    target_compile_options(rtype_server PRIVATE /W1)
 
-  file(GLOB SFML_DLLS ../SFML/build/lib/Debug/*.dll)
-  foreach(myDll IN LISTS SFML_DLLS)
-      add_custom_command(
-          TARGET rtype_server POST_BUILD
-          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
-          COMMENT "Copy DLL: ${myDll}\n")
-      endforeach()
+    file(GLOB SFML_DLLS ${SFML_LIBS_DIR_DEBUG}/*.dll)
+    foreach(myDll IN LISTS SFML_DLLS)
+        add_custom_command(
+            TARGET rtype_server POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
+            COMMENT "Copy DLL: ${myDll}\n")
+        endforeach()
 
-  file(GLOB EXT_DLLS ../SFML/extlibs/bin/x64/*.dll)
-  foreach(myDll IN LISTS EXT_DLLS)
-      add_custom_command(
-          TARGET rtype_server POST_BUILD
-          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
-          COMMENT "Copy DLL: ${myDll}\n")
-      endforeach()
+    file(GLOB EXT_DLLS ${SFML_EXT_LIBS_DIR}/*.dll)
+    foreach(myDll IN LISTS EXT_DLLS)
+        add_custom_command(
+            TARGET rtype_server POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
+            COMMENT "Copy DLL: ${myDll}\n")
+        endforeach()
+
+elseif(UNIX)
+    target_link_directories(rtype_server PUBLIC ${SFML_LIB_DIR_UNIX})
+    target_link_libraries(rtype_server ${SFML_LIBS_UNIX})
 endif()

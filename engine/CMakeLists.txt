@@ -15,11 +15,12 @@ target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts/E
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts/EcsSystems)
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts/EcsCore)
 
-
 target_include_directories(nuts_engine PUBLIC ${SFML_INCLUDE_DIR})
-target_link_directories(nuts_engine PUBLIC ${SFML_LIB_DIR_DEBUG})
-target_link_libraries(nuts_engine ${SFML_LIBS_DEBUG})
+target_link_directories(nuts_engine PUBLIC ${SFML_LIBS_DIR_DEBUG})
 
 if(MSVC)
-  target_compile_options(nuts_engine PRIVATE /W1)
+    target_link_libraries(nuts_engine ${SFML_LIBS_DEBUG})
+    target_compile_options(nuts_engine PRIVATE /W1)
+elseif(UNIX)
+    target_link_libraries(nuts_engine ${SFML_LIBS_UNIX})
 endif()
