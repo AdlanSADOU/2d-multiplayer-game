@@ -18,7 +18,7 @@ target_link_libraries(rtype_client nuts_engine)
 target_include_directories(rtype_client PUBLIC ${SFML_INCLUDE_DIR})
 
 add_custom_command(TARGET rtype_client POST_BUILD
-COMMAND ${CMAKE_COMMAND} -E copy_if_different
+COMMAND ${CMAKE_COMMAND} -E copy_directory
 ${CMAKE_CURRENT_SOURCE_DIR}/../resources
 ${CMAKE_CURRENT_BINARY_DIR}/resources)
 
