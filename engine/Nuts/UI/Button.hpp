@@ -18,7 +18,7 @@ namespace nuts::UI
     {
         private:
             EventType _type;
-            nuts::Text *_text;
+            nuts::Text _text;
 
         public:
             Button() {};
@@ -27,20 +27,19 @@ namespace nuts::UI
             Button(std::string name) : Widget(name)
             {
                 Create(name);
-                _text = new nuts::Text();
             }
 
             void SetText(const std::string &text)
             {
-                _text->setString(text);
+                _text.setString(text);
             }
 
             void SetTextFont(nuts::Font &font)
             {
-                _text->setFont(font);
+                _text.setFont(font);
             }
 
-            nuts::Text *GetText()
+            nuts::Text &GetText()
             {
                 return (_text);
             }

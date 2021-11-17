@@ -12,16 +12,26 @@ ServerMain.cpp
 target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(rtype_server nuts_engine)
+target_include_directories(rtype_server PUBLIC ${SFML_INCLUDE_DIR})
+target_link_directories(rtype_server PUBLIC ${SFML_LIB_DIR_DEBUG})
+target_link_libraries(rtype_server ${SFML_LIBS_DEBUG})
 
 if(MSVC)
   target_compile_options(rtype_server PRIVATE /W1)
 
-  target_include_directories(rtype_server PUBLIC ../SFML/include)
-  target_link_directories(rtype_server PUBLIC ../SFML/testBuild/lib/Debug)
-  target_link_libraries(rtype_server sfml-audio-d sfml-graphics-d sfml-main-d sfml-network-d sfml-system-d sfml-window-d)
+  file(GLOB SFML_DLLS ../SFML/build/lib/Debug/*.dll)
+  foreach(myDll IN LISTS SFML_DLLS)
+      add_custom_command(
+          TARGET rtype_server POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
+          COMMENT "Copy DLL: ${myDll}\n")
+      endforeach()
 
-#   add_custom_command(TARGET rtype_server POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy_directory
-#   ${CONAN_BIN_DIRS_SFML}
-#   ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+  file(GLOB EXT_DLLS ../SFML/extlibs/bin/x64/*.dll)
+  foreach(myDll IN LISTS EXT_DLLS)
+      add_custom_command(
+          TARGET rtype_server POST_BUILD
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
+          COMMENT "Copy DLL: ${myDll}\n")
+      endforeach()
 endif()

@@ -20,6 +20,7 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     _engine                = engine;
     nuts::Vector2u winSize = _engine->GetWindowSize();
 
+    _font.loadFromFile("./resources/fonts/CollegiateBlackFLF.ttf");
 
     _widgetMenu.logo     = nuts::UI::Widget("Logo");
     _widgetMenu.panel    = nuts::UI::Widget("Panel");
@@ -46,17 +47,17 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     float qtBtnWidth  = _widgetMenu.btnQuit.GetSprite().GetSprite().getLocalBounds().width;
     float qtBtnHeight = _widgetMenu.btnQuit.GetSprite().GetSprite().getLocalBounds().height;
 
-    _widgetMenu.btnQuit.GetText()->setFont(_font);
-    _widgetMenu.btnQuit.GetText()->setString("Quit");
-    _widgetMenu.btnQuit.GetText()->setCharacterSize(18);
-    _widgetMenu.btnQuit.GetText()->setFillColor({ 255, 255, 255, 255 });
+    _widgetMenu.btnQuit.GetText().setFont(_font);
+    _widgetMenu.btnQuit.GetText().setString("Quit");
+    _widgetMenu.btnQuit.GetText().setCharacterSize(18);
+    _widgetMenu.btnQuit.GetText().setFillColor({ 255, 255, 255, 255 });
 
-    _widgetMenu.btnLobby.GetText()->setFont(_font);
-    _widgetMenu.btnLobby.GetText()->setString("Quickmatch");
-    _widgetMenu.btnLobby.GetText()->setCharacterSize(18);
-    _widgetMenu.btnLobby.GetText()->setFillColor({ 255, 255, 255, 255 });
-    // nuts::FloatRect textLbBtn = _widgetMenu.btnLobby.GetText()->GetLocalBounds();
-    // nuts::FloatRect textQtBtn = _widgetMenu.btnQuit.GetText()->GetLocalBounds();
+    _widgetMenu.btnLobby.GetText().setFont(_font);
+    _widgetMenu.btnLobby.GetText().setString("Quickmatch");
+    _widgetMenu.btnLobby.GetText().setCharacterSize(18);
+    _widgetMenu.btnLobby.GetText().setFillColor({ 255, 255, 255, 255 });
+    nuts::FloatRect textLbBtn = _widgetMenu.btnLobby.GetText().getLocalBounds();
+    nuts::FloatRect textQtBtn = _widgetMenu.btnQuit.GetText().getLocalBounds();
 
     _widgetMenu.logo.SetPosition({ winSize.x / 2.f - lgWidth / 2.f, 0 });
     _widgetMenu.panel.SetPosition({ lgWidth / 2.f - panelWidth / 2.f, lgHeight - 20 });
@@ -66,6 +67,6 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     nuts::Vector2f lbBtnPos = _widgetMenu.btnLobby.GetPosition();
     nuts::Vector2f qtBtnPos = _widgetMenu.btnQuit.GetPosition();
 
-    // _widgetMenu.btnLobby.GetText()->SetPosition({lbBtnPos.x + lbBtnWidth / 2 - textLbBtn.width / 2, lbBtnPos.y + lbBtnHeight / 2 - textLbBtn.height / 2});
-    // _widgetMenu.btnQuit.GetText()->SetPosition({qtBtnPos.x + qtBtnWidth / 2 - textQtBtn.width / 2, qtBtnPos.y + qtBtnHeight / 2 - textQtBtn.height / 2});
+    _widgetMenu.btnLobby.GetText().setPosition({ lbBtnPos.x + lbBtnWidth / 2 - textLbBtn.width / 2, lbBtnPos.y + lbBtnHeight / 2 - textLbBtn.height / 2 });
+    _widgetMenu.btnQuit.GetText().setPosition({ qtBtnPos.x + qtBtnWidth / 2 - textQtBtn.width / 2, qtBtnPos.y + qtBtnHeight / 2 - textQtBtn.height / 2 });
 }

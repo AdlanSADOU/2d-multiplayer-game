@@ -9,19 +9,22 @@
 
 namespace nuts
 {
-    typedef struct
-    {
-        int left;
-        int top;
-        int width;
-        int height;
-    } IntRect;
+    using FloatRect = sf::FloatRect;
+    using IntRect = sf::IntRect;
 
-    typedef struct
-    {
-        float left;
-        float top;
-        float width;
-        float height;
-    } FloatRect;
+    // typedef struct
+    // {
+    //     int left;
+    //     int top;
+    //     int width;
+    //     int height;
+    // } IntRect;
+
+    // typedef struct
+    // {
+    //     float left;
+    //     float top;
+    //     float width;
+    //     float height;
+    // } FloatRect;
 }
