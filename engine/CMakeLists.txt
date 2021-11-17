@@ -15,14 +15,20 @@ target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts/E
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts/EcsSystems)
 target_include_directories(nuts_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Nuts/EcsCore)
 
+
+
+target_include_directories(nuts_engine PUBLIC ../SFML/include)
+target_link_directories(nuts_engine PUBLIC ../SFML/testBuild/lib/Debug)
+target_link_libraries(nuts_engine sfml-audio-d sfml-graphics-d sfml-main-d sfml-network-d sfml-system-d sfml-window-d)
+
 # Conan
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+# include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+# conan_basic_setup(TARGETS)
 
 # this is generated after $conan install
-target_include_directories(nuts_engine PUBLIC ${CONAN_INCLUDE_DIRS_SFML})
-target_link_directories(nuts_engine PUBLIC ${CONAN_LIB_DIRS_SFML})
-target_link_libraries(nuts_engine ${CONAN_LIBS_SFML})
+# target_include_directories(nuts_engine PUBLIC ${CONAN_INCLUDE_DIRS_SFML})
+# target_link_directories(nuts_engine PUBLIC ${CONAN_LIB_DIRS_SFML})
+# target_link_libraries(nuts_engine ${CONAN_LIBS_SFML})
 
 if(MSVC)
   target_compile_options(nuts_engine PRIVATE /W1)

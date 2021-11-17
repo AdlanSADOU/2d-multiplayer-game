@@ -16,9 +16,12 @@ target_link_libraries(rtype_server nuts_engine)
 if(MSVC)
   target_compile_options(rtype_server PRIVATE /W1)
 
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  add_custom_command(TARGET rtype_server POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  ${CONAN_BIN_DIRS_SFML}
-  ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+  target_include_directories(rtype_server PUBLIC ../SFML/include)
+  target_link_directories(rtype_server PUBLIC ../SFML/testBuild/lib/Debug)
+  target_link_libraries(rtype_server sfml-audio-d sfml-graphics-d sfml-main-d sfml-network-d sfml-system-d sfml-window-d)
+
+#   add_custom_command(TARGET rtype_server POST_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy_directory
+#   ${CONAN_BIN_DIRS_SFML}
+#   ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 endif()
