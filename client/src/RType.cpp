@@ -55,7 +55,7 @@ void RType::Init()
     soundSig.set(scene.GetComponentType<SoundComponent>());
     scene.SetSystemSignature<SoundSystem>(soundSig);
 
-    // _monster.Init();
+    _monster.Init();
     _soundSystem->Init();
 
     _transformSystem->Init();
@@ -107,6 +107,7 @@ void RType::Run()
                 if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
                     _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+
                 }
 
                 if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
