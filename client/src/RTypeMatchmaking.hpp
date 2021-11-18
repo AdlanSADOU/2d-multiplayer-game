@@ -132,7 +132,6 @@ class RTypeMatchmaking
             _font.LoadFromFile("./resources/fonts/arcade.ttf");
             nuts::Vector2u winSize = _engine->GetWindowSize();
 
-
             _players.emplace_back(RTypeMMPlayer("Player 1"));
             _players.emplace_back(RTypeMMPlayer("Player 2"));
             _players.emplace_back(RTypeMMPlayer("Player 3"));

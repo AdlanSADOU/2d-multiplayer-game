@@ -8,7 +8,10 @@
 #pragma once
 
 #include "SpriteComponent.hpp"
+#include "StateComponent.hpp"
 #include "System.hpp"
+
+#include "../client/src/RGameState.hpp"
 
 extern Scene scene;
 
@@ -23,13 +26,17 @@ class RenderSystem : public System
 
         }
 
-        void Update(sf::RenderWindow &window)
+        void Update(sf::RenderWindow &window, GameState currentState)
         {
             for (auto const &entity : _entities)
             {
-                auto const& spriteComponent = scene.GetComponent<SpriteComponent>(entity);
+                auto &stateComponent = scene.GetComponent<StateComponent>(entity);
 
-                window.draw(spriteComponent.sprite.GetSprite());
+                if (stateComponent.state == currentState) {
+                    auto const& spriteComponent = scene.GetComponent<SpriteComponent>(entity);
+
+                    window.draw(spriteComponent.sprite.GetSprite());
+                }
             }
         }
 };

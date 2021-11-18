@@ -32,6 +32,7 @@ void RType::Init()
     scene.RegisterComponent<VelocityComponent>();
     scene.RegisterComponent<WidgetComponent>();
     scene.RegisterComponent<SoundComponent>();
+    scene.RegisterComponent<StateComponent>();
 
     _renderSystem    = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
@@ -41,14 +42,17 @@ void RType::Init()
     EntitySignature transformSig;
     transformSig.set(scene.GetComponentType<TransformComponent>());
     transformSig.set(scene.GetComponentType<VelocityComponent>());
+    transformSig.set(scene.GetComponentType<StateComponent>());
     scene.SetSystemSignature<TransformSystem>(transformSig);
 
     EntitySignature renderSig;
     renderSig.set(scene.GetComponentType<SpriteComponent>());
+    renderSig.set(scene.GetComponentType<StateComponent>());
     scene.SetSystemSignature<RenderSystem>(renderSig);
 
     EntitySignature animationSig;
     animationSig.set(scene.GetComponentType<SpriteComponent>());
+    animationSig.set(scene.GetComponentType<StateComponent>());
     scene.SetSystemSignature<AnimationSystem>(animationSig);
 
     EntitySignature soundSig;
@@ -95,9 +99,9 @@ void RType::Run()
             INetClient::TcpSend(packet);
         }
 
-        _transformSystem.get()->Update(_deltaClock);
-        _animationSystem.get()->Update(_deltaClock);
-        _renderSystem.get()->Update(_engine->window);
+        _transformSystem.get()->Update(_deltaClock, _state);
+        _animationSystem.get()->Update(_deltaClock, _state);
+        _renderSystem.get()->Update(_engine->window, _state);
 
         INetClient::Update();
 

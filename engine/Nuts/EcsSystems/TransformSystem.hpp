@@ -9,6 +9,7 @@
 
 #include "TransformComponent.hpp"
 #include "VelocityComponent.hpp"
+#include "StateComponent.hpp"
 
 #include "Nuts/Clock.hpp"
 
@@ -34,12 +35,13 @@ class TransformSystem : public System
             std::cout << "Left key pressed!"<< std::endl;
         }
 
-        void Update(nuts::Clock deltaClock)
+        void Update(nuts::Clock deltaClock, GameState currentState)
         {
             for (auto const &entity : _entities) {
-                auto &spriteComponent = scene.GetComponent<SpriteComponent>(entity);
+                auto &stateComponent = scene.GetComponent<StateComponent>(entity);
 
-                if (spriteComponent.isActive) {
+                if (stateComponent.state == currentState) {
+                    auto &spriteComponent = scene.GetComponent<SpriteComponent>(entity);
                     auto &tComp = scene.GetComponent<TransformComponent>(entity);
                     auto &vComp = scene.GetComponent<VelocityComponent>(entity);
 

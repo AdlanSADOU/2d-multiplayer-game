@@ -21,6 +21,9 @@
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
+#include "Nuts/EcsComponents/StateComponent.hpp"
+
+#include "../client/src/RGameState.hpp"
 
 #include <iostream>
 
@@ -64,10 +67,13 @@ class GBackground
                 bg.AddComponent<SpriteComponent>();
                 bg.AddComponent<TransformComponent>();
                 bg.AddComponent<VelocityComponent>();
+                bg.AddComponent<StateComponent>();
 
                 auto &spriteComp = bg.GetComponent<SpriteComponent>();
                 auto &tComp = bg.GetComponent<TransformComponent>();
                 auto &velComp = bg.GetComponent<VelocityComponent>();
+                auto &stateComp = bg.GetComponent<StateComponent>();
+                stateComp.state = GAME;
 
                 velComp.velocity.x = -SCROLL_SPEED;
 

@@ -19,6 +19,7 @@
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
+#include "Nuts/EcsComponents/StateComponent.hpp"
 
 #include "Nuts/EcsSystems/AnimationSystem.hpp"
 #include "Nuts/EcsSystems/RenderSystem.hpp"
@@ -30,6 +31,8 @@
 #include "RTypeGame.hpp"
 #include "RTypeMenu.hpp"
 #include "RTypeMatchmaking.hpp"
+
+#include "RGameState.hpp"
 
 // #include "engine/Nuts/GameObject.hpp"
 
@@ -53,11 +56,14 @@ class RTypeMonster : public nuts::GameObject
             this->AddComponent<SpriteComponent>();
             this->AddComponent<VelocityComponent>();
             this->AddComponent<SoundComponent>();
+            this->AddComponent<StateComponent>();
 
-            TransformComponent &transformComponent = GetComponent<TransformComponent>();
-            SpriteComponent &   spriteComponent    = GetComponent<SpriteComponent>();
-            SoundComponent &    soundComponent     = GetComponent<SoundComponent>();
+            TransformComponent  &transformComponent = GetComponent<TransformComponent>();
+            SpriteComponent     &spriteComponent    = GetComponent<SpriteComponent>();
+            SoundComponent      &soundComponent     = GetComponent<SoundComponent>();
+            StateComponent      &stateComponent     = GetComponent<StateComponent>();
 
+            stateComponent.state = MENU;
             spriteComponent.sprite.SetTexture(_texture);
             spriteComponent.sprite.SetTextureRect({ 0, 0, 16, 14 });
             spriteComponent.sprite.SetAnimated(true);
@@ -75,14 +81,6 @@ class RTypeMonster : public nuts::GameObject
 
 class RType : public Net::INetClient
 {
-
-    enum GameState
-    {
-        MENU,
-        MATCHM,
-        GAME
-    };
-
     public:
         RType();
         ~RType();
@@ -99,7 +97,7 @@ class RType : public Net::INetClient
         void OnClientQuit(Event &event);
         void OnInitialGameInfo(Event &event);
 
-        GameState _state = GameState::MENU;
+        GameState _state = GameState::GAME;
 
     protected:
     private:
