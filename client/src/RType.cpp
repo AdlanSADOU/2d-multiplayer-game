@@ -55,7 +55,7 @@ void RType::Init()
     soundSig.set(scene.GetComponentType<SoundComponent>());
     scene.SetSystemSignature<SoundSystem>(soundSig);
 
-    // _monster.Init();
+    _monster.Init();
     _soundSystem->Init();
 
     _transformSystem->Init();
@@ -71,6 +71,7 @@ void RType::Init()
 
     _menu.Init(_engine);
     _matchMaking.Init(_engine);
+    _game.Init(_engine);
 }
 
 void RType::OnBtnQuit(Event &event)
@@ -105,6 +106,7 @@ void RType::Run()
                 if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
                     _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
+
                 }
 
                 if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
@@ -125,13 +127,15 @@ void RType::Run()
                 break;
 
             case GameState::GAME:
+                _game.Update();
+                _game.Draw();
                 break;
 
             default:
                 break;
         }
+        _deltaClock.Restart();
 
         _engine->Present();
-        _deltaClock.Restart();
     }
 }

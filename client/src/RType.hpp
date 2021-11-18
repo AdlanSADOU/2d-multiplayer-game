@@ -46,7 +46,7 @@ class RTypeMonster : public nuts::GameObject
         void Init()
         {
             this->Create("Monster");
-            _texture.LoadFromFile("./resources/sprites/r-typesheet3.gif");
+            _texture.LoadFromFile("./resources/sprites/ball.gif");
             _buffer.LoadFromFile("./resources/sounds/explosion.wav");
 
             this->AddComponent<TransformComponent>();
@@ -67,7 +67,7 @@ class RTypeMonster : public nuts::GameObject
             spriteComponent.sprite.SetFrameTime(0.070);
             spriteComponent.sprite.InitAnimationClock();
 
-            transformComponent.position = { 0, 0 };
+            transformComponent.position = { 700, 500 };
 
             soundComponent.sound.SetSoundBuffer(_buffer.GetSoundBuffer());
         }
@@ -105,6 +105,7 @@ class RType : public Net::INetClient
     private:
         RTypeMenu _menu;
         RTypeMatchmaking _matchMaking;
+        RTypeGame _game;
 
         RTypeMonster _monster;
 

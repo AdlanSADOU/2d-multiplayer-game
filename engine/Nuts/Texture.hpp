@@ -18,7 +18,7 @@ namespace nuts
 
             Texture()
             {
-                
+
             }
 
             ~Texture()
