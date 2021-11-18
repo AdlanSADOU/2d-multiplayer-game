@@ -9,14 +9,13 @@
 
 #include "Nuts/Input.hpp"
 
+
 RType::RType()
 {
-
 }
 
 RType::~RType()
 {
-
 }
 
 void RType::Init()
@@ -61,17 +60,17 @@ void RType::Init()
     _transformSystem->Init();
     _deltaClock.Restart();
 
-    scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
-    scene.AddEventCallback(Net::Events::NEW_CLIENT, BIND_CALLBACK(&RType::OnNewClient, this));
-    scene.AddEventCallback(Net::Events::CLIENT_QUIT, BIND_CALLBACK(&RType::OnClientQuit, this));
-    scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RType::OnInitialGameInfo, this));
-
-    scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnQuickPlayBtn, this));
-    scene.AddEventCallback(Events::Btn::BTN_QUIT, BIND_CALLBACK(&RType::OnBtnQuit, this));
-
     _menu.Init(_engine);
     _matchMaking.Init(_engine);
     _game.Init(_engine);
+
+    scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
+    scene.AddEventCallback(Net::Events::NEW_CLIENT, BIND_CALLBACK(&RType::OnNewClient, this));
+    scene.AddEventCallback(Net::Events::CLIENT_QUIT, BIND_CALLBACK(&RType::OnClientQuit, this));
+    scene.AddEventCallback(Net::Events::GAME_START, BIND_CALLBACK(&RType::OnStartGame, this));
+
+    scene.AddEventCallback(Events::Btn::BTN_LOBBY_SCREEN, BIND_CALLBACK(&RType::OnQuickPlayBtn, this));
+    scene.AddEventCallback(Events::Btn::BTN_QUIT, BIND_CALLBACK(&RType::OnBtnQuit, this));
 }
 
 void RType::OnBtnQuit(Event &event)
@@ -106,12 +105,11 @@ void RType::Run()
                 if (_menu._widgetMenu.btnLobby.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
                     _menu._widgetMenu.btnLobby.InvokeEvent(Event(Events::Btn::BTN_LOBBY_SCREEN));
-
                 }
 
                 if (_menu._widgetMenu.btnQuit.IsHovered(_engine->GetMousePos())
                     && _engine->IsMouseBtnPressed(nuts::Button::Left)) {
-                        _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
+                    _menu._widgetMenu.btnQuit.InvokeEvent(Event(Events::Btn::BTN_QUIT));
                 }
 
                 _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
@@ -127,6 +125,12 @@ void RType::Run()
                 break;
 
             case GameState::GAME:
+
+                if (_engine->IsKeyPressed(nuts::Key::RightArrow)) {
+                    sf::Packet keyPacket;
+                    keyPacket << Net::Events::CLIENT_KEY << nuts::Key::RightArrow;
+                    INetClient::UdpSend(keyPacket);
+                }
                 _game.Update();
                 _game.Draw();
                 break;

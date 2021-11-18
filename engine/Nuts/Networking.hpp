@@ -39,6 +39,8 @@ namespace Net {
         const EventType CLIENT_ID         = HASH(Events::CLIENT_ID);
         const EventType CLIENTS_PRINT     = HASH(Events::CLIENTS_PRINT);
         const EventType CLIENT_UDP        = HASH(Events::CLIENT_UDP);
+        const EventType CLIENT_KEY        = HASH(Events::CLIENT_KEY);
+
         const EventType NEW_CLIENT        = HASH(Events::NEW_CLIENT);
         const EventType UDP_OK            = HASH(Events::UDP_OK);
         const EventType MATCHM_INIT       = HASH(Events::MATCHM_INIT);
@@ -47,9 +49,12 @@ namespace Net {
         const EventType GAMEID            = HASH(Events::GAMEID);
         const EventType GAMEID_OK         = HASH(Events::GAMEID_OK);
         const EventType INITIAL_GAME_INFO = HASH(Events::INITIAL_GAME_INFO);
+        const EventType GAME_START        = HASH(Events::GAME_START);
+
     }
 
-    class INetClient {
+    class INetClient
+    {
     private:
         sf::TcpSocket _tcpSocket;
         sf::UdpSocket _udpSocket;
@@ -80,10 +85,15 @@ namespace Net {
         void UdpReceive()
         {
             sf::Packet packet {};
+            sf::Uint16 tmpUdp;
 
-            if (_udpSocket.receive(packet, _remoteServerIp, _remoteGameUdpPort) == sf::Socket::Done) {
+            if (_udpSocket.receive(packet, _remoteServerIp, tmpUdp) == sf::Socket::Done) {
                 EventType type {};
                 packet >> type;
+                _remoteGameUdpPort = tmpUdp;
+                std::cout << "[Client-UDP]: received EventType "
+                          << (type == Net::Events::GAME_START ? "GAME_START" : "?")
+                          << " port:[" << _remoteGameUdpPort <<"]\n";
 
                 Event event(type);
                 event.SetParam<sf::Packet>(0, packet);
@@ -147,7 +157,7 @@ namespace Net {
             _remoteServerIp    = serverIp;
             _remoteServerPort  = serverPort;
             _remoteGameIp      = serverIp;
-            _remoteGameUdpPort = serverPort + 1;
+            // _remoteGameUdpPort = serverPort + 1;
 
             if (_udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress()) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to connect to ["
@@ -189,6 +199,7 @@ namespace Net {
             if (_udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to send TCP packet\n";
             }
+            std::cerr << "[Net]: Sent UDP to port:[" << _remoteGameUdpPort << "]\n";
         }
 
         void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, sf::Uint16 gamePort)

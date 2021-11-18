@@ -35,42 +35,42 @@
 
 class RTypeMonster : public nuts::GameObject
 {
-    private:
-        nuts::Texture     _texture;
-        nuts::SoundBuffer _buffer;
+private:
+    nuts::Texture     _texture;
+    nuts::SoundBuffer _buffer;
 
-    public:
-        RTypeMonster() {}
-        ~RTypeMonster() {}
+public:
+    RTypeMonster() { }
+    ~RTypeMonster() { }
 
-        void Init()
-        {
-            this->Create("Monster");
-            _texture.LoadFromFile("./resources/sprites/ball.gif");
-            _buffer.LoadFromFile("./resources/sounds/explosion.wav");
+    void Init()
+    {
+        this->Create("Monster");
+        _texture.LoadFromFile("./resources/sprites/ball.gif");
+        _buffer.LoadFromFile("./resources/sounds/explosion.wav");
 
-            this->AddComponent<TransformComponent>();
-            this->AddComponent<SpriteComponent>();
-            this->AddComponent<VelocityComponent>();
-            this->AddComponent<SoundComponent>();
+        this->AddComponent<TransformComponent>();
+        this->AddComponent<SpriteComponent>();
+        this->AddComponent<VelocityComponent>();
+        this->AddComponent<SoundComponent>();
 
-            TransformComponent &transformComponent = GetComponent<TransformComponent>();
-            SpriteComponent &   spriteComponent    = GetComponent<SpriteComponent>();
-            SoundComponent &    soundComponent     = GetComponent<SoundComponent>();
+        TransformComponent &transformComponent = GetComponent<TransformComponent>();
+        SpriteComponent &   spriteComponent    = GetComponent<SpriteComponent>();
+        SoundComponent &    soundComponent     = GetComponent<SoundComponent>();
 
-            spriteComponent.sprite.SetTexture(_texture);
-            spriteComponent.sprite.SetTextureRect({ 0, 0, 16, 14 });
-            spriteComponent.sprite.SetAnimated(true);
-            spriteComponent.sprite.SetLooped(true);
-            spriteComponent.sprite.SetFirstFrame({ 0, 0, 16, 14 });
-            spriteComponent.sprite.SetFrameCount(12);
-            spriteComponent.sprite.SetFrameTime(0.070f);
-            spriteComponent.sprite.InitAnimationClock();
+        spriteComponent.sprite.SetTexture(_texture);
+        spriteComponent.sprite.SetTextureRect({ 0, 0, 16, 14 });
+        spriteComponent.sprite.SetAnimated(true);
+        spriteComponent.sprite.SetLooped(true);
+        spriteComponent.sprite.SetFirstFrame({ 0, 0, 16, 14 });
+        spriteComponent.sprite.SetFrameCount(12);
+        spriteComponent.sprite.SetFrameTime(0.070f);
+        spriteComponent.sprite.InitAnimationClock();
 
-            transformComponent.position = { 700, 500 };
+        transformComponent.position = { 700, 500 };
 
-            soundComponent.sound.SetSoundBuffer(_buffer.GetSoundBuffer());
-        }
+        soundComponent.sound.SetSoundBuffer(_buffer.GetSoundBuffer());
+    }
 };
 
 class RType : public Net::INetClient
@@ -83,38 +83,38 @@ class RType : public Net::INetClient
         GAME
     };
 
-    public:
-        RType();
-        ~RType();
+public:
+    RType();
+    ~RType();
 
-        void Init();
-        void Run();
+    void Init();
+    void Run();
 
-        void OnNetReceivedId(Event &event);
-        void OnLobbyScreenBtn(Event &event);
-        void OnBtnQuit(Event &event);
+    void OnNetReceivedId(Event &event);
+    void OnLobbyScreenBtn(Event &event);
+    void OnBtnQuit(Event &event);
 
-        void OnQuickPlayBtn(Event &event);
-        void OnNewClient(Event &event);
-        void OnClientQuit(Event &event);
-        void OnInitialGameInfo(Event &event);
+    void OnQuickPlayBtn(Event &event);
+    void OnNewClient(Event &event);
+    void OnClientQuit(Event &event);
+    void OnStartGame(Event &event);
 
-        GameState _state = GameState::MENU;
+    GameState _state = GameState::MENU;
 
-    protected:
-    private:
-        RTypeMenu _menu;
-        RTypeMatchmaking _matchMaking;
-        RTypeGame _game;
+protected:
+private:
+    RTypeMenu        _menu;
+    RTypeMatchmaking _matchMaking;
+    RTypeGame        _game;
 
-        RTypeMonster _monster;
+    RTypeMonster _monster;
 
-        nuts::Clock _deltaClock;
+    nuts::Clock _deltaClock;
 
-        std::shared_ptr<nuts::Engine> _engine;
+    std::shared_ptr<nuts::Engine> _engine;
 
-        std::shared_ptr<RenderSystem>    _renderSystem;
-        std::shared_ptr<TransformSystem> _transformSystem;
-        std::shared_ptr<AnimationSystem> _animationSystem;
-        std::shared_ptr<SoundSystem>     _soundSystem;
+    std::shared_ptr<RenderSystem>    _renderSystem;
+    std::shared_ptr<TransformSystem> _transformSystem;
+    std::shared_ptr<AnimationSystem> _animationSystem;
+    std::shared_ptr<SoundSystem>     _soundSystem;
 };

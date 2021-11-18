@@ -9,14 +9,15 @@
 
 #include "EcsCore/Scene.hpp"
 
-#include "Nuts/GameObject.hpp"
 #include "Nuts/Engine.hpp"
+#include "Nuts/GameObject.hpp"
 
 #include "Nuts/UI/Text.hpp"
 
-#include "Nuts/Vect.hpp"
-#include "Nuts/Texture.hpp"
 #include "Nuts/Clock.hpp"
+#include "Nuts/Networking.hpp"
+#include "Nuts/Texture.hpp"
+#include "Nuts/Vect.hpp"
 
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
@@ -30,53 +31,53 @@ extern Scene scene;
 
 class GBackground
 {
-    private:
-        std::vector<nuts::GameObject> _backgrounds;
-        nuts::Texture _texture;
+private:
+    std::vector<nuts::GameObject> _backgrounds;
+    nuts::Texture                 _texture;
 
-    public:
-        GBackground() {};
-        ~GBackground() {};
+public:
+    GBackground() {};
+    ~GBackground() {};
 
-        void Update()
-        {
-            for (auto &bg : _backgrounds) {
-                auto &tComp = bg.GetComponent<TransformComponent>();
-                auto &vComp = bg.GetComponent<VelocityComponent>();
+    void Update()
+    {
+        for (auto &bg : _backgrounds) {
+            auto &tComp = bg.GetComponent<TransformComponent>();
+            auto &vComp = bg.GetComponent<VelocityComponent>();
 
-                float sWidth = bg.GetComponent<SpriteComponent>().sprite.GetGlobalBounds().width;
+            float sWidth = bg.GetComponent<SpriteComponent>().sprite.GetGlobalBounds().width;
 
-                if (tComp.position.x <= -sWidth) {
-                    tComp.position.x = sWidth * 2;
-                }
+            if (tComp.position.x <= -sWidth) {
+                tComp.position.x = sWidth * 2;
             }
         }
+    }
 
-        void InitBackground()
-        {
-            _texture.LoadFromFile("./resources/sprites/starfield.png");
-            _backgrounds.emplace_back(nuts::GameObject("Background"));
-            _backgrounds.emplace_back(nuts::GameObject("Background"));
-            _backgrounds.emplace_back(nuts::GameObject("Background"));
+    void InitBackground()
+    {
+        _texture.LoadFromFile("./resources/sprites/starfield.png");
+        _backgrounds.emplace_back(nuts::GameObject("Background"));
+        _backgrounds.emplace_back(nuts::GameObject("Background"));
+        _backgrounds.emplace_back(nuts::GameObject("Background"));
 
-            nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
-            for (auto &bg : _backgrounds) {
-                bg.AddComponent<SpriteComponent>();
-                bg.AddComponent<TransformComponent>();
-                bg.AddComponent<VelocityComponent>();
+        nuts::FloatRect spritePos = { 0.f, 0.f, 0.f, 0.f };
+        for (auto &bg : _backgrounds) {
+            bg.AddComponent<SpriteComponent>();
+            bg.AddComponent<TransformComponent>();
+            bg.AddComponent<VelocityComponent>();
 
-                auto &spriteComp = bg.GetComponent<SpriteComponent>();
-                auto &tComp = bg.GetComponent<TransformComponent>();
-                auto &velComp = bg.GetComponent<VelocityComponent>();
+            auto &spriteComp = bg.GetComponent<SpriteComponent>();
+            auto &tComp      = bg.GetComponent<TransformComponent>();
+            auto &velComp    = bg.GetComponent<VelocityComponent>();
 
-                velComp.velocity.x = -SCROLL_SPEED;
+            velComp.velocity.x = -SCROLL_SPEED;
 
-                spriteComp.sprite.SetTexture(_texture);
-                tComp.position.x = spritePos.left;
-                tComp.position.y = spritePos.top;
-                spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
-            }
+            spriteComp.sprite.SetTexture(_texture);
+            tComp.position.x = spritePos.left;
+            tComp.position.y = spritePos.top;
+            spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
         }
+    }
 };
 
 class GPlayer : public nuts::GameObject
@@ -89,45 +90,57 @@ class GPlayer : public nuts::GameObject
         PURPLE
     };
 
-    public:
-        GPlayer()
-        {
+public:
+    GPlayer(ClientID id)
+    {
+        Create("");
+        AddComponent<SpriteComponent>();
+        AddComponent<TransformComponent>();
+        _playerTexture.LoadFromFile("./resources/sprites/players.gif");
 
-        }
+        auto &spriteComp = GetComponent<SpriteComponent>();
+        spriteComp.sprite.SetTexture(_playerTexture);
+        spriteComp.sprite.SetTextureRect({ 0, 0, 16, 14 });
+        spriteComp.sprite.SetAnimated(false);
+        spriteComp.sprite.SetLooped(false);
+        spriteComp.sprite.SetFirstFrame({ 0, 0, 16, 14 });
+        // sprite.SetTextureRect({0,0, 50, 50});
+    }
 
-        ~GPlayer()
-        {
+    ~GPlayer()
+    {
+        std::cout << "player destroyed\n";
+    }
 
-        }
+    void SetId(int id)
+    {
+        _playerId = id;
+    }
 
-        void SetId(int id)
-        {
-            _playerId = id;
-        }
+    int GetId()
+    {
+        return (_playerId);
+    }
 
-        int GetId()
-        {
-            return (_playerId);
-        }
-
-    private:
-        int _playerId = -1;
-        PlayerColor _color;
-        int _score = 0;
-        nuts::Vector2f _pos;
+private:
+    int            _playerId = -1;
+    PlayerColor    _color;
+    int            _score = 0;
+    nuts::Vector2f _pos;
+    nuts::Texture  _playerTexture;
 };
 
 class GMonsters : public nuts::GameObject
 {
-    enum Type {
+    enum Type
+    {
         GROUND = 0,
         FLY,
     };
 
-    public:
-
-    private:
-        GMonsters::Type _type;
+public:
+private:
+    GMonsters::Type _type;
 };
 
 class RTypeGame
@@ -140,19 +153,37 @@ class RTypeGame
         nuts::Text p4score;
     };
 
-    private:
-        std::shared_ptr<nuts::Engine> _engine;
-        nuts::Font _font;
+private:
+    std::shared_ptr<nuts::Engine>    _engine;
+    std::shared_ptr<Net::INetClient> _netClient;
 
-        GBackground _background;
-        std::vector<GPlayer> _players;
-        GameUI _ui;
+    nuts::Font _font;
 
-    public:
-        RTypeGame();
-        ~RTypeGame();
-        void Init(std::shared_ptr<nuts::Engine> engine);
-        void Update();
-        void Draw();
+    std::vector<GPlayer *> _players;
+    GBackground            _background;
+    GameUI                 _ui;
 
+public:
+    RTypeGame();
+    ~RTypeGame();
+    void Init(std::shared_ptr<nuts::Engine> engine);
+    void Update();
+    void Draw();
+
+    void OnInitialGameInfo(Event &event)
+    {
+        sf::Packet packet = event.GetParam<sf::Packet>(0);
+
+        std::vector<ClientID> clientIds;
+
+        while (!packet.endOfPacket()) {
+            ClientID tmpId;
+            packet >> tmpId;
+
+            clientIds.push_back(tmpId);
+            _players.push_back(new GPlayer(tmpId));
+
+            std::cout << "[Client]: Starting game with playerId:[" << tmpId << "]\n";
+        }
+    };
 };

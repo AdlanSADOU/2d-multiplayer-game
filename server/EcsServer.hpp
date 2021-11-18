@@ -9,20 +9,25 @@
 #include <Nuts/GameObject.hpp>
 
 #include "Components/Components.hpp"
+#include "InternalEvents.hpp"
 #include "Systems/ConnectionSystem.hpp"
 #include "Systems/SClientsSystem.hpp"
 
 #include <thread>
+#include <vector>
 
 Scene scene;
 
 #define FRAMERATE (1 / 30.f)
 
-class EcsServer {
+class EcsServer
+{
 private:
     std::shared_ptr<ConnectionSystem> _connectionSystem;
     std::shared_ptr<SClientsSystem>   _sClientSystem;
     sf::Clock                         deltaClock;
+
+    std::vector<std::thread *> GameWorkers;
 
 public:
     std::shared_ptr<ConnectionSystem> GetConnectionSystem() const
@@ -59,6 +64,8 @@ public:
         nuts::GameObject serverConnector;
         serverConnector.Create("");
         serverConnector.AddComponent<ConnectionComponent>();
+
+        scene.AddEventCallback(Events::MATCHM_READY, BIND_CALLBACK(&EcsServer::OnMatchMReady, this));
     }
 
     void Start(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
@@ -76,8 +83,19 @@ public:
                 _connectionSystem->ReceiveUdp();
 
                 _sClientSystem->ReceiveTcp();
+
                 acc = sf::Time::Zero;
             }
         }
+    }
+
+    void OnMatchMReady(Event &event)
+    {
+        std::cout << "MAtchm ready\n";
+        Game *game = new Game;
+
+        sf::Int32 gameId = event.GetParam<sf::Int32>(1);
+
+        GameWorkers.push_back(new std::thread(&Game::Run, game, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId));
     }
 };

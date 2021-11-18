@@ -67,19 +67,7 @@ void RType::OnClientQuit(Event &event)
               << "] quit game [" << gameId << "]\n";
 }
 
-void RType::OnInitialGameInfo(Event &event)
+void RType::OnStartGame(Event &event)
 {
-    sf::Packet  packet = event.GetParam<sf::Packet>(0);
-
-    std::vector<ClientID> clientIds;
-
-    while (!packet.endOfPacket()) {
-        ClientID tmpId;
-        packet >> tmpId;
-
-        clientIds.push_back(tmpId);
-
-
-    std::cout << "[Client]: Starting game with playerId:[" << tmpId << "]\n";
-    }
+    _state = GameState::GAME;
 }

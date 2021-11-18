@@ -14,11 +14,17 @@ RTypeGame::RTypeGame()
 
 RTypeGame::~RTypeGame()
 {
+    std::cout << "game destroyed\n";
 
+    for (auto &c : _players)
+    {
+        delete c;
+    }
 }
 
 void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 {
+
     _engine = engine;
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
 
@@ -36,11 +42,14 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _ui.p4score.SetPosition({sXpos + 400, (float)winSize.y / 6 * 5});
 
     _background.InitBackground();
+
+    scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
 }
 
 void RTypeGame::Update()
 {
     _background.Update();
+
 }
 
 void RTypeGame::Draw()

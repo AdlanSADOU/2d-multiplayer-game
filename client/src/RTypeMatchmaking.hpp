@@ -160,7 +160,7 @@ class RTypeMatchmaking
             _menu.startBtn.GetText().SetFillColor({255, 255, 255, 255});
 
             _menu.startBtn.SetParent(_menu.panel);
-            _menu.startBtn.SetEventType(::Events::Btn::BTN_START);
+            _menu.startBtn.SetEventType(Events::Btn::BTN_START);
 
             float panelWidth = _menu.panel.GetSprite().GetSprite().getLocalBounds().width;
             float panelHeight = _menu.panel.GetSprite().GetSprite().getLocalBounds().height;

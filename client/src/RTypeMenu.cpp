@@ -13,6 +13,7 @@ RTypeMenu::RTypeMenu()
 
 RTypeMenu::~RTypeMenu()
 {
+    std::cout << "menu destroyed\n";
 }
 
 void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
