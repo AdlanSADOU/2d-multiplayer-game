@@ -57,15 +57,6 @@ void RTypeMenu::Init(std::shared_ptr<nuts::Engine> engine)
     float qtBtnWidth  = _widgetMenu.btnQuit.GetSprite().GetSprite().getLocalBounds().width;
     float qtBtnHeight = _widgetMenu.btnQuit.GetSprite().GetSprite().getLocalBounds().height;
 
-    _widgetMenu.btnQuit.GetText().SetFont(_font);
-    _widgetMenu.btnQuit.GetText().SetString("Quit");
-    _widgetMenu.btnQuit.GetText().SetCharacterSize(18);
-    _widgetMenu.btnQuit.GetText().SetFillColor({ 255, 255, 255, 255 });
-
-    _widgetMenu.btnLobby.GetText().SetFont(_font);
-    _widgetMenu.btnLobby.GetText().SetString("Quickmatch");
-    _widgetMenu.btnLobby.GetText().SetCharacterSize(18);
-    _widgetMenu.btnLobby.GetText().SetFillColor({ 255, 255, 255, 255 });
     nuts::FloatRect textLbBtn = _widgetMenu.btnLobby.GetText().GetLocalBounds();
     nuts::FloatRect textQtBtn = _widgetMenu.btnQuit.GetText().GetLocalBounds();
 
