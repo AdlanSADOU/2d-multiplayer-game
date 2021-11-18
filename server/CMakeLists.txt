@@ -15,9 +15,9 @@ target_link_libraries(rtype_server nuts_engine)
 target_include_directories(rtype_server PUBLIC ${SFML_INCLUDE_DIR})
 
 if(MSVC)
+target_compile_options(rtype_server PRIVATE /W3)
     target_link_directories(rtype_server PUBLIC ${SFML_LIBS_DIR_DEBUG})
     target_link_libraries(rtype_server ${SFML_LIBS_DEBUG})
-    target_compile_options(rtype_server PRIVATE /W1)
 
     file(GLOB SFML_DLLS "${SFML_LIBS_DIR_DEBUG}/*.dll")
     foreach(myDll IN LISTS SFML_DLLS)

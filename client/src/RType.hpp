@@ -64,7 +64,7 @@ class RTypeMonster : public nuts::GameObject
             spriteComponent.sprite.SetLooped(true);
             spriteComponent.sprite.SetFirstFrame({ 0, 0, 16, 14 });
             spriteComponent.sprite.SetFrameCount(12);
-            spriteComponent.sprite.SetFrameTime(0.070);
+            spriteComponent.sprite.SetFrameTime(0.070f);
             spriteComponent.sprite.InitAnimationClock();
 
             transformComponent.position = { 700, 500 };

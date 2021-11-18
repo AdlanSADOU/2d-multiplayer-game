@@ -28,7 +28,7 @@ if(MSVC)
 target_link_directories(rtype_client PUBLIC ${SFML_LIBS_DIR_DEBUG})
 target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
 
-target_compile_options(rtype_client PRIVATE /W1)
+target_compile_options(rtype_client PRIVATE /W3)
 
     file(GLOB SFML_DLLS "${SFML_LIBS_DIR_DEBUG}/*.dll")
     foreach(myDll IN LISTS SFML_DLLS)

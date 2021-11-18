@@ -73,7 +73,7 @@ public:
         return _isRunning;
     }
 
-    std::int32_t GetConnectedClientsNum() const
+    std::size_t GetConnectedClientsNum() const
     {
         return _clients.size();
     }
