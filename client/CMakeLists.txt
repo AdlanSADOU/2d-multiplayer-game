@@ -8,14 +8,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(rtype_client
 ClientMain.cpp
 src/RType.cpp
+src/RTypeNet.cpp
 src/RTypeMenu.cpp
-src/RTypeNetCallbacks.cpp
-src/RTypeGame.cpp)
-
-if (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
-message("debug mode//////////////////////////////////////////////")
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Debug)
-endif (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+src/RTypeGame.cpp
+src/RTypeGameNet.cpp
+src/RTypeMatchmakingNet.cpp
+)
 
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

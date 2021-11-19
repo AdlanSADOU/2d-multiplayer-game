@@ -39,8 +39,7 @@ namespace Net {
         const EventType CLIENT_ID           = HASH(Events::CLIENT_ID);
         const EventType CLIENTS_PRINT       = HASH(Events::CLIENTS_PRINT);
         const EventType CLIENT_UDP          = HASH(Events::CLIENT_UDP);
-        const EventType CLIENT_KEY_PRESSED  = HASH(Events::CLIENT_KEY_PRESSED);
-        const EventType CLIENT_KEY_RELEASED = HASH(Events::CLIENT_KEY_RELEASED);
+        const EventType REMOTE_CLIENT_KEYS  = HASH(Events::REMOTE_CLIENT_KEYS);
 
         const EventType NEW_CLIENT        = HASH(Events::NEW_CLIENT);
         const EventType UDP_OK            = HASH(Events::UDP_OK);
@@ -96,7 +95,7 @@ namespace Net {
                 EventType type {};
                 packet >> type;
                 _remoteGameUdpPort = tmpUdp;
-                
+
                 Event event(type);
                 event.SetParam<sf::Packet &>(0, packet);
                 scene.InvokeEvent(event);

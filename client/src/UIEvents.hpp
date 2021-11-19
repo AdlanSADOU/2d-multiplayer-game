@@ -5,6 +5,8 @@
 ** UIEvents.hpp
 */
 
+#pragma once
+
 #include <Nuts/EcsCore/Event.hpp>
 
 namespace Events::Btn {

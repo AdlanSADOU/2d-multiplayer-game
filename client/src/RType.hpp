@@ -27,8 +27,8 @@
 
 #include "Nuts/Networking.hpp"
 
-#include "RTypeGame.hpp"
 #include "RTypeMenu.hpp"
+#include "RTypeGame.hpp"
 #include "RTypeMatchmaking.hpp"
 
 // #include "engine/Nuts/GameObject.hpp"

@@ -43,9 +43,15 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _background.InitBackground();
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
-    scene.AddEventCallback(Net::Events::CLIENT_KEY_PRESSED, BIND_CALLBACK(&RTypeGame::OnRemoteKeyPressedEvent, this));
+    scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemoteKeyEvent, this));
 }
 
+void RTypeGame::SetLocalClientId(ClientID clientId)
+{
+    _localClientId = clientId;
+}
+
+// Local client update
 void RTypeGame::Update()
 {
     if (!_isRunning) return;

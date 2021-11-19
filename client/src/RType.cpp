@@ -125,8 +125,6 @@ void RType::Run()
 
             case GameState::GAME:
 
-                // if (_engine->IskeyEvent())
-
                 if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 33.f) {
                     INetClient::ResetAccumulatorTime();
 
@@ -152,10 +150,9 @@ void RType::Run()
                         releasedKey = nuts::S;
 
                     sf::Packet pressedKeyPacket;
-                    pressedKeyPacket << Net::Events::CLIENT_KEY_PRESSED << GetLocalClientId() << pressedKey << releasedKey;
+                    pressedKeyPacket << Net::Events::REMOTE_CLIENT_KEYS << GetLocalClientId() << pressedKey << releasedKey;
 
                     INetClient::UdpSend(pressedKeyPacket);
-
                 }
 
                 if (GetLocalClientId() == -1) return;
@@ -166,8 +163,8 @@ void RType::Run()
             default:
                 break;
         }
-        _deltaClock.Restart();
 
+        _deltaClock.Restart();
         _engine->Present();
     }
 }

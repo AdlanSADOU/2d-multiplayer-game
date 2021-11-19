@@ -34,7 +34,7 @@ public:
     {
         _running = true;
 
-        _eventManager.AddEventCallback(Net::Events::CLIENT_KEY_PRESSED, BIND_CALLBACK(&Game::OnClientKeyEvent, this));
+        _eventManager.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&Game::OnClientKeyEvent, this));
     };
 
     void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
@@ -105,7 +105,7 @@ public:
         inClientKeyPacket >> clientId >> pressedKey >> releasedKey;
 
         sf::Packet outClientKeyPacket;
-        outClientKeyPacket << Net::Events::CLIENT_KEY_PRESSED << clientId << pressedKey << releasedKey;
+        outClientKeyPacket << Net::Events::REMOTE_CLIENT_KEYS << clientId << pressedKey << releasedKey;
         Broadcast(outClientKeyPacket, clientId);
 
     }

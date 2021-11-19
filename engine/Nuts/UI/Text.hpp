@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "../Color.hpp"
 #include "../Rect.hpp"
+#include "Vect.hpp"
 
 #include <iostream>
 
