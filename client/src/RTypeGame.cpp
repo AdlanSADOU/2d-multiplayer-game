@@ -52,35 +52,28 @@ void RTypeGame::Update()
 
     _background.Update();
 
-    for (auto &remotePlayer : _players) {
-        // remotePlayer.second->Move();
-    }
+    if (_players.size() == 0) return;
 
-    nuts::Vector2f vel = {};
-    nuts::Key      key = {};
-
-    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-    //     _players[_localClientId]->_pressedKeys[0] = true;
-    //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-    //     _players[_localClientId]->_pressedKeys[1] = true;
-    //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-    //     _players[_localClientId]->_pressedKeys[2] = true;
-    //  if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-    //     _players[_localClientId]->_pressedKeys[3] = true;
+    nuts::Vector2f vel = { 0, 0 };
+    nuts::Key      key = nuts::Key::Unknown;
 
     if (_engine->IsKeyPressed(nuts::Key::A)) {
-        vel = { -50, 0 };
+        vel = { -120, 0 };
     }
     if (_engine->IsKeyPressed(nuts::Key::D)) {
-        vel = { 50, 0 };
-        std::cout << "HELLO\n";
+        vel = { 120, 0 };
     }
     if (_engine->IsKeyPressed(nuts::Key::W))
-        vel = { 0, -50 };
+        vel = { 0, -120 };
     if (_engine->IsKeyPressed(nuts::Key::S))
-        vel = { 0, 50 };
+        vel = { 0, 120 };
 
-    _players[_localClientId]->Move(vel);
+    _players[_localClientId]->_vel->velocity = (vel);
+
+    // for (auto &otherPlayer : _players) {
+    //     otherPlayer.second->_vel->velocity = vel;
+    // }
+    // vel = {};
 }
 
 void RTypeGame::Draw()

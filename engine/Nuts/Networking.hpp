@@ -177,7 +177,7 @@ namespace Net {
             _remoteGameIp      = serverIp;
             // _remoteGameUdpPort = serverPort + 1;
 
-            if (_udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress()) != sf::Socket::Done) {
+            if (_udpSocket.bind(sf::Socket::AnyPort, serverIp) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to connect to ["
                           << serverIp << ":"
                           << serverPort << "]\n";

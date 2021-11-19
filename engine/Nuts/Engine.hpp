@@ -19,8 +19,8 @@ namespace nuts {
     class Engine
     {
     private:
-        nuts::Key            pressedKey;
-        nuts::Key            downKey;
+        nuts::Key            pressedKey = nuts::Unknown;
+        nuts::Key            downKey = nuts::Unknown;
         nuts::Button         mouseButton = nuts::Button::Middle;
         nuts::Vector2i       mousePos;
         bool                 isRunning;
@@ -64,7 +64,7 @@ namespace nuts {
         void HandleEvent()
         {
             sf::Event event;
-            pressedKey  = nuts::Unknown;
+            // pressedKey  = nuts::Unknown;
             mouseButton = nuts::Button::Middle;
 
             while (window.pollEvent(event)) {
@@ -74,13 +74,13 @@ namespace nuts {
                 if (event.type == sf::Event::Closed)
                     window.close();
 
-                if (event.type == sf::Event::KeyPressed) {
+                if (type == sf::Event::KeyPressed) {
                     pressedKey = (nuts::Key)event.key.code;
                     downKey    = (nuts::Key)event.key.code;
                 }
-
-                if (event.type == sf::Event::KeyReleased) {
+                if (event.type == sf::Event::KeyReleased && event.key.code == (sf::Keyboard::Key)pressedKey) {
                     downKey = nuts::Unknown;
+                    pressedKey = nuts::Unknown;
                 }
 
                 if (event.type == sf::Event::MouseButtonPressed) {
@@ -90,7 +90,6 @@ namespace nuts {
                     mousePos = { event.mouseMove.x, event.mouseMove.y };
                 }
             }
-            isPressed = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)pressedKey);
         }
 
         bool IskeyEvent()
@@ -112,7 +111,9 @@ namespace nuts {
 
         bool IsKeyPressed(nuts::Key key)
         {
-            return sf::Keyboard::isKeyPressed((sf::Keyboard::Key)key);
+            if (key == pressedKey)
+                return true;
+            return false;
         }
 
         bool IsKeyDown(nuts::Key key)

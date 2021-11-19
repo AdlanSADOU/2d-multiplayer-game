@@ -127,23 +127,23 @@ void RType::Run()
 
                 // if (_engine->IskeyEvent())
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 66.f) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 33.f) {
                     INetClient::ResetAccumulatorTime();
 
-                    // nuts::Key key = {};
+                    nuts::Key key = nuts::Unknown;
 
-                    // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
-                    //     key = nuts::A;
-                    // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
-                    //     key = nuts::D;
-                    // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
-                    //     key = nuts::W;
-                    // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
-                    //     key = nuts::S;
+                    if (_engine->IsKeyPressed(nuts::Key::A))
+                        key = nuts::A;
+                    else if (_engine->IsKeyPressed(nuts::Key::D))
+                        key = nuts::D;
+                    else if (_engine->IsKeyPressed(nuts::Key::W))
+                        key = nuts::W;
+                    else if (_engine->IsKeyPressed(nuts::Key::S))
+                        key = nuts::S;
 
-                    // sf::Packet keyPacket;
-                    // keyPacket << Net::Events::CLIENT_KEY << GetLocalClientId() << key;
-                    // INetClient::UdpSend(keyPacket);
+                    sf::Packet keyPacket;
+                    keyPacket << Net::Events::CLIENT_KEY << GetLocalClientId() << key;
+                    INetClient::UdpSend(keyPacket);
                 }
 
                 if (GetLocalClientId() == -1) return;

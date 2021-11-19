@@ -135,7 +135,7 @@ public:
     void Move(nuts::Vector2f vel)
     {
         // nuts::Vector2f vel = {};
-
+        std::cout << "moving with vel:" << vel.x << ":" << vel.y << "\n";
         // if (_pressedKeys[0])
         //     vel.x = 25;
         // else if (_pressedKeys[1])
@@ -149,14 +149,15 @@ public:
     }
 
 private:
-    int                _playerId = -1;
-    PlayerColor        _color;
-    int                _score = 0;
-    nuts::Vector2f     _pos;
-    nuts::Texture      _playerTexture;
-    VelocityComponent *_vel;
+    int            _playerId = -1;
+    PlayerColor    _color;
+    int            _score = 0;
+    nuts::Vector2f _pos;
+    nuts::Texture  _playerTexture;
 
 public:
+    VelocityComponent *_vel = nullptr;
+
     /**
      * right, left, up, down
      * in that order
@@ -233,11 +234,28 @@ public:
         sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
         ClientID  clientId;
-        sf::Int32 pressedKey;
+        sf::Int32 pressedKey = -1;
 
         inClientKeyPacket >> clientId >> pressedKey;
 
         if (clientId == _localClientId)
             return;
+
+        nuts::Vector2f vel = { 0, 0 };
+        nuts::Key      key = nuts::Key::Unknown;
+
+        if (nuts::Key::A == (nuts::Key)pressedKey) {
+            vel = { -120, 0 };
+        }
+        if (nuts::Key::D == (nuts::Key)pressedKey) {
+            vel = { 120, 0 };
+        }
+        if (nuts::Key::W == (nuts::Key)pressedKey)
+            vel = { 0, -120 };
+        if (nuts::Key::S == (nuts::Key)pressedKey)
+            vel = { 0, 120 };
+
+        // _players[clientId]->Move(vel);
+        _players[clientId]->_vel->velocity = vel;
     }
 };

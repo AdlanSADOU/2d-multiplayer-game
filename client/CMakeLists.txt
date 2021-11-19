@@ -12,6 +12,11 @@ src/RTypeMenu.cpp
 src/RTypeNetCallbacks.cpp
 src/RTypeGame.cpp)
 
+if (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+message("debug mode//////////////////////////////////////////////")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Debug)
+endif (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+
 target_include_directories(rtype_client PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(rtype_client nuts_engine)
@@ -30,8 +35,8 @@ target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
 
 target_compile_options(rtype_client PRIVATE /W3)
 
-    file(GLOB SFML_DLLS "${SFML_LIBS_DIR_DEBUG}/*.dll")
-    foreach(myDll IN LISTS SFML_DLLS)
+    file(GLOB SFML_DLLS_DEBUG "${SFML_LIBS_DIR_DEBUG}/*.dll")
+    foreach(myDll IN LISTS SFML_DLLS_DEBUG)
         add_custom_command(
             TARGET rtype_client POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${myDll} ${CMAKE_CURRENT_BINARY_DIR}/Debug
