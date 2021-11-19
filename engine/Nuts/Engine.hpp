@@ -13,15 +13,19 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace nuts {
-    class Engine {
-    private:
-        nuts::Key    pressedKey;
-        nuts::Key    downKey;
-        nuts::Button mouseButton = nuts::Button::Middle;
-        nuts::Vector2i mousePos;
+#include <iostream>
 
-        bool isRunning;
+namespace nuts {
+    class Engine
+    {
+    private:
+        nuts::Key            pressedKey;
+        nuts::Key            downKey;
+        nuts::Button         mouseButton = nuts::Button::Middle;
+        nuts::Vector2i       mousePos;
+        bool                 isRunning;
+        sf::Event::EventType type;
+        bool                 isPressed = false;
 
     public:
         sf::RenderWindow window;
@@ -60,10 +64,13 @@ namespace nuts {
         void HandleEvent()
         {
             sf::Event event;
-            pressedKey = nuts::Unknown;
+            pressedKey  = nuts::Unknown;
             mouseButton = nuts::Button::Middle;
 
             while (window.pollEvent(event)) {
+
+                type = event.type;
+
                 if (event.type == sf::Event::Closed)
                     window.close();
 
@@ -71,9 +78,11 @@ namespace nuts {
                     pressedKey = (nuts::Key)event.key.code;
                     downKey    = (nuts::Key)event.key.code;
                 }
+
                 if (event.type == sf::Event::KeyReleased) {
                     downKey = nuts::Unknown;
                 }
+
                 if (event.type == sf::Event::MouseButtonPressed) {
                     mouseButton = (nuts::Button)event.mouseButton.button;
                 }
@@ -81,13 +90,29 @@ namespace nuts {
                     mousePos = { event.mouseMove.x, event.mouseMove.y };
                 }
             }
+            isPressed = sf::Keyboard::isKeyPressed((sf::Keyboard::Key)pressedKey);
+        }
+
+        bool IskeyEvent()
+        {
+            if (type == sf::Event::KeyPressed)
+                return true;
+            return false;
+        }
+
+        nuts::Key GetPressedKey()
+        {
+            return pressedKey;
+        }
+
+        nuts::Key GetDownKey()
+        {
+            return downKey;
         }
 
         bool IsKeyPressed(nuts::Key key)
         {
-            if (key == pressedKey)
-                return true;
-            return false;
+            return sf::Keyboard::isKeyPressed((sf::Keyboard::Key)key);
         }
 
         bool IsKeyDown(nuts::Key key)

@@ -65,6 +65,10 @@ namespace Net {
         sf::IpAddress _remoteServerIp;
         sf::Uint16    _remoteServerPort;
 
+        sf::Clock _clock;
+        sf::Time _acc;
+        sf::Time _dt;
+
         ClientID _clientId    = -1;
         bool     _isConnected = false;
 
@@ -91,9 +95,9 @@ namespace Net {
                 EventType type {};
                 packet >> type;
                 _remoteGameUdpPort = tmpUdp;
-                std::cout << "[Client-UDP]: received EventType "
-                          << (type == Net::Events::GAME_START ? "GAME_START" : "?")
-                          << " port:[" << _remoteGameUdpPort <<"]\n";
+                // std::cout << "[Client-UDP]: received EventType "
+                //           << (type == Net::Events::GAME_START ? "GAME_START" : "?")
+                //           << " port:[" << _remoteGameUdpPort <<"]\n";
 
                 Event event(type);
                 event.SetParam<sf::Packet>(0, packet);
@@ -141,8 +145,22 @@ namespace Net {
 
         void Update()
         {
+            _dt = _clock.restart();
+            _acc += _dt;
+
             this->TcpReceive();
             this->UdpReceive();
+
+        }
+
+        sf::Time GetAccumulatorTime()
+        {
+            return _acc;
+        }
+
+        void ResetAccumulatorTime()
+        {
+            _acc = _acc.Zero;
         }
 
         bool Connect(sf::IpAddress serverIp, sf::Uint16 serverPort)
@@ -194,12 +212,12 @@ namespace Net {
 
         void UdpSend(sf::Packet &packet)
         {
-            // if (!_isConnected) return;
+            if (!_isConnected) return;
 
             if (_udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to send TCP packet\n";
             }
-            std::cerr << "[Net]: Sent UDP to port:[" << _remoteGameUdpPort << "]\n";
+            // std::cerr << "[Net]: Sent UDP to port:[" << _remoteGameUdpPort << "]\n";
         }
 
         void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, sf::Uint16 gamePort)

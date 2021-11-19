@@ -96,15 +96,25 @@ public:
         Create("");
         AddComponent<SpriteComponent>();
         AddComponent<TransformComponent>();
+        AddComponent<VelocityComponent>();
+
         _playerTexture.LoadFromFile("./resources/sprites/players.gif");
 
         auto &spriteComp = GetComponent<SpriteComponent>();
         spriteComp.sprite.SetTexture(_playerTexture);
-        spriteComp.sprite.SetTextureRect({ 0, 0, 16, 14 });
+        spriteComp.sprite.SetTextureRect({ 0, 16 * (id % 4), 32, 16 });
         spriteComp.sprite.SetAnimated(false);
         spriteComp.sprite.SetLooped(false);
-        spriteComp.sprite.SetFirstFrame({ 0, 0, 16, 14 });
+        spriteComp.sprite.SetFirstFrame({ 0, 16 * (id % 4), 32, 16 });
         // sprite.SetTextureRect({0,0, 50, 50});
+
+        _vel = &GetComponent<VelocityComponent>();
+
+        _vel->velocity = { 0.f, 0.f };
+
+        for (size_t i = 0; i < 4; i++) {
+            _pressedKeys[i] = false;
+        }
     }
 
     ~GPlayer()
@@ -122,12 +132,36 @@ public:
         return (_playerId);
     }
 
+    void Move(nuts::Vector2f vel)
+    {
+        // nuts::Vector2f vel = {};
+
+        // if (_pressedKeys[0])
+        //     vel.x = 25;
+        // else if (_pressedKeys[1])
+        //     vel.x = -25;
+        // else if (_pressedKeys[2])
+        //     vel.y = -25;
+        // else if (_pressedKeys[3])
+        //     vel.y = 25;
+
+        *_vel = { vel.x, vel.y };
+    }
+
 private:
-    int            _playerId = -1;
-    PlayerColor    _color;
-    int            _score = 0;
-    nuts::Vector2f _pos;
-    nuts::Texture  _playerTexture;
+    int                _playerId = -1;
+    PlayerColor        _color;
+    int                _score = 0;
+    nuts::Vector2f     _pos;
+    nuts::Texture      _playerTexture;
+    VelocityComponent *_vel;
+
+public:
+    /**
+     * right, left, up, down
+     * in that order
+     */
+    bool _pressedKeys[4] = { 0 };
 };
 
 class GMonsters : public nuts::GameObject
@@ -154,14 +188,15 @@ class RTypeGame
     };
 
 private:
-    std::shared_ptr<nuts::Engine>    _engine;
-    std::shared_ptr<Net::INetClient> _netClient;
+    std::unordered_map<ClientID, GPlayer *> _players;
+    std::shared_ptr<nuts::Engine>           _engine;
 
-    nuts::Font _font;
+    ClientID    _localClientId;
+    GBackground _background;
+    nuts::Font  _font;
+    GameUI      _ui;
 
-    std::vector<GPlayer *> _players;
-    GBackground            _background;
-    GameUI                 _ui;
+    bool _isRunning = false;
 
 public:
     RTypeGame();
@@ -169,6 +204,11 @@ public:
     void Init(std::shared_ptr<nuts::Engine> engine);
     void Update();
     void Draw();
+
+    void SetLocalClientId(ClientID clientId)
+    {
+        _localClientId = clientId;
+    }
 
     void OnInitialGameInfo(Event &event)
     {
@@ -181,9 +221,23 @@ public:
             packet >> tmpId;
 
             clientIds.push_back(tmpId);
-            _players.push_back(new GPlayer(tmpId));
+            _players.insert({ tmpId, new GPlayer(tmpId) });
 
             std::cout << "[Client]: Starting game with playerId:[" << tmpId << "]\n";
         }
+        _isRunning = true;
     };
+
+    void OnRemoteKeyEvent(Event &event)
+    {
+        sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
+
+        ClientID  clientId;
+        sf::Int32 pressedKey;
+
+        inClientKeyPacket >> clientId >> pressedKey;
+
+        if (clientId == _localClientId)
+            return;
+    }
 };

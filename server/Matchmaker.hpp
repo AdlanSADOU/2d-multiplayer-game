@@ -12,15 +12,17 @@
 #include <cstdint>
 #include <thread>
 
+#include "EventManager.h"
 #include "InternalEvents.hpp"
+#include <Nuts/Input.hpp>
 
 #define MAX_CLIENTS 2
-
 
 class Game
 {
 private:
     std::vector<std::shared_ptr<SClientComponent>> _clients;
+    EventManager                                   _eventManager;
 
     std::int32_t  _gameId;
     sf::UdpSocket _socket;
@@ -32,10 +34,10 @@ public:
         std::cout << "game start\n";
         _running = true;
 
-        scene.AddEventCallback(Net::Events::CLIENT_KEY, BIND_CALLBACK(&Game::OnClientKeyEvent, this));
+        _eventManager.AddEventCallback(Net::Events::CLIENT_KEY, BIND_CALLBACK(&Game::OnClientKeyEvent, this));
     };
 
-    void Run(std::vector<std::shared_ptr<SClientComponent>> &clients, std::int32_t gameId)
+    void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
     {
         std::cout << "thread start\n";
         _clients = std::move(clients);
@@ -78,16 +80,46 @@ public:
         sf::Socket::Status status = _socket.receive(remotePacket, remoteAddress, remotePort);
         if (status == sf::Socket::Done) {
             remotePacket >> type;
-            std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "]: RECEIVEDDDD\n";
-
             Event remoteEvent(type);
             remoteEvent.SetParam<sf::Packet>(0, remotePacket);
-            scene.InvokeEvent(remoteEvent);
+            _eventManager.InvokeEvent(remoteEvent);
+        }
+    }
+
+    void Broadcast(sf::Packet packet, ClientID ignoredClientId)
+    {
+        for (auto &client : _clients) {
+            if (client->id != ignoredClientId) {
+                _socket.send(packet, client->ip, client->updPort);
+            }
         }
     }
 
     void OnClientKeyEvent(Event &event)
     {
+        sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
+
+        ClientID  clientId;
+        sf::Int32 pressedKey;
+
+        inClientKeyPacket >> clientId >> pressedKey;
+
+        sf::Packet outClientKeyPacket;
+        outClientKeyPacket << Net::Events::CLIENT_KEY << clientId << pressedKey;
+        Broadcast(outClientKeyPacket, clientId);
+
+        // if (pressedKey == nuts::Key::RightArrow)
+        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Right"
+        //               << "\n";
+        // if (pressedKey == nuts::Key::LeftArrow)
+        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Left"
+        //               << "\n";
+        // if (pressedKey == nuts::Key::UpArrow)
+        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Up"
+        //               << "\n";
+        // if (pressedKey == nuts::Key::DownArrow)
+        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Down"
+        //               << "\n";
     }
 };
 
@@ -161,7 +193,6 @@ public:
             // {
             //     t.detach();
             // }
-
         }
     }
 
