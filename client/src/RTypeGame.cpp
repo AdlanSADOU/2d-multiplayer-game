@@ -43,7 +43,7 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _background.InitBackground();
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
-    scene.AddEventCallback(Net::Events::CLIENT_KEY, BIND_CALLBACK(&RTypeGame::OnRemoteKeyEvent, this));
+    scene.AddEventCallback(Net::Events::CLIENT_KEY_PRESSED, BIND_CALLBACK(&RTypeGame::OnRemoteKeyPressedEvent, this));
 }
 
 void RTypeGame::Update()
@@ -55,25 +55,34 @@ void RTypeGame::Update()
     if (_players.size() == 0) return;
 
     nuts::Vector2f vel = { 0, 0 };
-    nuts::Key      key = nuts::Key::Unknown;
 
     if (_engine->IsKeyPressed(nuts::Key::A)) {
-        vel = { -120, 0 };
+        _players[_localClientId]->_pressedKeys[0] = true;
     }
     if (_engine->IsKeyPressed(nuts::Key::D)) {
-        vel = { 120, 0 };
+        _players[_localClientId]->_pressedKeys[1] = true;
     }
-    if (_engine->IsKeyPressed(nuts::Key::W))
-        vel = { 0, -120 };
-    if (_engine->IsKeyPressed(nuts::Key::S))
-        vel = { 0, 120 };
+    if (_engine->IsKeyPressed(nuts::Key::W)) {
+        _players[_localClientId]->_pressedKeys[2] = true;
+    }
+    if (_engine->IsKeyPressed(nuts::Key::S)) {
+        _players[_localClientId]->_pressedKeys[3] = true;
+    }
 
-    _players[_localClientId]->_vel->velocity = (vel);
+    _players[_localClientId]->Move();
 
-    // for (auto &otherPlayer : _players) {
-    //     otherPlayer.second->_vel->velocity = vel;
-    // }
-    // vel = {};
+    if (_engine->IsKeyReleased(nuts::Key::A)) {
+        _players[_localClientId]->_pressedKeys[0] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::D)) {
+        _players[_localClientId]->_pressedKeys[1] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::W)) {
+        _players[_localClientId]->_pressedKeys[2] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::S)) {
+        _players[_localClientId]->_pressedKeys[3] = false;
+    }
 }
 
 void RTypeGame::Draw()

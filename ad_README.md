@@ -70,15 +70,15 @@ https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
 
 
 # Server Issues
-server accepts same incoming connection multiple times
-  [really an issue? we can just not register it]
 
-# TODO sever
+# TODO
+Event loop must be run by the client
+not the engine
+cause engine is a shared lib, so static function isKeyPressed() executes on all clients...
 
 
 # TODO Engine
 sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
-
 
 prediction
 le plus proche de rtype
@@ -105,9 +105,7 @@ Once in a lobby clients have a [READY] button, when clicked, server receives a p
 
 When the last client in the lobby clicks the [READY] button, the server receives a [START_GAME] packet, which inits a game session on the server side and broadcasts to all clients data related to the game session. the client can now start to load the necessary sprite assets to start drawing all entities received from the server.
 
-
-
-###### not actually sure about what follows
+###### not actually sure about what follows (turned out exactly as stated)
 Each GameSession could be a thread, that thread has its own UDP socket that only clients belonging to that session can communicate with
 
 
@@ -116,7 +114,7 @@ Each GameSession could be a thread, that thread has its own UDP socket that only
 https://en.cppreference.com/w/cpp/thread/mutex
 
     std::vector<std::thread> workers;
-    
+
     for (int i = 0; i < 5; i++) {
         workers.push_back(std::thread([]()
         {

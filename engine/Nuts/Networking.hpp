@@ -33,13 +33,14 @@ using ClientID = sf::Int32;
 namespace Net {
 
     namespace Events {
-        const EventType CLIENT_CONNECT    = HASH(Events::CLIENT_CONNECT);
-        const EventType CLIENT_DISCONNECT = HASH(Events::CLIENT_DISCONNECT);
-        const EventType CLIENT_QUIT       = HASH(Events::CLIENT_QUIT);
-        const EventType CLIENT_ID         = HASH(Events::CLIENT_ID);
-        const EventType CLIENTS_PRINT     = HASH(Events::CLIENTS_PRINT);
-        const EventType CLIENT_UDP        = HASH(Events::CLIENT_UDP);
-        const EventType CLIENT_KEY        = HASH(Events::CLIENT_KEY);
+        const EventType CLIENT_CONNECT      = HASH(Events::CLIENT_CONNECT);
+        const EventType CLIENT_DISCONNECT   = HASH(Events::CLIENT_DISCONNECT);
+        const EventType CLIENT_QUIT         = HASH(Events::CLIENT_QUIT);
+        const EventType CLIENT_ID           = HASH(Events::CLIENT_ID);
+        const EventType CLIENTS_PRINT       = HASH(Events::CLIENTS_PRINT);
+        const EventType CLIENT_UDP          = HASH(Events::CLIENT_UDP);
+        const EventType CLIENT_KEY_PRESSED  = HASH(Events::CLIENT_KEY_PRESSED);
+        const EventType CLIENT_KEY_RELEASED = HASH(Events::CLIENT_KEY_RELEASED);
 
         const EventType NEW_CLIENT        = HASH(Events::NEW_CLIENT);
         const EventType UDP_OK            = HASH(Events::UDP_OK);
@@ -66,8 +67,8 @@ namespace Net {
         sf::Uint16    _remoteServerPort;
 
         sf::Clock _clock;
-        sf::Time _acc;
-        sf::Time _dt;
+        sf::Time  _acc;
+        sf::Time  _dt;
 
         ClientID _clientId    = -1;
         bool     _isConnected = false;
@@ -88,21 +89,20 @@ namespace Net {
 
         void UdpReceive()
         {
-            sf::Packet packet {};
-            sf::Uint16 tmpUdp;
-
-            if (_udpSocket.receive(packet, _remoteServerIp, tmpUdp) == sf::Socket::Done) {
+            sf::Packet         packet;
+            sf::Uint16         tmpUdp;
+            sf::Socket::Status status;
+            if ((status = _udpSocket.receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
                 EventType type {};
                 packet >> type;
                 _remoteGameUdpPort = tmpUdp;
-                // std::cout << "[Client-UDP]: received EventType "
-                //           << (type == Net::Events::GAME_START ? "GAME_START" : "?")
-                //           << " port:[" << _remoteGameUdpPort <<"]\n";
-
+                
                 Event event(type);
-                event.SetParam<sf::Packet>(0, packet);
+                event.SetParam<sf::Packet &>(0, packet);
                 scene.InvokeEvent(event);
             }
+            if (status == sf::Socket::Partial)
+                std::cerr << "[Net]: Received partial data\n";
         }
 
     public:
@@ -150,7 +150,6 @@ namespace Net {
 
             this->TcpReceive();
             this->UdpReceive();
-
         }
 
         sf::Time GetAccumulatorTime()
@@ -172,9 +171,9 @@ namespace Net {
                 return false;
             }
 
-            _remoteServerIp    = serverIp;
-            _remoteServerPort  = serverPort;
-            _remoteGameIp      = serverIp;
+            _remoteServerIp   = serverIp;
+            _remoteServerPort = serverPort;
+            _remoteGameIp     = serverIp;
             // _remoteGameUdpPort = serverPort + 1;
 
             if (_udpSocket.bind(sf::Socket::AnyPort, serverIp) != sf::Socket::Done) {
@@ -213,11 +212,13 @@ namespace Net {
         void UdpSend(sf::Packet &packet)
         {
             if (!_isConnected) return;
+            sf::Socket::Status status;
 
-            if (_udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort) != sf::Socket::Done) {
+            if ((status = _udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort)) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to send TCP packet\n";
             }
-            // std::cerr << "[Net]: Sent UDP to port:[" << _remoteGameUdpPort << "]\n";
+            if (status == sf::Socket::Partial)
+                std::cerr << "[Net]: Sent partial data\n";
         }
 
         void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, sf::Uint16 gamePort)

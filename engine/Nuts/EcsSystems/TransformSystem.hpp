@@ -29,7 +29,7 @@ public:
 
     void OnLeftkeyPressed(Event &event)
     {
-        std::cout << "Left key pressed!" << std::endl;
+        // std::cout << "Left key pressed!" << std::endl;
     }
 
     void Update(nuts::Clock deltaClock)

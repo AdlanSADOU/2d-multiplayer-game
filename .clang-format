@@ -1,5 +1,6 @@
 {
   BasedOnStyle: WebKit,
+  # IncludeBlocksStyle: Custom,
   UseTab: Never,
   IndentWidth: 4,
   TabWidth: 4,

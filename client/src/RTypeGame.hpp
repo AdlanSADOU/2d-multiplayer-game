@@ -132,18 +132,18 @@ public:
         return (_playerId);
     }
 
-    void Move(nuts::Vector2f vel)
+    void Move()
     {
-        // nuts::Vector2f vel = {};
-        std::cout << "moving with vel:" << vel.x << ":" << vel.y << "\n";
-        // if (_pressedKeys[0])
-        //     vel.x = 25;
-        // else if (_pressedKeys[1])
-        //     vel.x = -25;
-        // else if (_pressedKeys[2])
-        //     vel.y = -25;
-        // else if (_pressedKeys[3])
-        //     vel.y = 25;
+        nuts::Vector2f vel = {};
+
+        if (_pressedKeys[0])
+            vel.x = -125;
+        if (_pressedKeys[1])
+            vel.x = 125;
+        if (_pressedKeys[2])
+            vel.y = -125;
+        if (_pressedKeys[3])
+            vel.y = 125;
 
         *_vel = { vel.x, vel.y };
     }
@@ -229,33 +229,47 @@ public:
         _isRunning = true;
     };
 
-    void OnRemoteKeyEvent(Event &event)
+    void OnRemoteKeyPressedEvent(Event &event)
     {
-        sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
+        sf::Packet &inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
         ClientID  clientId;
-        sf::Int32 pressedKey = -1;
+        sf::Int32 pressedKey  = -1;
+        sf::Int32 releasedKey = -1;
 
-        inClientKeyPacket >> clientId >> pressedKey;
+        inClientKeyPacket >> clientId >> pressedKey >> releasedKey;
 
         if (clientId == _localClientId)
             return;
 
-        nuts::Vector2f vel = { 0, 0 };
-        nuts::Key      key = nuts::Key::Unknown;
-
-        if (nuts::Key::A == (nuts::Key)pressedKey) {
-            vel = { -120, 0 };
+        if (pressedKey == (nuts::Key::A)) {
+            _players[clientId]->_pressedKeys[0] = true;
         }
-        if (nuts::Key::D == (nuts::Key)pressedKey) {
-            vel = { 120, 0 };
+        if (pressedKey == (nuts::Key::D)) {
+            _players[clientId]->_pressedKeys[1] = true;
         }
-        if (nuts::Key::W == (nuts::Key)pressedKey)
-            vel = { 0, -120 };
-        if (nuts::Key::S == (nuts::Key)pressedKey)
-            vel = { 0, 120 };
+        if (pressedKey == (nuts::Key::W)) {
+            _players[clientId]->_pressedKeys[2] = true;
+        }
+        if (pressedKey == (nuts::Key::S)) {
+            _players[clientId]->_pressedKeys[3] = true;
+        }
 
-        // _players[clientId]->Move(vel);
-        _players[clientId]->_vel->velocity = vel;
+
+        _players[clientId]->Move();
+
+        if (releasedKey == (nuts::Key::A)) {
+            _players[clientId]->_pressedKeys[0] = false;
+        }
+        if (releasedKey == (nuts::Key::D)) {
+            _players[clientId]->_pressedKeys[1] = false;
+        }
+        if (releasedKey == (nuts::Key::W)) {
+            _players[clientId]->_pressedKeys[2] = false;
+        }
+        if (releasedKey == (nuts::Key::S)) {
+            _players[clientId]->_pressedKeys[3] = false;
+        }
+
     }
 };

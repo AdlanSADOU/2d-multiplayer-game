@@ -12,8 +12,9 @@
 #include <cstdint>
 #include <thread>
 
-#include "EventManager.h"
 #include "InternalEvents.hpp"
+#include "EventManager.h"
+
 #include <Nuts/Input.hpp>
 
 #define MAX_CLIENTS 2
@@ -31,15 +32,13 @@ private:
 public:
     Game()
     {
-        std::cout << "game start\n";
         _running = true;
 
-        _eventManager.AddEventCallback(Net::Events::CLIENT_KEY, BIND_CALLBACK(&Game::OnClientKeyEvent, this));
+        _eventManager.AddEventCallback(Net::Events::CLIENT_KEY_PRESSED, BIND_CALLBACK(&Game::OnClientKeyEvent, this));
     };
 
     void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
     {
-        std::cout << "thread start\n";
         _clients = std::move(clients);
         _gameId  = gameId;
 
@@ -101,25 +100,14 @@ public:
 
         ClientID  clientId;
         sf::Int32 pressedKey;
+        sf::Int32 releasedKey;
 
-        inClientKeyPacket >> clientId >> pressedKey;
+        inClientKeyPacket >> clientId >> pressedKey >> releasedKey;
 
         sf::Packet outClientKeyPacket;
-        outClientKeyPacket << Net::Events::CLIENT_KEY << clientId << pressedKey;
+        outClientKeyPacket << Net::Events::CLIENT_KEY_PRESSED << clientId << pressedKey << releasedKey;
         Broadcast(outClientKeyPacket, clientId);
 
-        // if (pressedKey == nuts::Key::RightArrow)
-        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Right"
-        //               << "\n";
-        // if (pressedKey == nuts::Key::LeftArrow)
-        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Left"
-        //               << "\n";
-        // if (pressedKey == nuts::Key::UpArrow)
-        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Up"
-        //               << "\n";
-        // if (pressedKey == nuts::Key::DownArrow)
-        //     std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "][Client: " << clientId << "]: pressed: Down"
-        //               << "\n";
     }
 };
 

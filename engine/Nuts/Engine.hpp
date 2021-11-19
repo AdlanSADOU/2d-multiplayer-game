@@ -19,8 +19,9 @@ namespace nuts {
     class Engine
     {
     private:
-        nuts::Key            pressedKey = nuts::Unknown;
-        nuts::Key            downKey = nuts::Unknown;
+        nuts::Key            pressedKey  = nuts::Unknown;
+        nuts::Key            releasedKey  = nuts::Unknown;
+        nuts::Key            downKey     = nuts::Unknown;
         nuts::Button         mouseButton = nuts::Button::Middle;
         nuts::Vector2i       mousePos;
         bool                 isRunning;
@@ -78,8 +79,11 @@ namespace nuts {
                     pressedKey = (nuts::Key)event.key.code;
                     downKey    = (nuts::Key)event.key.code;
                 }
+                if (type == sf::Event::KeyReleased) {
+                    releasedKey = (nuts::Key)event.key.code;
+                }
                 if (event.type == sf::Event::KeyReleased && event.key.code == (sf::Keyboard::Key)pressedKey) {
-                    downKey = nuts::Unknown;
+                    downKey    = nuts::Unknown;
                     pressedKey = nuts::Unknown;
                 }
 
@@ -90,6 +94,8 @@ namespace nuts {
                     mousePos = { event.mouseMove.x, event.mouseMove.y };
                 }
             }
+
+
         }
 
         bool IskeyEvent()
@@ -112,6 +118,12 @@ namespace nuts {
         bool IsKeyPressed(nuts::Key key)
         {
             if (key == pressedKey)
+                return true;
+            return false;
+        }
+        bool IsKeyReleased(nuts::Key key)
+        {
+            if (key == releasedKey)
                 return true;
             return false;
         }

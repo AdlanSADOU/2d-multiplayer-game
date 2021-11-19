@@ -89,7 +89,7 @@ void RType::Run()
 
         if (_engine->IsKeyPressed(nuts::Key::P)) {
             sf::Packet packet;
-            packet << Net::Events::CLIENTS_PRINT;
+            packet << (EventType)Net::Events::CLIENTS_PRINT;
             INetClient::TcpSend(packet);
         }
 
@@ -130,20 +130,32 @@ void RType::Run()
                 if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 33.f) {
                     INetClient::ResetAccumulatorTime();
 
-                    nuts::Key key = nuts::Unknown;
+                    nuts::Key pressedKey  = nuts::Unknown;
+                    nuts::Key releasedKey = nuts::Unknown;
 
                     if (_engine->IsKeyPressed(nuts::Key::A))
-                        key = nuts::A;
-                    else if (_engine->IsKeyPressed(nuts::Key::D))
-                        key = nuts::D;
-                    else if (_engine->IsKeyPressed(nuts::Key::W))
-                        key = nuts::W;
-                    else if (_engine->IsKeyPressed(nuts::Key::S))
-                        key = nuts::S;
+                        pressedKey = nuts::A;
+                    if (_engine->IsKeyPressed(nuts::Key::D))
+                        pressedKey = nuts::D;
+                    if (_engine->IsKeyPressed(nuts::Key::W))
+                        pressedKey = nuts::W;
+                    if (_engine->IsKeyPressed(nuts::Key::S))
+                        pressedKey = nuts::S;
 
-                    sf::Packet keyPacket;
-                    keyPacket << Net::Events::CLIENT_KEY << GetLocalClientId() << key;
-                    INetClient::UdpSend(keyPacket);
+                    if (_engine->IsKeyReleased(nuts::Key::A))
+                        releasedKey = nuts::A;
+                    if (_engine->IsKeyReleased(nuts::Key::D))
+                        releasedKey = nuts::D;
+                    if (_engine->IsKeyReleased(nuts::Key::W))
+                        releasedKey = nuts::W;
+                    if (_engine->IsKeyReleased(nuts::Key::S))
+                        releasedKey = nuts::S;
+
+                    sf::Packet pressedKeyPacket;
+                    pressedKeyPacket << Net::Events::CLIENT_KEY_PRESSED << GetLocalClientId() << pressedKey << releasedKey;
+
+                    INetClient::UdpSend(pressedKeyPacket);
+
                 }
 
                 if (GetLocalClientId() == -1) return;
