@@ -36,46 +36,6 @@
 
 // #include "engine/Nuts/GameObject.hpp"
 
-class RTypeMonster : public nuts::GameObject
-{
-private:
-    nuts::Texture     _texture;
-    nuts::SoundBuffer _buffer;
-
-public:
-    RTypeMonster() { }
-    ~RTypeMonster() { }
-
-    void Init()
-    {
-        this->Create("Monster");
-        _texture.LoadFromFile("./resources/sprites/ball.gif");
-        _buffer.LoadFromFile("./resources/sounds/explosion.wav");
-
-        this->AddComponent<TransformComponent>();
-        this->AddComponent<SpriteComponent>();
-        this->AddComponent<VelocityComponent>();
-        this->AddComponent<SoundComponent>();
-
-        TransformComponent &transformComponent = GetComponent<TransformComponent>();
-        SpriteComponent &   spriteComponent    = GetComponent<SpriteComponent>();
-        SoundComponent &    soundComponent     = GetComponent<SoundComponent>();
-
-        spriteComponent.sprite.SetTexture(_texture);
-        spriteComponent.sprite.SetTextureRect({ 0, 0, 16, 14 });
-        spriteComponent.sprite.SetAnimated(true);
-        spriteComponent.sprite.SetLooped(true);
-        spriteComponent.sprite.SetFirstFrame({ 0, 0, 16, 14 });
-        spriteComponent.sprite.SetFrameCount(12);
-        spriteComponent.sprite.SetFrameTime(0.070f);
-        spriteComponent.sprite.InitAnimationClock();
-
-        transformComponent.position = { 700, 500 };
-
-        soundComponent.sound.SetSoundBuffer(_buffer.GetSoundBuffer());
-    }
-};
-
 class RType : public Net::INetClient
 {
 
@@ -102,8 +62,6 @@ private:
     RTypeMenu        _menu;
     RTypeMatchmaking _matchMaking;
     RTypeGame        _game;
-
-    RTypeMonster _monster;
 
     nuts::Clock _deltaClock;
 

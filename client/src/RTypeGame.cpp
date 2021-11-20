@@ -22,6 +22,18 @@ RTypeGame::~RTypeGame()
     // }
 }
 
+void RTypeGame::InitMonsterFrameCount()
+{
+    _MFrameCount.emplace(std::make_pair(GMonster::Type::FLY, 12));
+    _MFrameCount.emplace(std::make_pair(GMonster::Type::GROUND, 4));
+}
+
+void RTypeGame::InitMonsterTexturesRect()
+{
+    _MTexturesRect.emplace(std::make_pair(GMonster::Type::FLY, (nuts::IntRect){ 0, 0, 16, 14 }));
+    _MTexturesRect.emplace(std::make_pair(GMonster::Type::GROUND, (nuts::IntRect){ 0, 0, 33, 32 }));
+}
+
 void RTypeGame::InitMonsterTextures()
 {
     _MTextures.emplace(std::make_pair(GMonster::Type::FLY, nuts::Texture("./resources/sprites/ball.gif")));
@@ -33,6 +45,8 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _engine = engine;
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
     InitMonsterTextures();
+    InitMonsterTexturesRect();
+    InitMonsterFrameCount();
 
     _ui.p1score = nuts::Text("0", 10, _font);
     _ui.p2score = nuts::Text("0", 10, _font);

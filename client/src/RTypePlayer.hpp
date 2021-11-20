@@ -46,7 +46,7 @@ public:
         _vel->velocity = { 0.f, 0.f };
 
         for (size_t i = 0; i < 4; i++) {
-            _directionalKeys[i] = false;
+            _directionalKeys[i] = false;    
         }
     }
 

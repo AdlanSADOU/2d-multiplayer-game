@@ -107,10 +107,8 @@ class GMonster : public nuts::GameObject
 
         GMonster() {}
 
-        GMonster(int id, GMonster::Type type, nuts::Vector2f pos, nuts::Texture &texture) {
-            _infos.id = id;
-            _infos.type = type;
-            _infos.pos = pos;
+        GMonster(MInfos infos, nuts::Texture &texture, nuts::IntRect rect, int fc) {
+            _infos = infos;
 
             this->Create("Monster");
             this->AddComponent<SpriteComponent>();
@@ -124,14 +122,14 @@ class GMonster : public nuts::GameObject
             auto &stateComp = GetComponent<StateComponent>();
 
             stateComp.state = GameState::GAME;
-            transformComp.position = pos;
+            transformComp.position = _infos.pos;
             velocityComp.velocity = {0, 0};
             spriteComp.sprite.SetTexture(texture);
-            spriteComp.sprite.SetTextureRect({ 0, 0, 16, 14 });
+            spriteComp.sprite.SetTextureRect(rect);
             spriteComp.sprite.SetAnimated(true);
             spriteComp.sprite.SetLooped(true);
-            spriteComp.sprite.SetFirstFrame({ 0, 0, 16, 14 });
-            spriteComp.sprite.SetFrameCount(12);
+            spriteComp.sprite.SetFirstFrame(rect);
+            spriteComp.sprite.SetFrameCount(fc);
             spriteComp.sprite.SetFrameTime(0.070f);
             spriteComp.sprite.InitAnimationClock();
         }
@@ -193,6 +191,9 @@ class RTypeGame
         nuts::Font  _font;
         GameUI      _ui;
         std::unordered_map<GMonster::Type, nuts::Texture> _MTextures;
+        std::unordered_map<GMonster::Type, nuts::IntRect> _MTexturesRect;
+        std::unordered_map<GMonster::Type, int>           _MFrameCount;
+
 
         bool _isRunning = false;
 
@@ -202,6 +203,8 @@ class RTypeGame
 
         void Init(std::shared_ptr<nuts::Engine> engine);
         void InitMonsterTextures();
+        void InitMonsterTexturesRect();
+        void InitMonsterFrameCount();
 
         void SetLocalClientId(ClientID clientId);
         bool IsMonsterInList(int id);
