@@ -75,11 +75,6 @@ void RTypeGame::OnRemoteKeyEvent(Event &event)
 
 bool RTypeGame::IsMonsterInList(int id)
 {
-    for (auto &monster : _monsters) {
-        if (monster.GetId() == id) {
-            return (true);
-        }
-    }
     return (false);
 }
 
@@ -92,20 +87,14 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
     float posX;
     float posY;
 
-    packet >> id >> type >> posX >> posY;
 
-    if (!IsMonsterInList(id)) {
-        std::cout << "New monster registered" << std::endl;
-        _monsters.emplace_back(GMonster((GMonster::MInfos){id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]));
-    }
-    else {
-        for (auto &monster : _monsters) {
-            if (monster.GetId() == id) {
-                auto &tComp = monster.GetComponent<TransformComponent>();
-                tComp.position.x = posX;
-                tComp.position.y = posY;
-                std::cout << "Position Updated" << std::endl;
-            }
+    while (!packet.endOfPacket()) {
+        packet >> id >> type >> posX >> posY;
+
+        if (_monsters.find(id) == std::end(_monsters)) {
+            _monsters.insert({id, GMonster((GMonster::MInfos){id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type])});
         }
+        auto &tComp = _monsters[id].GetComponent<TransformComponent>();
+        tComp = {posX, posY};
     }
 }

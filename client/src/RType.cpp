@@ -156,8 +156,8 @@ void RType::Run()
                     pressedKeyPacket << Net::Events::REMOTE_CLIENT_KEYS << GetLocalClientId() << pressedKey << releasedKey;
 
                     INetClient::UdpSend(pressedKeyPacket);
-                }
 
+                }
                 if (GetLocalClientId() == -1) return;
                 _game.Update();
                 _game.Draw();

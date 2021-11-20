@@ -18,6 +18,7 @@ private:
     sf::TcpSocket *     _tmpSocket;
 
 public:
+
     int Init(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         std::set<Entity>::iterator entity = _entities.find(0);

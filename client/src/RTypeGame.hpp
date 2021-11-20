@@ -184,7 +184,7 @@ class RTypeGame
     private:
         std::shared_ptr<nuts::Engine>           _engine;
         std::unordered_map<ClientID, GPlayer *> _players;
-        std::vector<GMonster>                  _monsters;
+        std::unordered_map<int, GMonster> _monsters;
 
         ClientID    _localClientId;
         GBackground _background;
@@ -193,7 +193,6 @@ class RTypeGame
         std::unordered_map<GMonster::Type, nuts::Texture> _MTextures;
         std::unordered_map<GMonster::Type, nuts::IntRect> _MTexturesRect;
         std::unordered_map<GMonster::Type, int>           _MFrameCount;
-
 
         bool _isRunning = false;
 

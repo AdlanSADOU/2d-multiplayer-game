@@ -28,10 +28,13 @@ class GameThread
 
     private:
         std::vector<std::shared_ptr<SClientComponent>> _clients;
-        EventManager                                   _eventManager;
+        EventManager _eventManager;
 
-        nuts::Clock                             *_monsterSpawn = nullptr;
-        std::vector<SMInfos>           _monsters;
+        nuts::Clock *_deltaClock = nullptr;
+        nuts::Clock *_monsterSpawn = nullptr;
+        nuts::Clock *_tickrateClock = nullptr;
+
+        std::vector<SMInfos> _monsters;
 
         int _monsterId;
 
@@ -43,7 +46,7 @@ class GameThread
         GameThread()
         {
             _running = true;
-            std::srand(time(NULL));
+            srand(time(NULL));
 
             _eventManager.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&GameThread::OnClientKeyEvent, this));
         };
@@ -52,6 +55,8 @@ class GameThread
         {
             _clients = std::move(clients);
             _gameId  = gameId;
+            if (!_deltaClock) { _deltaClock = new nuts::Clock(); }
+            if (!_tickrateClock) { _tickrateClock = new nuts::Clock(); }
 
             _socket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress());
             _socket.setBlocking(false);
@@ -76,7 +81,11 @@ class GameThread
 
             while (_running) {
                 receive();
-                UpdateMonsters();
+                if (_tickrateClock->GetElapsedTimeAsSeconds() > 1 / 60.f) {
+                    UpdateMonsters(*_deltaClock);
+                    _deltaClock->Restart();
+                    _tickrateClock->Restart();
+                }
             }
         }
 
@@ -129,57 +138,59 @@ class GameThread
 
         GMonster::Type GetRandomType()
         {
-            return ((GMonster::Type)(0 + ( std::rand() % ( 1 - 0 + 1 ))));
+            return ((GMonster::Type)(0 + ( rand() % ( 1 - 0 + 1 ))));
         }
 
         nuts::Vector2f GetRandomPosSpawn()
         {
-            float x = 600 + (std::rand() % ( 1000 - 600 + 1 ));
-            float y = 0 + (std::rand() % ( 400 - 0 + 1 ));
+            float x = 600 + (rand() % ( 1000 - 600 + 1 ));
+            float y = 0 + (rand() % ( 400 - 0 + 1 ));
             return ((nuts::Vector2f){x, y});
         }
 
         nuts::Vector2f GetRandomPos()
         {
-            float x = 0 + (std::rand() % ( 800 - 0 + 1 ));
-            float y = 0 + (std::rand() % ( 400 - 0 + 1 ));
+            float x = (rand() % ( 800 - 0 + 1 )) + 0;
+            float y = (rand() % ( 400 - 0 + 1 )) + 0;
             return ((nuts::Vector2f){x, y});
         }
 
-        void UpdateMonstersPos()
+        void UpdateMonstersPos(nuts::Clock &deltaClock)
         {
             for (auto &monster : _monsters) {
-                nuts::Vector2f pos = monster.pos;
-                nuts::Vector2f gotoPos = monster.gotoPos;
+                nuts::Vector2f &pos = monster.pos;
+                nuts::Vector2f &gotoPos = monster.gotoPos;
+                float dt = deltaClock.GetElapsedTimeAsSeconds();
 
-                if (pos.x > gotoPos.x + (10)) { pos.x--;}
-                if (pos.x < gotoPos.x - (10)) { pos.x++;}
-                if (pos.y > gotoPos.y + (10)) { pos.y--;}
-                if (pos.y < gotoPos.y - (10)) { pos.y++;}
+                if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt;}
+                if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt;}
+                if (pos.y >= gotoPos.y + 10) { pos.y -= 100 * dt;}
+                if (pos.y <= gotoPos.y - 10) { pos.y += 100 * dt;}
 
-                if (pos.x > gotoPos.x - 10 && pos.x < gotoPos.x + 10 &&
-                    pos.y > gotoPos.y - 10 && pos.y < gotoPos.y + 10)
+                std::cout << " [POS] X: " << pos.x << " Y : " << pos.y << std::endl;
+                if ((pos.x >= gotoPos.x - 10 && pos.x <= gotoPos.x + 10) && (pos.y >= gotoPos.y - 10 && pos.y <= gotoPos.y + 10))
                 {
                     monster.gotoPos = GetRandomPos();
+                    std::cout << " [GOTO] X: " << gotoPos.x << " Y : " << gotoPos.y << std::endl;
                 }
             }
         }
 
-        void UpdateMonsters()
+        void UpdateMonsters(nuts::Clock &deltaClock)
         {
             if (!_monsterSpawn) { _monsterSpawn = new nuts::Clock(); }
+            UpdateMonstersPos(deltaClock);
 
-            if (_monsterSpawn->GetElapsedTimeAsSeconds() >= 2.f) {
+            if (_monsterSpawn->GetElapsedTimeAsSeconds() >= 0.5f) {
                 _monsters.emplace_back((SMInfos){GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn()});
                 _monsterSpawn->Restart();
             }
 
-            UpdateMonstersPos();
-
+            sf::Packet mPacket;
+            mPacket << Net::Events::MONSTER_UPDATE_POS;
             for (auto &monster : _monsters) {
-                sf::Packet mPacket;
-                mPacket << Net::Events::MONSTER_UPDATE_POS << monster.id << monster.type << monster.pos.x << monster.pos.y;
-                Broadcast(mPacket);
+                mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y;
             }
+            Broadcast(mPacket);
         }
 };
