@@ -107,6 +107,7 @@ class RTypeGame
 
 private:
     std::unordered_map<ClientID, GPlayer *> _players;
+
     std::shared_ptr<nuts::Engine>           _engine;
 
     ClientID    _localClientId;
@@ -126,7 +127,7 @@ public:
             std::cout << __FUNCTIONW__ << " player does not exist yet...\n";
             return nullptr;
         }
-        
+
         return _players.at(_localClientId);
     }
 

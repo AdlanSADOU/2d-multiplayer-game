@@ -8,13 +8,13 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "Nuts/Engine.hpp"
+#include "Nuts/UI/Button.hpp"
 #include "Nuts/UI/Text.hpp"
 #include "Nuts/UI/Widget.hpp"
-#include "Nuts/UI/Button.hpp"
 #include "UIEvents.hpp"
 
 class RTypeMMPlayer
@@ -47,6 +47,7 @@ public:
 
     void SetState(MPlayerState state)
     {
+        std::cout << "mmPlayerId:" << _id << " state changed\n";
         _state = state;
     }
 
@@ -57,6 +58,7 @@ public:
 
     void SetID(int id)
     {
+        std::cout << "mmPlayerId:" << id << "\n";
         _id = id;
     }
 
@@ -92,6 +94,9 @@ private:
     WidgetMenu _menu;
 
 public:
+    sf::Int32 _localClientId;
+    bool      _isInitiated = false;
+
     RTypeMatchmaking()
     {
     }
@@ -107,22 +112,23 @@ public:
 
     void Draw()
     {
-        int x = 0;
+        if (!_isInitiated) return;
+
         _menu.panel.TEST_DRAW(_engine->window);
         _menu.startBtn.TEST_DRAW(_engine->window);
         _menu.startBtn.GetText().Draw(_engine->window);
-        for (auto &player : _tPlayers) {
-            nuts::FloatRect pPos = player.GetGlobalBounds();
-            nuts::Text      tmp;
-            if (_players[x].GetState() == RTypeMMPlayer::MPlayerState::READY) {
+
+        for (auto &player : _players) {
+            nuts::Text tmp;
+            tmp = _tNReady;
+            if (player.GetState() == RTypeMMPlayer::MPlayerState::READY) {
                 tmp = _tReady;
-            } else {
-                tmp = _tNReady;
+                nuts::FloatRect pPos = _tPlayers[player.GetID()].GetGlobalBounds();
+                _tPlayers[player.GetID()].Draw(_engine->window);
+                tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });
+                tmp.SetCharacterSize(8);
+                tmp.Draw(_engine->window);
             }
-            player.Draw(_engine->window);
-            tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });
-            tmp.SetCharacterSize(8);
-            tmp.Draw(_engine->window);
         }
     }
 

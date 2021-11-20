@@ -16,6 +16,7 @@ class GameThread
 private:
     std::vector<std::shared_ptr<SClientComponent>> _clients;
     EventManager                                   _eventManager;
+    sf::Clock                                      _deltaClock;
 
     std::int32_t  _gameId;
     sf::UdpSocket _socket;
@@ -55,8 +56,17 @@ public:
             _socket.send(packet, client->ip, client->updPort);
         }
 
+        sf::Time dt;
+        sf::Time acc;
+
         while (_running) {
-            receive();
+
+            dt = _deltaClock.restart();
+            acc += dt;
+            if (acc.asSeconds() > 1/(33.f * 6)) {
+                receive();
+                acc = acc.Zero;
+            }
         }
     }
 
@@ -104,13 +114,14 @@ public:
 
         sf::Packet outClientKeyPacket;
 
-        outClientKeyPacket << Net::Events::REMOTE_CLIENT_KEYS
-                           << clientId
-                           << left
-                           << right
-                           << up
-                           << down
-                           << isFiering;
+        outClientKeyPacket
+            << Net::Events::REMOTE_CLIENT_KEYS
+            << clientId
+            << left
+            << right
+            << up
+            << down
+            << isFiering;
 
         Broadcast(outClientKeyPacket, clientId);
     }

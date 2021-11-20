@@ -14,6 +14,12 @@ void RType::OnNetReceivedId(Event &event)
     packet >> id;
 
     SetLocalClientId(id);
+    auto &mmPlayers = _matchMaking.GetPlayers();
+    mmPlayers[id % MAX_CLIENTS].SetID(id);
+    mmPlayers[id % MAX_CLIENTS].SetState(RTypeMMPlayer::READY);
+
+    _matchMaking._localClientId = id;
+    _matchMaking._isInitiated   = true;
 
     sf::Packet udpInfoPacket;
     udpInfoPacket << Net::Events::CLIENT_UDP
@@ -43,16 +49,20 @@ void RType::OnQuickPlayBtn(Event &event)
 void RType::OnNewClient(Event &event)
 {
     sf::Packet packet = event.GetParam<sf::Packet>(0);
-    ClientID   id;
-    sf::Int32  gameId;
 
-    packet >> id >> gameId;
+    while (!packet.endOfPacket()) {
+        ClientID tmpId;
+        packet >> tmpId;
 
-    std::cout << "[Client]: Client ["
-              << id
-              << "] joined game ["
-              << gameId
-              << "]\n";
+        std::cout << "[Client]: Client ["
+                  << tmpId
+                  << "] joined matchmaking "
+                  << "]\n";
+
+        auto &mmPlayers = _matchMaking.GetPlayers();
+        mmPlayers[tmpId % MAX_CLIENTS].SetID(tmpId);
+        mmPlayers[tmpId % MAX_CLIENTS].SetState(RTypeMMPlayer::READY);
+    }
 }
 
 void RType::OnClientQuit(Event &event)

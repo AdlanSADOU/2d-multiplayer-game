@@ -49,6 +49,4 @@ void RTypeGame::OnRemotePlayerState(Event &event)
     //     << _players[clientId]->_directionalKeys[2]
     //     << _players[clientId]->_directionalKeys[3]
     //     << _players[clientId]->_isFiering << "\n";
-
-    _players[clientId]->Move();
 }

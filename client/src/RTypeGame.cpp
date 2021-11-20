@@ -57,6 +57,9 @@ void RTypeGame::Update()
     if (!isReady) return;
 
     _background.Update();
+    for (auto &player : _players) {
+        player.second->Update();
+    }
 }
 
 void RTypeGame::Draw()
@@ -72,10 +75,9 @@ void RTypeGame::Draw()
 
 void RTypeGame::LocalClientInputs()
 {
-
     if (_players.size() == 0 && !_players[_localClientId]) return;
 
-
+    // key release checks go first
     if (_engine->IsKeyReleased(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = false;
     }
@@ -89,10 +91,10 @@ void RTypeGame::LocalClientInputs()
         _players[_localClientId]->_directionalKeys[3] = false;
     }
 
-    if (_engine->IsKeyPressed(nuts::Key::S)) {
+    // key presss checks
+    if (_engine->IsKeyPressed(nuts::Key::Space)) {
         _players[_localClientId]->SetFiering(false);
     }
-
     if (_engine->IsKeyPressed(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = true;
     }
@@ -106,10 +108,7 @@ void RTypeGame::LocalClientInputs()
         _players[_localClientId]->_directionalKeys[3] = true;
     }
 
-    if (_engine->IsKeyPressed(nuts::Key::S)) {
+    if (_engine->IsKeyPressed(nuts::Key::Space)) {
         _players[_localClientId]->SetFiering(true);
     }
-
-    _players[_localClientId]->Move();
-
 }
