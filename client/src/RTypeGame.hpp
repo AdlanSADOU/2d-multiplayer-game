@@ -25,6 +25,7 @@
 #include "Nuts/EcsComponents/StateComponent.hpp"
 
 #include "RTypePlayer.hpp"
+#include "../client/src/RGameState.hpp"
 
 #include <iostream>
 #include <unordered_map>
@@ -64,15 +65,18 @@ public:
         _backgrounds.emplace_back(nuts::GameObject("Background"));
         _backgrounds.emplace_back(nuts::GameObject("Background"));
 
-        nuts::FloatRect spritePos = { 0.f, 0.f, 0.f, 0.f };
+        nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
         for (auto &bg : _backgrounds) {
             bg.AddComponent<SpriteComponent>();
             bg.AddComponent<TransformComponent>();
             bg.AddComponent<VelocityComponent>();
+            bg.AddComponent<StateComponent>();
 
             auto &spriteComp = bg.GetComponent<SpriteComponent>();
-            auto &tComp      = bg.GetComponent<TransformComponent>();
-            auto &velComp    = bg.GetComponent<VelocityComponent>();
+            auto &tComp = bg.GetComponent<TransformComponent>();
+            auto &velComp = bg.GetComponent<VelocityComponent>();
+            auto &stateComp = bg.GetComponent<StateComponent>();
+            stateComp.state = GAME;
 
             velComp.velocity.x = -SCROLL_SPEED;
 
