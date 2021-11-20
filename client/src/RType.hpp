@@ -19,6 +19,7 @@
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
+#include "Nuts/EcsComponents/StateComponent.hpp"
 
 #include "Nuts/EcsSystems/AnimationSystem.hpp"
 #include "Nuts/EcsSystems/RenderSystem.hpp"
@@ -30,6 +31,8 @@
 #include "RTypeMenu.hpp"
 #include "RTypeGame.hpp"
 #include "RTypeMatchmaking.hpp"
+
+#include "RGameState.hpp"
 
 // #include "engine/Nuts/GameObject.hpp"
 

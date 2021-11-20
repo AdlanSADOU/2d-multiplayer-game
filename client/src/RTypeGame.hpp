@@ -25,6 +25,7 @@
 #include "Nuts/EcsComponents/StateComponent.hpp"
 
 #include "RTypePlayer.hpp"
+#include "../client/src/RGameState.hpp"
 
 #include <iostream>
 #include <unordered_map>

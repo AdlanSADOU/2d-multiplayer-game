@@ -9,6 +9,7 @@
 
 #include "TransformComponent.hpp"
 #include "VelocityComponent.hpp"
+#include "StateComponent.hpp"
 
 #include "Nuts/Clock.hpp"
 
