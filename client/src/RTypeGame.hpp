@@ -23,6 +23,8 @@
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
 
+#include "RTypePlayer.hpp"
+
 #include <iostream>
 
 extern Scene scene;
@@ -78,91 +80,6 @@ public:
             spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
         }
     }
-};
-
-class GPlayer : public nuts::GameObject
-{
-    enum PlayerColor
-    {
-        BLUE = 0,
-        RED,
-        GREEN,
-        PURPLE
-    };
-
-public:
-    GPlayer(ClientID id)
-    {
-        Create("");
-        AddComponent<SpriteComponent>();
-        AddComponent<TransformComponent>();
-        AddComponent<VelocityComponent>();
-
-        _playerTexture.LoadFromFile("./resources/sprites/players.gif");
-
-        auto &spriteComp = GetComponent<SpriteComponent>();
-        spriteComp.sprite.SetTexture(_playerTexture);
-        spriteComp.sprite.SetTextureRect({ 0, 16 * (id % 4), 32, 16 });
-        spriteComp.sprite.SetAnimated(false);
-        spriteComp.sprite.SetLooped(false);
-        spriteComp.sprite.SetFirstFrame({ 0, 16 * (id % 4), 32, 16 });
-        // sprite.SetTextureRect({0,0, 50, 50});
-
-        _vel = &GetComponent<VelocityComponent>();
-
-        _vel->velocity = { 0.f, 0.f };
-
-        for (size_t i = 0; i < 4; i++) {
-            _pressedKeys[i] = false;
-        }
-    }
-
-    ~GPlayer()
-    {
-        std::cout << "player destroyed\n";
-    }
-
-    void SetId(int id)
-    {
-        _playerId = id;
-    }
-
-    int GetId()
-    {
-        return (_playerId);
-    }
-
-    void Move()
-    {
-        nuts::Vector2f vel = {};
-
-        if (_pressedKeys[0])
-            vel.x = -125;
-        if (_pressedKeys[1])
-            vel.x = 125;
-        if (_pressedKeys[2])
-            vel.y = -125;
-        if (_pressedKeys[3])
-            vel.y = 125;
-
-        *_vel = { vel.x, vel.y };
-    }
-
-private:
-    int            _playerId = -1;
-    PlayerColor    _color;
-    int            _score = 0;
-    nuts::Vector2f _pos;
-    nuts::Texture  _playerTexture;
-
-public:
-    VelocityComponent *_vel = nullptr;
-
-    /**
-     * right, left, up, down
-     * in that order
-     */
-    bool _pressedKeys[4] = { 0 };
 };
 
 class GMonsters : public nuts::GameObject

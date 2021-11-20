@@ -8,10 +8,15 @@
 #pragma once
 #include <Nuts/GameObject.hpp>
 
+
 #include "Components/Components.hpp"
+
 #include "InternalEvents.hpp"
+
 #include "Systems/ConnectionSystem.hpp"
 #include "Systems/SClientsSystem.hpp"
+
+#include "GameThread.hpp"
 
 #include <thread>
 #include <vector>
@@ -91,11 +96,11 @@ public:
 
     void OnMatchMReady(Event &event)
     {
-        std::cout << "MAtchm ready\n";
-        Game *game = new Game;
+        std::cout << "Matchm ready\n";
+        GameThread *gameTh = new GameThread;
 
         sf::Int32 gameId = event.GetParam<sf::Int32>(1);
 
-        GameWorkers.push_back(new std::thread(&Game::Run, game, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId));
+        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId));
     }
 };

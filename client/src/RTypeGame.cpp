@@ -63,31 +63,31 @@ void RTypeGame::Update()
     nuts::Vector2f vel = { 0, 0 };
 
     if (_engine->IsKeyPressed(nuts::Key::A)) {
-        _players[_localClientId]->_pressedKeys[0] = true;
+        _players[_localClientId]->_directionalKeys[0] = true;
     }
     if (_engine->IsKeyPressed(nuts::Key::D)) {
-        _players[_localClientId]->_pressedKeys[1] = true;
+        _players[_localClientId]->_directionalKeys[1] = true;
     }
     if (_engine->IsKeyPressed(nuts::Key::W)) {
-        _players[_localClientId]->_pressedKeys[2] = true;
+        _players[_localClientId]->_directionalKeys[2] = true;
     }
     if (_engine->IsKeyPressed(nuts::Key::S)) {
-        _players[_localClientId]->_pressedKeys[3] = true;
+        _players[_localClientId]->_directionalKeys[3] = true;
     }
 
     _players[_localClientId]->Move();
 
     if (_engine->IsKeyReleased(nuts::Key::A)) {
-        _players[_localClientId]->_pressedKeys[0] = false;
+        _players[_localClientId]->_directionalKeys[0] = false;
     }
     if (_engine->IsKeyReleased(nuts::Key::D)) {
-        _players[_localClientId]->_pressedKeys[1] = false;
+        _players[_localClientId]->_directionalKeys[1] = false;
     }
     if (_engine->IsKeyReleased(nuts::Key::W)) {
-        _players[_localClientId]->_pressedKeys[2] = false;
+        _players[_localClientId]->_directionalKeys[2] = false;
     }
     if (_engine->IsKeyReleased(nuts::Key::S)) {
-        _players[_localClientId]->_pressedKeys[3] = false;
+        _players[_localClientId]->_directionalKeys[3] = false;
     }
 }
 

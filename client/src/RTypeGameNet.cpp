@@ -33,37 +33,42 @@ void RTypeGame::OnRemoteKeyEvent(Event &event)
     ClientID  clientId;
     sf::Int32 pressedKey  = -1;
     sf::Int32 releasedKey = -1;
-
-    inClientKeyPacket >> clientId >> pressedKey >> releasedKey;
+    bool      isFiering   = false;
 
     if (clientId == _localClientId)
         return;
 
+    inClientKeyPacket >> clientId
+        >> pressedKey >> releasedKey
+        >> isFiering;
+
     if (pressedKey == (nuts::Key::A)) {
-        _players[clientId]->_pressedKeys[0] = true;
+        _players[clientId]->_directionalKeys[0] = true;
     }
     if (pressedKey == (nuts::Key::D)) {
-        _players[clientId]->_pressedKeys[1] = true;
+        _players[clientId]->_directionalKeys[1] = true;
     }
     if (pressedKey == (nuts::Key::W)) {
-        _players[clientId]->_pressedKeys[2] = true;
+        _players[clientId]->_directionalKeys[2] = true;
     }
     if (pressedKey == (nuts::Key::S)) {
-        _players[clientId]->_pressedKeys[3] = true;
+        _players[clientId]->_directionalKeys[3] = true;
     }
 
     _players[clientId]->Move();
 
     if (releasedKey == (nuts::Key::A)) {
-        _players[clientId]->_pressedKeys[0] = false;
+        _players[clientId]->_directionalKeys[0] = false;
     }
     if (releasedKey == (nuts::Key::D)) {
-        _players[clientId]->_pressedKeys[1] = false;
+        _players[clientId]->_directionalKeys[1] = false;
     }
     if (releasedKey == (nuts::Key::W)) {
-        _players[clientId]->_pressedKeys[2] = false;
+        _players[clientId]->_directionalKeys[2] = false;
     }
     if (releasedKey == (nuts::Key::S)) {
-        _players[clientId]->_pressedKeys[3] = false;
+        _players[clientId]->_directionalKeys[3] = false;
     }
+
+    _players[clientId]->SetFiering(isFiering);
 }
