@@ -88,12 +88,12 @@ public:
         *_vel = { vel.x, vel.y };
     }
 
-private:
-    bool       _isFiering = false;
-    sf::Uint16 _score      = 0;
-    sf::Uint16 _health     = 0;
-    sf::Uint16 _maxHealth  = 0;
+    void Update()
+    {
 
+    }
+
+private:
     ClientID       _clientId = -1;
     nuts::Vector2f _pos;
     nuts::Texture  _playerTexture;
@@ -105,5 +105,9 @@ public:
      * left, right, up, down
      * in that order
      */
-    bool _directionalKeys[4] = { 0 };
+    bool       _isFiering          = false;
+    sf::Uint16 _score              = 0;
+    sf::Uint16 _health             = 0;
+    sf::Uint16 _maxHealth          = 0;
+    bool       _directionalKeys[4] = { 0 };
 };

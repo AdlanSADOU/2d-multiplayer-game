@@ -1,4 +1,7 @@
 # Remarks
+
+RType.cpp => GameThread.hpp => RTypeGameNet.cpp
+
 - ditch Lobby
 
 CLIENT_ID       : server sends

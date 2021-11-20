@@ -43,7 +43,7 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _background.InitBackground();
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
-    scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemoteKeyEvent, this));
+    scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemotePlayerState, this));
 }
 
 void RTypeGame::SetLocalClientId(ClientID clientId)
@@ -54,13 +54,47 @@ void RTypeGame::SetLocalClientId(ClientID clientId)
 // Local client update
 void RTypeGame::Update()
 {
-    if (!_isRunning) return;
+    if (!isReady) return;
 
     _background.Update();
+}
 
-    if (_players.size() == 0) return;
+void RTypeGame::Draw()
+{
+    if (GetLocalPlayer())
+        LocalClientInputs();
+
+    _ui.p1score.Draw(_engine->window);
+    _ui.p2score.Draw(_engine->window);
+    _ui.p3score.Draw(_engine->window);
+    _ui.p4score.Draw(_engine->window);
+}
+
+void RTypeGame::LocalClientInputs()
+{
+
+    if (_players.size() == 0 && !_players[_localClientId]) return;
 
     nuts::Vector2f vel = { 0, 0 };
+
+
+
+    if (_engine->IsKeyReleased(nuts::Key::A)) {
+        _players[_localClientId]->_directionalKeys[0] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::D)) {
+        _players[_localClientId]->_directionalKeys[1] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::W)) {
+        _players[_localClientId]->_directionalKeys[2] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::S)) {
+        _players[_localClientId]->_directionalKeys[3] = false;
+    }
+
+    if (_engine->IsKeyPressed(nuts::Key::S)) {
+        _players[_localClientId]->SetFiering(false);
+    }
 
     if (_engine->IsKeyPressed(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = true;
@@ -75,26 +109,10 @@ void RTypeGame::Update()
         _players[_localClientId]->_directionalKeys[3] = true;
     }
 
+    if (_engine->IsKeyPressed(nuts::Key::S)) {
+        _players[_localClientId]->SetFiering(true);
+    }
+
     _players[_localClientId]->Move();
 
-    if (_engine->IsKeyReleased(nuts::Key::A)) {
-        _players[_localClientId]->_directionalKeys[0] = false;
-    }
-    if (_engine->IsKeyReleased(nuts::Key::D)) {
-        _players[_localClientId]->_directionalKeys[1] = false;
-    }
-    if (_engine->IsKeyReleased(nuts::Key::W)) {
-        _players[_localClientId]->_directionalKeys[2] = false;
-    }
-    if (_engine->IsKeyReleased(nuts::Key::S)) {
-        _players[_localClientId]->_directionalKeys[3] = false;
-    }
-}
-
-void RTypeGame::Draw()
-{
-    _ui.p1score.Draw(_engine->window);
-    _ui.p2score.Draw(_engine->window);
-    _ui.p3score.Draw(_engine->window);
-    _ui.p4score.Draw(_engine->window);
 }

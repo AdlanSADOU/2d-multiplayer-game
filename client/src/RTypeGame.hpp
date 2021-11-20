@@ -114,18 +114,29 @@ private:
     nuts::Font  _font;
     GameUI      _ui;
 
-    bool _isRunning = false;
+    void LocalClientInputs();
 
 public:
     RTypeGame();
     ~RTypeGame();
 
+    GPlayer *GetLocalPlayer()
+    {
+        if (!isReady) {
+            std::cout << __FUNCTIONW__ << " player does not exist yet...\n";
+            return nullptr;
+        }
+        
+        return _players.at(_localClientId);
+    }
+
     void Init(std::shared_ptr<nuts::Engine> engine);
     void SetLocalClientId(ClientID clientId);
-
     void Update();
     void Draw();
 
     void OnInitialGameInfo(Event &event);
-    void OnRemoteKeyEvent(Event &event);
+    void OnRemotePlayerState(Event &event);
+
+    bool isReady = false;
 };

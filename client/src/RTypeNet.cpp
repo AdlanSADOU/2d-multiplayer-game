@@ -70,5 +70,5 @@ void RType::OnClientQuit(Event &event)
 void RType::OnStartGame(Event &event)
 {
     _state = GameState::GAME;
-    _game.SetLocalClientId(INetClient::GetLocalClientId());
+    _game->SetLocalClientId(INetClient::GetLocalClientId());
 }

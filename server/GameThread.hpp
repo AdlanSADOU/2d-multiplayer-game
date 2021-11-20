@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include <Nuts/EcsCore/EventManager.h>
 #include <thread>
 #include <vector>
-#include <Nuts/EcsCore/EventManager.h>
 
 class GameThread
 {
@@ -91,15 +91,27 @@ public:
     {
         sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
-        ClientID  clientId;
-        sf::Int32 pressedKey;
-        sf::Int32 releasedKey;
+        ClientID clientId;
+        bool     left, right, up, down, isFiering;
 
-        inClientKeyPacket >> clientId >> pressedKey >> releasedKey;
+        inClientKeyPacket
+            >> clientId
+            >> left
+            >> right
+            >> up
+            >> down
+            >> isFiering;
 
         sf::Packet outClientKeyPacket;
-        outClientKeyPacket << Net::Events::REMOTE_CLIENT_KEYS << clientId << pressedKey << releasedKey;
-        Broadcast(outClientKeyPacket, clientId);
 
+        outClientKeyPacket << Net::Events::REMOTE_CLIENT_KEYS
+                           << clientId
+                           << left
+                           << right
+                           << up
+                           << down
+                           << isFiering;
+
+        Broadcast(outClientKeyPacket, clientId);
     }
 };
