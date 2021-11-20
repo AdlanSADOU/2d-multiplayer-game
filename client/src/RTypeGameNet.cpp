@@ -98,4 +98,14 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
         std::cout << "New monster registered" << std::endl;
         _monsters.emplace_back(GMonster((GMonster::MInfos){id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]));
     }
+    else {
+        for (auto &monster : _monsters) {
+            if (monster.GetId() == id) {
+                auto &tComp = monster.GetComponent<TransformComponent>();
+                tComp.position.x = posX;
+                tComp.position.y = posY;
+                std::cout << "Position Updated" << std::endl;
+            }
+        }
+    }
 }

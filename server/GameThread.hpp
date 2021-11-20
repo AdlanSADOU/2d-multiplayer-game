@@ -19,12 +19,19 @@
 
 class GameThread
 {
+    struct SMInfos {
+        int id;
+        GMonster::Type type;
+        nuts::Vector2f pos;
+        nuts::Vector2f gotoPos;
+    };
+
     private:
         std::vector<std::shared_ptr<SClientComponent>> _clients;
         EventManager                                   _eventManager;
 
         nuts::Clock                             *_monsterSpawn = nullptr;
-        std::vector<GMonster::MInfos>           _monsters;
+        std::vector<SMInfos>           _monsters;
 
         int _monsterId;
 
@@ -125,6 +132,13 @@ class GameThread
             return ((GMonster::Type)(0 + ( std::rand() % ( 1 - 0 + 1 ))));
         }
 
+        nuts::Vector2f GetRandomPosSpawn()
+        {
+            float x = 600 + (std::rand() % ( 1000 - 600 + 1 ));
+            float y = 0 + (std::rand() % ( 400 - 0 + 1 ));
+            return ((nuts::Vector2f){x, y});
+        }
+
         nuts::Vector2f GetRandomPos()
         {
             float x = 0 + (std::rand() % ( 800 - 0 + 1 ));
@@ -132,14 +146,35 @@ class GameThread
             return ((nuts::Vector2f){x, y});
         }
 
+        void UpdateMonstersPos()
+        {
+            for (auto &monster : _monsters) {
+                nuts::Vector2f pos = monster.pos;
+                nuts::Vector2f gotoPos = monster.gotoPos;
+
+                if (pos.x > gotoPos.x + (10)) { pos.x--;}
+                if (pos.x < gotoPos.x - (10)) { pos.x++;}
+                if (pos.y > gotoPos.y + (10)) { pos.y--;}
+                if (pos.y < gotoPos.y - (10)) { pos.y++;}
+
+                if (pos.x > gotoPos.x - 10 && pos.x < gotoPos.x + 10 &&
+                    pos.y > gotoPos.y - 10 && pos.y < gotoPos.y + 10)
+                {
+                    monster.gotoPos = GetRandomPos();
+                }
+            }
+        }
+
         void UpdateMonsters()
         {
             if (!_monsterSpawn) { _monsterSpawn = new nuts::Clock(); }
 
             if (_monsterSpawn->GetElapsedTimeAsSeconds() >= 2.f) {
-                _monsters.emplace_back((GMonster::MInfos){GetNewMId(), GetRandomType(), GetRandomPos()});
+                _monsters.emplace_back((SMInfos){GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn()});
                 _monsterSpawn->Restart();
             }
+
+            UpdateMonstersPos();
 
             for (auto &monster : _monsters) {
                 sf::Packet mPacket;
