@@ -128,7 +128,7 @@ void RType::Run()
 
             case GameState::GAME:
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 33.f) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 6.f) {
                     INetClient::ResetAccumulatorTime();
 
                     nuts::Key pressedKey  = nuts::Unknown;

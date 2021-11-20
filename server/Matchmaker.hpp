@@ -16,7 +16,7 @@
 
 #include <Nuts/Input.hpp>
 
-#define MAX_CLIENTS 1
+#define MAX_CLIENTS 4
 
 // ----------------------------------------
 
