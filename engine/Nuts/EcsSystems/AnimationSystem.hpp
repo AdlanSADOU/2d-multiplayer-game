@@ -15,8 +15,6 @@
 #include "Sprite.hpp"
 #include "System.hpp"
 
-#include "../client/src/RGameState.hpp"
-
 extern Scene scene;
 
 class AnimationSystem : public System
@@ -30,7 +28,7 @@ class AnimationSystem : public System
 
         }
 
-        void Update(nuts::Clock deltaClock, RType::GameState currentState)
+        void Update(nuts::Clock deltaClock, GameState currentState)
         {
             for (auto const &entity : _entities) {
                 auto &stateComponent = scene.GetComponent<StateComponent>(entity);

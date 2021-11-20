@@ -128,7 +128,7 @@ class GameThread
         nuts::Vector2f GetRandomPos()
         {
             float x = 0 + (std::rand() % ( 800 - 0 + 1 ));
-            float y = 0 + (std::rand() % ( 600 - 0 + 1 ));
+            float y = 0 + (std::rand() % ( 400 - 0 + 1 ));
             return ((nuts::Vector2f){x, y});
         }
 
@@ -136,14 +136,14 @@ class GameThread
         {
             if (!_monsterSpawn) { _monsterSpawn = new nuts::Clock(); }
 
-            if (_monsterSpawn->GetElapsedTimeAsSeconds() >= 5.f) {
+            if (_monsterSpawn->GetElapsedTimeAsSeconds() >= 2.f) {
                 _monsters.emplace_back((GMonster::MInfos){GetNewMId(), GetRandomType(), GetRandomPos()});
                 _monsterSpawn->Restart();
             }
 
             for (auto &monster : _monsters) {
                 sf::Packet mPacket;
-                mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y;
+                mPacket << Net::Events::MONSTER_UPDATE_POS << monster.id << monster.type << monster.pos.x << monster.pos.y;
                 Broadcast(mPacket);
             }
         }

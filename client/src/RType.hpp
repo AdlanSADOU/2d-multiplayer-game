@@ -79,13 +79,6 @@ public:
 class RType : public Net::INetClient
 {
 
-    enum GameState
-    {
-        MENU,
-        MATCHM,
-        GAME
-    };
-
 public:
     RType();
     ~RType();
@@ -102,7 +95,7 @@ public:
     void OnClientQuit(Event &event);
     void OnStartGame(Event &event);
 
-    RType::GameState _state = GameState::MENU;
+    GameState _state = GameState::MENU;
 
 protected:
 private:

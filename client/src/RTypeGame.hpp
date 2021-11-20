@@ -120,9 +120,12 @@ class GMonster : public nuts::GameObject
 
             auto &spriteComp = GetComponent<SpriteComponent>();
             auto &transformComp = GetComponent<TransformComponent>();
+            auto &velocityComp = GetComponent<VelocityComponent>();
             auto &stateComp = GetComponent<StateComponent>();
 
+            stateComp.state = GameState::GAME;
             transformComp.position = pos;
+            velocityComp.velocity = {0, 0};
             spriteComp.sprite.SetTexture(texture);
             spriteComp.sprite.SetTextureRect({ 0, 0, 16, 14 });
             spriteComp.sprite.SetAnimated(true);

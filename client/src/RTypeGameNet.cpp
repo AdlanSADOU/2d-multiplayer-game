@@ -95,6 +95,7 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
     packet >> id >> type >> posX >> posY;
 
     if (!IsMonsterInList(id)) {
+        std::cout << "New monster registered" << std::endl;
         _monsters.emplace_back(GMonster(id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}, _MTextures[(GMonster::Type)type]));
     }
 }

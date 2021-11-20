@@ -15,8 +15,6 @@
 
 #include "System.hpp"
 
-#include "../client/src/RGameState.hpp"
-
 #include <iostream>
 
 extern Scene scene;
@@ -37,7 +35,7 @@ class TransformSystem : public System
             std::cout << "Left key pressed!"<< std::endl;
         }
 
-        void Update(nuts::Clock deltaClock, RType::GameState currentState)
+        void Update(nuts::Clock deltaClock, GameState currentState)
         {
             for (auto const &entity : _entities) {
                 auto &stateComponent = scene.GetComponent<StateComponent>(entity);

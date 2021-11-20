@@ -28,10 +28,13 @@ public:
         AddComponent<SpriteComponent>();
         AddComponent<TransformComponent>();
         AddComponent<VelocityComponent>();
+        AddComponent<StateComponent>();
 
         _playerTexture.LoadFromFile("./resources/sprites/players.gif");
 
         auto &spriteComp = GetComponent<SpriteComponent>();
+        auto &stateComp = GetComponent<StateComponent>();
+        stateComp.state = GameState::GAME;
         spriteComp.sprite.SetTexture(_playerTexture);
         spriteComp.sprite.SetTextureRect({ 0, 16 * (id % 4), 32, 16 });
         spriteComp.sprite.SetAnimated(false);

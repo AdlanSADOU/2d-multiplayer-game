@@ -11,8 +11,6 @@
 #include "StateComponent.hpp"
 #include "System.hpp"
 
-#include "../client/src/RGameState.hpp"
-
 extern Scene scene;
 
 class RenderSystem : public System
@@ -26,7 +24,7 @@ class RenderSystem : public System
 
         }
 
-        void Update(sf::RenderWindow &window, RType::GameState currentState)
+        void Update(sf::RenderWindow &window, GameState currentState)
         {
             for (auto const &entity : _entities)
             {

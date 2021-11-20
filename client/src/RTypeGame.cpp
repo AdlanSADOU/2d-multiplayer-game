@@ -32,6 +32,7 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 {
     _engine = engine;
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
+    InitMonsterTextures();
 
     _ui.p1score = nuts::Text("0", 10, _font);
     _ui.p2score = nuts::Text("0", 10, _font);
