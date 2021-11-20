@@ -21,6 +21,11 @@ namespace nuts
 
             }
 
+            Texture(const std::string &path)
+            {
+                _texture.loadFromFile(path);
+            }
+
             ~Texture()
             {
                 _texture.~Texture();

@@ -143,7 +143,7 @@ namespace nuts
                 return (_text.getFont());
             }
 
-            void Draw(sf::RenderWindow &window)
+            void TEST_DRAW(sf::RenderWindow &window)
             {
                 window.draw(_text);
             }

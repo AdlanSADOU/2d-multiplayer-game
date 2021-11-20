@@ -28,7 +28,7 @@ void RTypeGame::OnInitialGameInfo(Event &event)
 // process key events from other clients in the game
 void RTypeGame::OnRemoteKeyEvent(Event &event)
 {
-    sf::Packet &inClientKeyPacket = event.GetParam<sf::Packet>(0);
+    sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
     ClientID  clientId;
     sf::Int32 pressedKey  = -1;
@@ -71,4 +71,30 @@ void RTypeGame::OnRemoteKeyEvent(Event &event)
     }
 
     _players[clientId]->SetFiering(isFiering);
+}
+
+bool RTypeGame::IsMonsterInList(int id)
+{
+    for (auto &monster : _monsters) {
+        if (monster.GetId() == id) {
+            return (true);
+        }
+    }
+    return (false);
+}
+
+void RTypeGame::OnMonsterUpdatePos(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+
+    int id;
+    int type;
+    float posX;
+    float posY;
+
+    packet >> id >> type >> posX >> posY;
+
+    if (!IsMonsterInList(id)) {
+        _monsters.emplace_back(GMonster(id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}, _MTextures[(GMonster::Type)type]));
+    }
 }

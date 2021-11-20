@@ -110,7 +110,7 @@ public:
         int x = 0;
         _menu.panel.TEST_DRAW(_engine->window);
         _menu.startBtn.TEST_DRAW(_engine->window);
-        _menu.startBtn.GetText().Draw(_engine->window);
+        _menu.startBtn.GetText().TEST_DRAW(_engine->window);
         for (auto &player : _tPlayers) {
             nuts::FloatRect pPos = player.GetGlobalBounds();
             nuts::Text      tmp;
@@ -119,10 +119,10 @@ public:
             } else {
                 tmp = _tNReady;
             }
-            player.Draw(_engine->window);
+            player.TEST_DRAW(_engine->window);
             tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });
             tmp.SetCharacterSize(8);
-            tmp.Draw(_engine->window);
+            tmp.TEST_DRAW(_engine->window);
         }
     }
 

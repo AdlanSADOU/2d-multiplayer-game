@@ -114,9 +114,9 @@ void RType::Run()
                 _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
                 _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
                 _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
-                _menu._widgetMenu.btnLobby.GetText().Draw(_engine->window);
+                _menu._widgetMenu.btnLobby.GetText().TEST_DRAW(_engine->window);
                 _menu._widgetMenu.btnQuit.TEST_DRAW(_engine->window);
-                _menu._widgetMenu.btnQuit.GetText().Draw(_engine->window);
+                _menu._widgetMenu.btnQuit.GetText().TEST_DRAW(_engine->window);
                 break;
 
             case GameState::MATCHM:

@@ -22,6 +22,12 @@ RTypeGame::~RTypeGame()
     // }
 }
 
+void RTypeGame::InitMonsterTextures()
+{
+    _MTextures.emplace(std::make_pair(GMonster::Type::FLY, nuts::Texture("./resources/sprites/ball.gif")));
+    _MTextures.emplace(std::make_pair(GMonster::Type::GROUND, nuts::Texture("./resources/sprites/mecha.gif")));
+}
+
 void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 {
     _engine = engine;
@@ -44,6 +50,7 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
     scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemoteKeyEvent, this));
+    scene.AddEventCallback(Net::Events::MONSTER_UPDATE_POS, BIND_CALLBACK(&RTypeGame::OnMonsterUpdatePos, this));
 }
 
 void RTypeGame::SetLocalClientId(ClientID clientId)
@@ -93,8 +100,8 @@ void RTypeGame::Update()
 
 void RTypeGame::Draw()
 {
-    _ui.p1score.Draw(_engine->window);
-    _ui.p2score.Draw(_engine->window);
-    _ui.p3score.Draw(_engine->window);
-    _ui.p4score.Draw(_engine->window);
+    _ui.p1score.TEST_DRAW(_engine->window);
+    _ui.p2score.TEST_DRAW(_engine->window);
+    _ui.p3score.TEST_DRAW(_engine->window);
+    _ui.p4score.TEST_DRAW(_engine->window);
 }

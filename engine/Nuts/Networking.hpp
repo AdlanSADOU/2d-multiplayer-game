@@ -41,6 +41,9 @@ namespace Net {
         const EventType CLIENT_UDP          = HASH(Events::CLIENT_UDP);
         const EventType REMOTE_CLIENT_KEYS  = HASH(Events::REMOTE_CLIENT_KEYS);
 
+        const EventType MONSTER_UPDATE_POS  = HASH(Events::MONSTER_UPDATE_POS);
+        const EventType PLAYER_UPDATE_SCORE = HASH(Events::PLAYER_UPDATE_SCORE);
+
         const EventType NEW_CLIENT        = HASH(Events::NEW_CLIENT);
         const EventType UDP_OK            = HASH(Events::UDP_OK);
         const EventType MATCHM_INIT       = HASH(Events::MATCHM_INIT);
