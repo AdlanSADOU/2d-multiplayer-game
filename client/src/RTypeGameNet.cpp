@@ -43,12 +43,12 @@ void RTypeGame::OnRemotePlayerState(Event &event)
         >> _players[clientId]->_directionalKeys[3]
         >> _players[clientId]->_isFiering;
 
-    std::cout << "OnRemotePlayerState() -> " << clientId
-        << _players[clientId]->_directionalKeys[0]
-        << _players[clientId]->_directionalKeys[1]
-        << _players[clientId]->_directionalKeys[2]
-        << _players[clientId]->_directionalKeys[3]
-        << _players[clientId]->_isFiering << "\n";
+    // std::cout << "OnRemotePlayerState() -> " << clientId
+    //     << _players[clientId]->_directionalKeys[0]
+    //     << _players[clientId]->_directionalKeys[1]
+    //     << _players[clientId]->_directionalKeys[2]
+    //     << _players[clientId]->_directionalKeys[3]
+    //     << _players[clientId]->_isFiering << "\n";
 
     _players[clientId]->Move();
 }

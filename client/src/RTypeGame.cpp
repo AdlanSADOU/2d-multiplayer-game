@@ -75,9 +75,6 @@ void RTypeGame::LocalClientInputs()
 
     if (_players.size() == 0 && !_players[_localClientId]) return;
 
-    nuts::Vector2f vel = { 0, 0 };
-
-
 
     if (_engine->IsKeyReleased(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = false;
