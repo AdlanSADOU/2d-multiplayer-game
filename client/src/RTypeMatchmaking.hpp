@@ -118,7 +118,7 @@ public:
 
         _menu.panel.TEST_DRAW(_engine->window);
         _menu.startBtn.TEST_DRAW(_engine->window);
-        _menu.startBtn.GetText().Draw(_engine->window);
+        _menu.startBtn.GetText().TEST_DRAW(_engine->window);
 
         for (auto &player : _players) {
             nuts::Text tmp;
@@ -126,10 +126,10 @@ public:
             if (player.GetState() == RTypeMMPlayer::MPlayerState::READY) {
                 tmp = _tReady;
                 nuts::FloatRect pPos = _tPlayers[player.GetID() % MAX_CLIENTS].GetGlobalBounds();
-                _tPlayers[player.GetID() % MAX_CLIENTS].Draw(_engine->window);
+                _tPlayers[player.GetID() % MAX_CLIENTS].TEST_DRAW(_engine->window);
                 tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });
                 tmp.SetCharacterSize(8);
-                tmp.Draw(_engine->window);
+                tmp.TEST_DRAW(_engine->window);
             }
         }
     }

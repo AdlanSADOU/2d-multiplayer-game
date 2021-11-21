@@ -22,10 +22,31 @@ RTypeGame::~RTypeGame()
     // }
 }
 
+void RTypeGame::InitMonsterFrameCount()
+{
+    _MFrameCount.insert({GMonster::Type::FLY, 12});
+    _MFrameCount.insert({GMonster::Type::GROUND, 4});
+}
+
+void RTypeGame::InitMonsterTexturesRect()
+{
+    _MTexturesRect.insert({GMonster::Type::FLY, { 0, 0, 16, 14 }});
+    _MTexturesRect.insert({GMonster::Type::GROUND, { 0, 0, 33, 32 }});
+}
+
+void RTypeGame::InitMonsterTextures()
+{
+    _MTextures.insert({GMonster::Type::FLY, nuts::Texture("./resources/sprites/ball.gif")});
+    _MTextures.insert({GMonster::Type::GROUND, nuts::Texture("./resources/sprites/mecha.gif")});
+}
+
 void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 {
     _engine = engine;
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
+    InitMonsterTextures();
+    InitMonsterTexturesRect();
+    InitMonsterFrameCount();
 
     _ui.p1score = nuts::Text("0", 10, _font);
     _ui.p2score = nuts::Text("0", 10, _font);
@@ -43,6 +64,7 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _background.InitBackground();
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
+    scene.AddEventCallback(Net::Events::MONSTER_UPDATE_POS, BIND_CALLBACK(&RTypeGame::OnMonsterUpdatePos, this));
     scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemotePlayerState, this));
 }
 
@@ -68,10 +90,10 @@ void RTypeGame::Update()
 void RTypeGame::Draw()
 {
 
-    _ui.p1score.Draw(_engine->window);
-    _ui.p2score.Draw(_engine->window);
-    _ui.p3score.Draw(_engine->window);
-    _ui.p4score.Draw(_engine->window);
+    _ui.p1score.TEST_DRAW(_engine->window);
+    _ui.p2score.TEST_DRAW(_engine->window);
+    _ui.p3score.TEST_DRAW(_engine->window);
+    _ui.p4score.TEST_DRAW(_engine->window);
 }
 
 void RTypeGame::LocalClientInputs()

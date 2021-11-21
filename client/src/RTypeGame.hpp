@@ -22,10 +22,13 @@
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
+#include "Nuts/EcsComponents/StateComponent.hpp"
 
 #include "RTypePlayer.hpp"
+#include "../client/src/RGameState.hpp"
 
 #include <iostream>
+#include <unordered_map>
 
 extern Scene scene;
 
@@ -62,15 +65,18 @@ public:
         _backgrounds.emplace_back(nuts::GameObject("Background"));
         _backgrounds.emplace_back(nuts::GameObject("Background"));
 
-        nuts::FloatRect spritePos = { 0.f, 0.f, 0.f, 0.f };
+        nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
         for (auto &bg : _backgrounds) {
             bg.AddComponent<SpriteComponent>();
             bg.AddComponent<TransformComponent>();
             bg.AddComponent<VelocityComponent>();
+            bg.AddComponent<StateComponent>();
 
             auto &spriteComp = bg.GetComponent<SpriteComponent>();
-            auto &tComp      = bg.GetComponent<TransformComponent>();
-            auto &velComp    = bg.GetComponent<VelocityComponent>();
+            auto &tComp = bg.GetComponent<TransformComponent>();
+            auto &velComp = bg.GetComponent<VelocityComponent>();
+            auto &stateComp = bg.GetComponent<StateComponent>();
+            stateComp.state = GAME;
 
             velComp.velocity.x = -SCROLL_SPEED;
 
@@ -82,17 +88,87 @@ public:
     }
 };
 
-class GMonsters : public nuts::GameObject
+class GMonster : public nuts::GameObject
 {
-    enum Type
-    {
-        GROUND = 0,
-        FLY,
-    };
+    public:
 
-public:
-private:
-    GMonsters::Type _type;
+        enum Type
+        {
+            GROUND = 0,
+            FLY,
+        };
+
+        struct MInfos
+        {
+            int id;
+            GMonster::Type type;
+            nuts::Vector2f pos;
+        };
+
+        GMonster() {}
+
+        GMonster(MInfos infos, nuts::Texture &texture, nuts::IntRect rect, int fc) {
+            _infos = infos;
+
+            this->Create("Monster");
+            this->AddComponent<SpriteComponent>();
+            this->AddComponent<TransformComponent>();
+            this->AddComponent<VelocityComponent>();
+            this->AddComponent<StateComponent>();
+
+            auto &spriteComp = GetComponent<SpriteComponent>();
+            auto &transformComp = GetComponent<TransformComponent>();
+            auto &velocityComp = GetComponent<VelocityComponent>();
+            auto &stateComp = GetComponent<StateComponent>();
+
+            stateComp.state = GameState::GAME;
+            transformComp.position = _infos.pos;
+            velocityComp.velocity = {0, 0};
+            spriteComp.sprite.SetTexture(texture);
+            spriteComp.sprite.SetTextureRect(rect);
+            spriteComp.sprite.SetAnimated(true);
+            spriteComp.sprite.SetLooped(true);
+            spriteComp.sprite.SetFirstFrame(rect);
+            spriteComp.sprite.SetFrameCount(fc);
+            spriteComp.sprite.SetFrameTime(0.070f);
+            spriteComp.sprite.InitAnimationClock();
+        }
+
+        ~GMonster() {}
+
+        GMonster::Type GetType()
+        {
+            return (_infos.type);
+        }
+
+        void SetType(GMonster::Type type)
+        {
+            _infos.type = type;
+        }
+
+        nuts::Vector2f GetPosition()
+        {
+            return (_infos.pos);
+        }
+
+        void SetPosition(nuts::Vector2f pos)
+        {
+            _infos.pos = pos;
+        }
+
+        int GetId()
+        {
+            return (_infos.id);
+        }
+
+        void SetId(int id)
+        {
+            _infos.id = id;
+        }
+
+    private:
+        MInfos _infos;
+
 };
 
 class RTypeGame
@@ -105,39 +181,51 @@ class RTypeGame
         nuts::Text p4score;
     };
 
-private:
-    std::unordered_map<ClientID, GPlayer *> _players;
+    private:
+        std::shared_ptr<nuts::Engine>           _engine;
+        std::unordered_map<ClientID, GPlayer *> _players;
+        std::unordered_map<int, GMonster> _monsters;
 
-    std::shared_ptr<nuts::Engine>           _engine;
+        ClientID    _localClientId;
+        GBackground _background;
+        nuts::Font  _font;
+        GameUI      _ui;
+        std::unordered_map<GMonster::Type, nuts::Texture> _MTextures;
+        std::unordered_map<GMonster::Type, nuts::IntRect> _MTexturesRect;
+        std::unordered_map<GMonster::Type, int>           _MFrameCount;
 
-    ClientID    _localClientId;
-    GBackground _background;
-    nuts::Font  _font;
-    GameUI      _ui;
+        bool _isRunning = false;
+        void LocalClientInputs();
 
-    void LocalClientInputs();
+    public:
+        RTypeGame();
+        ~RTypeGame();
 
-public:
-    RTypeGame();
-    ~RTypeGame();
+        void Init(std::shared_ptr<nuts::Engine> engine);
+        void InitMonsterTextures();
+        void InitMonsterTexturesRect();
+        void InitMonsterFrameCount();
 
-    GPlayer *GetLocalPlayer()
-    {
-        if (!isReady) {
-            std::cout << __FUNCTIONW__ << " player does not exist yet...\n";
-            return nullptr;
+        void SetLocalClientId(ClientID clientId);
+        bool IsMonsterInList(int id);
+
+        void Update();
+        void Draw();
+
+        void OnInitialGameInfo(Event &event);
+        void OnRemoteKeyEvent(Event &event);
+        void OnMonsterUpdatePos(Event &event);
+
+        GPlayer *GetLocalPlayer()
+        {
+            if (!isReady) {
+                return nullptr;
+            }
+
+            return _players.at(_localClientId);
         }
 
-        return _players.at(_localClientId);
-    }
+        void OnRemotePlayerState(Event &event);
 
-    void Init(std::shared_ptr<nuts::Engine> engine);
-    void SetLocalClientId(ClientID clientId);
-    void Update();
-    void Draw();
-
-    void OnInitialGameInfo(Event &event);
-    void OnRemotePlayerState(Event &event);
-
-    bool isReady = false;
+        bool isReady = false;
 };

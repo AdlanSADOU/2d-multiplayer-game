@@ -16,8 +16,6 @@
 
 #include <Nuts/Input.hpp>
 
-#include <Nuts/Networking.hpp>
-
 // ----------------------------------------
 
 class Matchmaker

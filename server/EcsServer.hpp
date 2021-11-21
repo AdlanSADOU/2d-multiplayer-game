@@ -7,7 +7,7 @@
 
 #pragma once
 #include <Nuts/GameObject.hpp>
-
+#include <SFML/Window/Keyboard.hpp>
 
 #include "Components/Components.hpp"
 
@@ -33,6 +33,7 @@ private:
     sf::Clock                         deltaClock;
 
     std::vector<std::thread *> GameWorkers;
+    bool _running = false;
 
 public:
     std::shared_ptr<ConnectionSystem> GetConnectionSystem() const
@@ -71,6 +72,7 @@ public:
         serverConnector.AddComponent<ConnectionComponent>();
 
         scene.AddEventCallback(Events::MATCHM_READY, BIND_CALLBACK(&EcsServer::OnMatchMReady, this));
+        _running = true;
     }
 
     void Start(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
@@ -79,7 +81,10 @@ public:
         sf::Time dt;
         sf::Time acc;
 
-        while (1) {
+        while (_running) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
+                _running = false;
+
             dt = deltaClock.restart();
             acc += dt;
 
@@ -101,6 +106,6 @@ public:
 
         sf::Int32 gameId = event.GetParam<sf::Int32>(1);
 
-        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId, _connectionSystem->_conn.tcpSock));
+        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId));
     }
 };

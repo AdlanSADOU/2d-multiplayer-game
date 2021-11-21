@@ -28,7 +28,7 @@ void RTypeGame::OnInitialGameInfo(Event &event)
 // process key events from other clients in the game
 void RTypeGame::OnRemotePlayerState(Event &event)
 {
-    sf::Packet &inClientStatePacket = event.GetParam<sf::Packet>(0);
+    sf::Packet inClientStatePacket = event.GetParam<sf::Packet>(0);
 
     ClientID  clientId    = -1;
 
@@ -43,4 +43,31 @@ void RTypeGame::OnRemotePlayerState(Event &event)
         >> _players[clientId]->_directionalKeys[3]
         >> _players[clientId]->_isFiering;
 
+}
+
+bool RTypeGame::IsMonsterInList(int id)
+{
+    return (false);
+}
+
+void RTypeGame::OnMonsterUpdatePos(Event &event)
+{
+    sf::Packet packet = event.GetParam<sf::Packet>(0);
+
+    int id;
+    int type;
+    float posX;
+    float posY;
+
+    while (!packet.endOfPacket()) {
+        packet >> id >> type >> posX >> posY;
+
+        if (_monsters.find(id) == std::end(_monsters)) {
+            _monsters.insert({id, GMonster({id, (GMonster::Type)type, {posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type])});
+        }
+        else {
+            auto &tComp = _monsters[id].GetComponent<TransformComponent>();
+            tComp = {posX, posY};
+        }
+    }
 }

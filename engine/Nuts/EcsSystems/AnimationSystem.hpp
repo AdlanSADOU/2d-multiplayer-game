@@ -10,6 +10,8 @@
 #include "Nuts/Clock.hpp"
 
 #include "SpriteComponent.hpp"
+#include "StateComponent.hpp"
+
 #include "Sprite.hpp"
 #include "System.hpp"
 
@@ -26,16 +28,19 @@ class AnimationSystem : public System
 
         }
 
-        void Update(nuts::Clock deltaClock)
+        void Update(nuts::Clock deltaClock, GameState currentState)
         {
-            for (auto const &entity : _entities)
-            {
-                nuts::Sprite &sprite = scene.GetComponent<SpriteComponent>(entity).sprite;
+            for (auto const &entity : _entities) {
+                auto &stateComponent = scene.GetComponent<StateComponent>(entity);
 
-                if (sprite.IsAnimated() && sprite.ShouldGetNextFrame(sprite.GetAnimationClock()->GetElapsedTimeAsSeconds())) {
-                    sprite.NextFrame();
-                    sprite.SetTextureRect(sprite.GetCurrentFrame());
-                    sprite.ResetAnimationClock();
+                if (stateComponent.state == currentState) {
+                    nuts::Sprite &sprite = scene.GetComponent<SpriteComponent>(entity).sprite;
+
+                    if (sprite.IsAnimated() && sprite.ShouldGetNextFrame(sprite.GetAnimationClock()->GetElapsedTimeAsSeconds())) {
+                        sprite.NextFrame();
+                        sprite.SetTextureRect(sprite.GetCurrentFrame());
+                        sprite.ResetAnimationClock();
+                    }
                 }
             }
         }

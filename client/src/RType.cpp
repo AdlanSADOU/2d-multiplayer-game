@@ -30,6 +30,7 @@ void RType::Init()
     scene.RegisterComponent<VelocityComponent>();
     scene.RegisterComponent<WidgetComponent>();
     scene.RegisterComponent<SoundComponent>();
+    scene.RegisterComponent<StateComponent>();
 
     _renderSystem    = scene.RegisterSystem<RenderSystem>();
     _transformSystem = scene.RegisterSystem<TransformSystem>();
@@ -39,21 +40,23 @@ void RType::Init()
     EntitySignature transformSig;
     transformSig.set(scene.GetComponentType<TransformComponent>());
     transformSig.set(scene.GetComponentType<VelocityComponent>());
+    transformSig.set(scene.GetComponentType<StateComponent>());
     scene.SetSystemSignature<TransformSystem>(transformSig);
 
     EntitySignature renderSig;
     renderSig.set(scene.GetComponentType<SpriteComponent>());
+    renderSig.set(scene.GetComponentType<StateComponent>());
     scene.SetSystemSignature<RenderSystem>(renderSig);
 
     EntitySignature animationSig;
     animationSig.set(scene.GetComponentType<SpriteComponent>());
+    animationSig.set(scene.GetComponentType<StateComponent>());
     scene.SetSystemSignature<AnimationSystem>(animationSig);
 
     EntitySignature soundSig;
     soundSig.set(scene.GetComponentType<SoundComponent>());
     scene.SetSystemSignature<SoundSystem>(soundSig);
 
-    _monster.Init();
     _soundSystem->Init();
 
     _transformSystem->Init();
@@ -96,9 +99,9 @@ void RType::Run()
             INetClient::TcpSend(packet);
         }
 
-        _transformSystem.get()->Update(_deltaClock);
-        _animationSystem.get()->Update(_deltaClock);
-        _renderSystem.get()->Update(_engine->window);
+        _transformSystem.get()->Update(_deltaClock, _state);
+        _animationSystem.get()->Update(_deltaClock, _state);
+        _renderSystem.get()->Update(_engine->window, _state);
 
         INetClient::Update();
 
@@ -117,9 +120,9 @@ void RType::Run()
                 _menu._widgetMenu.logo.TEST_DRAW(_engine->window);
                 _menu._widgetMenu.panel.TEST_DRAW(_engine->window);
                 _menu._widgetMenu.btnLobby.TEST_DRAW(_engine->window);
-                _menu._widgetMenu.btnLobby.GetText().Draw(_engine->window);
+                _menu._widgetMenu.btnLobby.GetText().TEST_DRAW(_engine->window);
                 _menu._widgetMenu.btnQuit.TEST_DRAW(_engine->window);
-                _menu._widgetMenu.btnQuit.GetText().Draw(_engine->window);
+                _menu._widgetMenu.btnQuit.GetText().TEST_DRAW(_engine->window);
                 break;
 
             case GameState::MATCHM:
@@ -132,7 +135,7 @@ void RType::Run()
                 _game->Draw();
                 _game->Update();
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (22.f)) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (26.f)) {
                     INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
