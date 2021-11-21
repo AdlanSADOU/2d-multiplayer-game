@@ -12,12 +12,14 @@
 #include <iostream>
 #include <vector>
 
-class ConnectionSystem : public System {
+class ConnectionSystem : public System
+{
 private:
-    ConnectionComponent _conn;
-    sf::TcpSocket *     _tmpSocket;
+    sf::TcpSocket *_tmpSocket;
 
 public:
+    ConnectionComponent _conn;
+
     int Init(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)
     {
         std::set<Entity>::iterator entity = _entities.find(0);
@@ -63,20 +65,20 @@ public:
 
     void ReceiveUdp()
     {
-            sf::Packet remotePacket;
-            EventType  type;
+        sf::Packet remotePacket;
+        EventType  type;
 
-            sf::IpAddress remoteAddress;
-            sf::Uint16    remotePort;
+        sf::IpAddress remoteAddress;
+        sf::Uint16    remotePort;
 
-            sf::Socket::Status status = _conn.udpSock->receive(remotePacket, remoteAddress, remotePort);
-            if (status == sf::Socket::Done) {
+        sf::Socket::Status status = _conn.udpSock->receive(remotePacket, remoteAddress, remotePort);
+        if (status == sf::Socket::Done) {
 
-                remotePacket >> type;
+            remotePacket >> type;
 
-                Event remoteEvent(type);
-                remoteEvent.SetParam<sf::Packet>(0, remotePacket);
-                scene.InvokeEvent(remoteEvent);
+            Event remoteEvent(type);
+            remoteEvent.SetParam<sf::Packet>(0, remotePacket);
+            scene.InvokeEvent(remoteEvent);
         }
     }
 };

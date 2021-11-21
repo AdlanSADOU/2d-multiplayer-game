@@ -30,7 +30,7 @@ public:
         _eventManager.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&GameThread::OnClientKeyEvent, this));
     };
 
-    void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
+    void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId, std::shared_ptr<sf::TcpSocket> _tcpSocket)
     {
         _clients = std::move(clients);
         _gameId  = gameId;
@@ -40,9 +40,9 @@ public:
         for (auto &client : _clients) {
             sf::Packet packet;
 
-            packet << Net::Events::GAME_START;
-            _socket.send(packet, client->ip, client->updPort);
-
+            packet << Net::Events::GAME_START << sf::IpAddress::getLocalAddress().toInteger() << _socket.getLocalPort();
+            // _socket.send(packet, client->ip, client->updPort);
+            client->tcpSock->send(packet);
             packet.clear();
 
             std::cout << "ThreadId[" << threadID() << "|port:" << _socket.getLocalPort() << "]: Launching game with "
@@ -53,7 +53,8 @@ public:
                 packet << client->id;
             }
 
-            _socket.send(packet, client->ip, client->updPort);
+            // _socket.send(packet, client->ip, client->updPort);
+            client->tcpSock->send(packet);
         }
 
         sf::Time dt;

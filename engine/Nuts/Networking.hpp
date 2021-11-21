@@ -179,7 +179,7 @@ namespace Net {
             _remoteGameIp     = serverIp;
             // _remoteGameUdpPort = serverPort + 1;
 
-            if (_udpSocket.bind(sf::Socket::AnyPort, serverIp) != sf::Socket::Done) {
+            if (_udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress()) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to connect to ["
                           << serverIp << ":"
                           << serverPort << "]\n";
@@ -208,7 +208,7 @@ namespace Net {
             if (!_isConnected) return;
 
             if (_tcpSocket.send(packet) != sf::Socket::Done) {
-                std::cerr << "[Net]: Failed to send TCP packet\n";
+                std::cerr << "[Net-TCP]: Failed to send packet to [" << _tcpSocket.getRemoteAddress() << ":" << _tcpSocket.getRemotePort() << "\n";
             }
         }
 
@@ -218,14 +218,15 @@ namespace Net {
             sf::Socket::Status status;
 
             if ((status = _udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort)) != sf::Socket::Done) {
-                std::cerr << "[Net]: Failed to send TCP packet\n";
+                std::cerr << "[Net-UDP]: Failed to send packet to [" << _remoteGameIp << ":" << _remoteGameUdpPort << "\n";
             }
             if (status == sf::Socket::Partial)
-                std::cerr << "[Net]: Sent partial data\n";
+                std::cerr << "[Net-UDP]: Sent partial data\n";
         }
 
         void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, sf::Uint16 gamePort)
         {
+            std::cerr << "[Net-UDP]: SetRemoteGameUdpEndpoint to [" << gameIp << ":" << gamePort << "\n";
             _remoteGameIp      = gameIp;
             _remoteGameUdpPort = gamePort;
         }

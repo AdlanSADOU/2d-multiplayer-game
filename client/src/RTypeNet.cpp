@@ -79,6 +79,13 @@ void RType::OnClientQuit(Event &event)
 
 void RType::OnStartGame(Event &event)
 {
+    sf::Packet packet   = event.GetParam<sf::Packet>(0);
+    sf::Uint16 gamePort = 0;
+    sf::Uint32 gameIp   = 0;
+
+    packet >> gameIp >> gamePort;
+
     _state = GameState::GAME;
     _game->SetLocalClientId(INetClient::GetLocalClientId());
+    INetClient::SetRemoteGameUdpEndpoint(sf::IpAddress(gameIp), gamePort);
 }

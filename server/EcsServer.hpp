@@ -101,6 +101,6 @@ public:
 
         sf::Int32 gameId = event.GetParam<sf::Int32>(1);
 
-        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId));
+        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId, _connectionSystem->_conn.tcpSock));
     }
 };
