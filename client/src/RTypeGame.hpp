@@ -195,6 +195,7 @@ class RTypeGame
         std::unordered_map<GMonster::Type, int>           _MFrameCount;
 
         bool _isRunning = false;
+        void LocalClientInputs();
 
     public:
         RTypeGame();
@@ -214,4 +215,17 @@ class RTypeGame
         void OnInitialGameInfo(Event &event);
         void OnRemoteKeyEvent(Event &event);
         void OnMonsterUpdatePos(Event &event);
+
+        GPlayer *GetLocalPlayer()
+        {
+            if (!isReady) {
+                return nullptr;
+            }
+
+            return _players.at(_localClientId);
+        }
+
+        void OnRemotePlayerState(Event &event);
+
+        bool isReady = false;
 };

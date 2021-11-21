@@ -64,8 +64,8 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     _background.InitBackground();
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
-    scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemoteKeyEvent, this));
     scene.AddEventCallback(Net::Events::MONSTER_UPDATE_POS, BIND_CALLBACK(&RTypeGame::OnMonsterUpdatePos, this));
+    scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemotePlayerState, this));
 }
 
 void RTypeGame::SetLocalClientId(ClientID clientId)
@@ -76,14 +76,47 @@ void RTypeGame::SetLocalClientId(ClientID clientId)
 // Local client update
 void RTypeGame::Update()
 {
-    if (!_isRunning) return;
+    if (!isReady) return;
 
     _background.Update();
+    for (auto &player : _players) {
+        player.second->Update();
+    }
+}
 
-    if (_players.size() == 0) return;
+void RTypeGame::Draw()
+{
+    if (GetLocalPlayer())
+        LocalClientInputs();
 
-    nuts::Vector2f vel = { 0, 0 };
+    _ui.p1score.TEST_DRAW(_engine->window);
+    _ui.p2score.TEST_DRAW(_engine->window);
+    _ui.p3score.TEST_DRAW(_engine->window);
+    _ui.p4score.TEST_DRAW(_engine->window);
+}
 
+void RTypeGame::LocalClientInputs()
+{
+    if (_players.size() == 0 && !_players[_localClientId]) return;
+
+    // key release checks go first
+    if (_engine->IsKeyReleased(nuts::Key::A)) {
+        _players[_localClientId]->_directionalKeys[0] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::D)) {
+        _players[_localClientId]->_directionalKeys[1] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::W)) {
+        _players[_localClientId]->_directionalKeys[2] = false;
+    }
+    if (_engine->IsKeyReleased(nuts::Key::S)) {
+        _players[_localClientId]->_directionalKeys[3] = false;
+    }
+
+    // key presss checks
+    if (_engine->IsKeyPressed(nuts::Key::Space)) {
+        _players[_localClientId]->SetFiering(false);
+    }
     if (_engine->IsKeyPressed(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = true;
     }
@@ -97,26 +130,7 @@ void RTypeGame::Update()
         _players[_localClientId]->_directionalKeys[3] = true;
     }
 
-    _players[_localClientId]->Move();
-
-    if (_engine->IsKeyReleased(nuts::Key::A)) {
-        _players[_localClientId]->_directionalKeys[0] = false;
+    if (_engine->IsKeyPressed(nuts::Key::Space)) {
+        _players[_localClientId]->SetFiering(true);
     }
-    if (_engine->IsKeyReleased(nuts::Key::D)) {
-        _players[_localClientId]->_directionalKeys[1] = false;
-    }
-    if (_engine->IsKeyReleased(nuts::Key::W)) {
-        _players[_localClientId]->_directionalKeys[2] = false;
-    }
-    if (_engine->IsKeyReleased(nuts::Key::S)) {
-        _players[_localClientId]->_directionalKeys[3] = false;
-    }
-}
-
-void RTypeGame::Draw()
-{
-    _ui.p1score.TEST_DRAW(_engine->window);
-    _ui.p2score.TEST_DRAW(_engine->window);
-    _ui.p3score.TEST_DRAW(_engine->window);
-    _ui.p4score.TEST_DRAW(_engine->window);
 }

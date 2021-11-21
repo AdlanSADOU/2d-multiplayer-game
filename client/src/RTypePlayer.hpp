@@ -36,10 +36,10 @@ public:
         auto &stateComp = GetComponent<StateComponent>();
         stateComp.state = GameState::GAME;
         spriteComp.sprite.SetTexture(_playerTexture);
-        spriteComp.sprite.SetTextureRect({ 0, 16 * (id % 4), 32, 16 });
+        spriteComp.sprite.SetTextureRect({ 0, 16 * (id % MAX_CLIENTS), 32, 16 });
         spriteComp.sprite.SetAnimated(false);
         spriteComp.sprite.SetLooped(false);
-        spriteComp.sprite.SetFirstFrame({ 0, 16 * (id % 4), 32, 16 });
+        spriteComp.sprite.SetFirstFrame({ 0, 16 * (id % MAX_CLIENTS), 32, 16 });
 
         _vel = &GetComponent<VelocityComponent>();
 
@@ -91,12 +91,12 @@ public:
         *_vel = { vel.x, vel.y };
     }
 
-private:
-    bool       _isFiering = false;
-    sf::Uint16 _score      = 0;
-    sf::Uint16 _health     = 0;
-    sf::Uint16 _maxHealth  = 0;
+    void Update()
+    {
+        Move();
+    }
 
+private:
     ClientID       _clientId = -1;
     nuts::Vector2f _pos;
     nuts::Texture  _playerTexture;
@@ -108,5 +108,10 @@ public:
      * left, right, up, down
      * in that order
      */
-    bool _directionalKeys[4] = { 0 };
+    bool       _directionalKeys[4] = { 0 };
+
+    bool       _isFiering          = false;
+    sf::Uint16 _score              = 0;
+    sf::Uint16 _health             = 0;
+    sf::Uint16 _maxHealth          = 0;
 };

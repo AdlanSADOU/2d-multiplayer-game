@@ -22,55 +22,33 @@ void RTypeGame::OnInitialGameInfo(Event &event)
 
         std::cout << "[Client]: Starting game with playerId:[" << tmpId << "]\n";
     }
-    _isRunning = true;
+    isReady = true;
 };
 
 // process key events from other clients in the game
-void RTypeGame::OnRemoteKeyEvent(Event &event)
+void RTypeGame::OnRemotePlayerState(Event &event)
 {
-    sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
+    sf::Packet inClientStatePacket = event.GetParam<sf::Packet>(0);
 
-    ClientID  clientId;
-    sf::Int32 pressedKey  = -1;
-    sf::Int32 releasedKey = -1;
-    bool      isFiering   = false;
+    ClientID  clientId    = -1;
 
     if (clientId == _localClientId)
         return;
 
-    inClientKeyPacket >> clientId
-        >> pressedKey >> releasedKey
-        >> isFiering;
+    inClientStatePacket
+        >> clientId
+        >> _players[clientId]->_directionalKeys[0]
+        >> _players[clientId]->_directionalKeys[1]
+        >> _players[clientId]->_directionalKeys[2]
+        >> _players[clientId]->_directionalKeys[3]
+        >> _players[clientId]->_isFiering;
 
-    if (pressedKey == (nuts::Key::A)) {
-        _players[clientId]->_directionalKeys[0] = true;
-    }
-    if (pressedKey == (nuts::Key::D)) {
-        _players[clientId]->_directionalKeys[1] = true;
-    }
-    if (pressedKey == (nuts::Key::W)) {
-        _players[clientId]->_directionalKeys[2] = true;
-    }
-    if (pressedKey == (nuts::Key::S)) {
-        _players[clientId]->_directionalKeys[3] = true;
-    }
-
-    _players[clientId]->Move();
-
-    if (releasedKey == (nuts::Key::A)) {
-        _players[clientId]->_directionalKeys[0] = false;
-    }
-    if (releasedKey == (nuts::Key::D)) {
-        _players[clientId]->_directionalKeys[1] = false;
-    }
-    if (releasedKey == (nuts::Key::W)) {
-        _players[clientId]->_directionalKeys[2] = false;
-    }
-    if (releasedKey == (nuts::Key::S)) {
-        _players[clientId]->_directionalKeys[3] = false;
-    }
-
-    _players[clientId]->SetFiering(isFiering);
+    // std::cout << "OnRemotePlayerState() -> " << clientId
+    //     << _players[clientId]->_directionalKeys[0]
+    //     << _players[clientId]->_directionalKeys[1]
+    //     << _players[clientId]->_directionalKeys[2]
+    //     << _players[clientId]->_directionalKeys[3]
+    //     << _players[clientId]->_isFiering << "\n";
 }
 
 bool RTypeGame::IsMonsterInList(int id)
@@ -87,14 +65,15 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
     float posX;
     float posY;
 
-
     while (!packet.endOfPacket()) {
         packet >> id >> type >> posX >> posY;
 
         if (_monsters.find(id) == std::end(_monsters)) {
             _monsters.insert({id, GMonster((GMonster::MInfos){id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type])});
         }
-        auto &tComp = _monsters[id].GetComponent<TransformComponent>();
-        tComp = {posX, posY};
+        else {
+            auto &tComp = _monsters[id].GetComponent<TransformComponent>();
+            tComp = {posX, posY};
+        }
     }
 }

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <Nuts/EcsCore/EventManager.h>
 #include <thread>
 #include <vector>
 #include <random>
@@ -30,11 +31,11 @@ class GameThread
         std::vector<std::shared_ptr<SClientComponent>> _clients;
         EventManager _eventManager;
 
-        nuts::Clock *_deltaClock = nullptr;
-        nuts::Clock *_monsterSpawn = nullptr;
-        nuts::Clock *_tickrateClock = nullptr;
-        nuts::Clock *_receiveClock = nullptr;
-        nuts::Clock *_broadcastClock = nullptr;
+        nuts::Clock _deltaClock;
+        nuts::Clock _monsterSpawn;
+        nuts::Clock _tickrateClock;
+        nuts::Clock _receiveClock;
+        nuts::Clock _broadcastClock;
 
         std::vector<SMInfos> _monsters;
 
@@ -57,10 +58,6 @@ class GameThread
         {
             _clients = std::move(clients);
             _gameId  = gameId;
-            if (!_deltaClock) { _deltaClock = new nuts::Clock(); }
-            if (!_tickrateClock) { _tickrateClock = new nuts::Clock(); }
-            if (!_receiveClock) { _receiveClock = new nuts::Clock(); }
-            if (!_broadcastClock) { _broadcastClock = new nuts::Clock(); }
 
             _socket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress());
             _socket.setBlocking(false);
@@ -84,15 +81,13 @@ class GameThread
             }
 
             while (_running) {
-                if (_receiveClock->GetElapsedTimeAsSeconds() > 1 / 33.f) {
+                if (_receiveClock.GetElapsedTimeAsSeconds() > 1 / 33.f) {
                     receive();
-                    _receiveClock->Restart();
+                    _receiveClock.Restart();
                 }
-                if (_tickrateClock->GetElapsedTimeAsSeconds() > 1 / 16.f) {
-                    UpdateMonsters(*_deltaClock);
-                    _tickrateClock->Restart();
-                }
-                _deltaClock->Restart();
+                UpdateMonstersPos();
+                UpdateMonsters();
+                _deltaClock.Restart();
             }
         }
 
@@ -127,14 +122,28 @@ class GameThread
         {
             sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
-            ClientID  clientId;
-            sf::Int32 pressedKey;
-            sf::Int32 releasedKey;
+            ClientID clientId;
+            bool     left, right, up, down, isFiering;
 
-            inClientKeyPacket >> clientId >> pressedKey >> releasedKey;
+            inClientKeyPacket
+                >> clientId
+                >> left
+                >> right
+                >> up
+                >> down
+                >> isFiering;
 
             sf::Packet outClientKeyPacket;
-            outClientKeyPacket << Net::Events::REMOTE_CLIENT_KEYS << clientId << pressedKey << releasedKey;
+
+            outClientKeyPacket
+                << Net::Events::REMOTE_CLIENT_KEYS
+                << clientId
+                << left
+                << right
+                << up
+                << down
+                << isFiering;
+
             Broadcast(outClientKeyPacket, clientId);
         }
 
@@ -162,12 +171,12 @@ class GameThread
             return ((nuts::Vector2f){x, y});
         }
 
-        void UpdateMonstersPos(nuts::Clock &deltaClock)
+        void UpdateMonstersPos()
         {
+            float dt = _deltaClock.GetElapsedTimeAsSeconds();
             for (auto &monster : _monsters) {
                 nuts::Vector2f &pos = monster.pos;
                 nuts::Vector2f &gotoPos = monster.gotoPos;
-                float dt = deltaClock.GetElapsedTimeAsSeconds();
 
                 if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt;}
                 if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt;}
@@ -181,25 +190,21 @@ class GameThread
             }
         }
 
-        void UpdateMonsters(nuts::Clock &deltaClock)
+        void UpdateMonsters()
         {
-            if (!_monsterSpawn) { _monsterSpawn = new nuts::Clock(); }
-
-            UpdateMonstersPos(deltaClock);
-
-            if (_monsterSpawn->GetElapsedTimeAsSeconds() >= 0.5f) {
+            if (_monsterSpawn.GetElapsedTimeAsSeconds() >= 0.5f) {
                 _monsters.emplace_back((SMInfos){GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn()});
-                _monsterSpawn->Restart();
+                _monsterSpawn.Restart();
             }
 
-            if (_broadcastClock->GetElapsedTimeAsSeconds() > 1 / 16.f) {
+            if (_broadcastClock.GetElapsedTimeAsSeconds() > 1 / 16.f) {
                 sf::Packet mPacket;
                 mPacket << Net::Events::MONSTER_UPDATE_POS;
                 for (auto &monster : _monsters) {
                     mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y;
                 }
                 Broadcast(mPacket);
-                _broadcastClock->Restart();
+                _broadcastClock.Restart();
             }
         }
 };

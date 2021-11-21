@@ -30,6 +30,8 @@
 
 using ClientID = sf::Int32;
 
+#define MAX_CLIENTS 3
+
 namespace Net {
 
     namespace Events {

@@ -11,12 +11,10 @@
 #include <SFML/Network.hpp>
 #include <thread>
 
-#include "InternalEvents.hpp"
 #include "EventManager.h"
+#include "InternalEvents.hpp"
 
 #include <Nuts/Input.hpp>
-
-#define MAX_CLIENTS 4
 
 // ----------------------------------------
 
@@ -57,15 +55,15 @@ public:
 
         _clients.push_back((newClient));
 
+        sf::Packet newClientPacket;
+
+        newClientPacket << Net::Events::NEW_CLIENT;
+
         for (auto &client : _clients) {
-            {
-                sf::Packet newClientPacket;
-                newClientPacket << Net::Events::NEW_CLIENT
-                                << newClient->id
-                                << _gameId;
-                client->tcpSock->send(newClientPacket);
-            }
+            newClientPacket << client->id;
         }
+
+        BroadcastTcp(newClientPacket);
 
         std::cout << "[Server|Game " << _gameId << "]: "
                   << _clients.size() << " Player(s) joined\n";
@@ -79,7 +77,7 @@ public:
         }
     }
 
-    void BroadcastTcp(sf::Packet packet, ClientID ignoredClientId)
+    void BroadcastTcp(sf::Packet packet, ClientID ignoredClientId = -1)
     {
         for (auto &client : _clients) {
             if (client->id != ignoredClientId) {

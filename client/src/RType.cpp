@@ -64,7 +64,9 @@ void RType::Init()
 
     _menu.Init(_engine);
     _matchMaking.Init(_engine);
-    _game.Init(_engine);
+
+    _game = std::make_shared<RTypeGame>();
+    _game->Init(_engine);
 
     scene.AddEventCallback(Net::Events::CLIENT_ID, BIND_CALLBACK(&RType::OnNetReceivedId, this));
     scene.AddEventCallback(Net::Events::NEW_CLIENT, BIND_CALLBACK(&RType::OnNewClient, this));
@@ -128,39 +130,36 @@ void RType::Run()
 
             case GameState::GAME:
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / 6.f) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (33.f)) {
                     INetClient::ResetAccumulatorTime();
 
-                    nuts::Key pressedKey  = nuts::Unknown;
-                    nuts::Key releasedKey = nuts::Unknown;
+                    GPlayer *localPlayer = (_game->GetLocalPlayer());
+                    if (_game->isReady && localPlayer != nullptr) {
 
-                    if (_engine->IsKeyPressed(nuts::Key::A))
-                        pressedKey = nuts::A;
-                    if (_engine->IsKeyPressed(nuts::Key::D))
-                        pressedKey = nuts::D;
-                    if (_engine->IsKeyPressed(nuts::Key::W))
-                        pressedKey = nuts::W;
-                    if (_engine->IsKeyPressed(nuts::Key::S))
-                        pressedKey = nuts::S;
+                        sf::Packet playerStatePacket;
+                        playerStatePacket << Net::Events::REMOTE_CLIENT_KEYS
+                                          << GetLocalClientId()
+                                          << _game->GetLocalPlayer()->_directionalKeys[0]
+                                          << _game->GetLocalPlayer()->_directionalKeys[1]
+                                          << _game->GetLocalPlayer()->_directionalKeys[2]
+                                          << _game->GetLocalPlayer()->_directionalKeys[3]
+                                          << _game->GetLocalPlayer()->IsFiering();
 
-                    if (_engine->IsKeyReleased(nuts::Key::A))
-                        releasedKey = nuts::A;
-                    if (_engine->IsKeyReleased(nuts::Key::D))
-                        releasedKey = nuts::D;
-                    if (_engine->IsKeyReleased(nuts::Key::W))
-                        releasedKey = nuts::W;
-                    if (_engine->IsKeyReleased(nuts::Key::S))
-                        releasedKey = nuts::S;
 
-                    sf::Packet pressedKeyPacket;
-                    pressedKeyPacket << Net::Events::REMOTE_CLIENT_KEYS << GetLocalClientId() << pressedKey << releasedKey;
+                        // std::cout << "UdpSend(playerStatePacket) ------> " << _game->GetLocalPlayer()->_directionalKeys[0]
+                        //     << _game->GetLocalPlayer()->_directionalKeys[1]
+                        //     << _game->GetLocalPlayer()->_directionalKeys[2]
+                        //     << _game->GetLocalPlayer()->_directionalKeys[3]
+                        //     << _game->GetLocalPlayer()->IsFiering() << "\n";
 
-                    INetClient::UdpSend(pressedKeyPacket);
-
+                        INetClient::UdpSend(playerStatePacket);
+                    }
                 }
+
+                
                 if (GetLocalClientId() == -1) return;
-                _game.Update();
-                _game.Draw();
+                _game->Draw();
+                _game->Update();
                 break;
 
             default:

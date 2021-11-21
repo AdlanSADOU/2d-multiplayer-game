@@ -28,9 +28,9 @@
 
 #include "Nuts/Networking.hpp"
 
-#include "RTypeMenu.hpp"
 #include "RTypeGame.hpp"
 #include "RTypeMatchmaking.hpp"
+#include "RTypeMenu.hpp"
 
 #include "RGameState.hpp"
 
@@ -46,6 +46,10 @@ public:
     void Init();
     void Run();
 
+    auto &GetGame() const {
+        return _game;
+    }
+
     void OnNetReceivedId(Event &event);
     void OnLobbyScreenBtn(Event &event);
     void OnBtnQuit(Event &event);
@@ -56,12 +60,12 @@ public:
     void OnStartGame(Event &event);
 
     GameState _state = GameState::MENU;
-
 protected:
 private:
-    RTypeMenu        _menu;
-    RTypeMatchmaking _matchMaking;
-    RTypeGame        _game;
+    RTypeMenu                  _menu;
+    RTypeMatchmaking           _matchMaking;
+
+    std::shared_ptr<RTypeGame> _game;
 
     nuts::Clock _deltaClock;
 
