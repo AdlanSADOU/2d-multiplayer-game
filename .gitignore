@@ -40,3 +40,6 @@ build/
 ./serverRun.bat
 clientRun.bat
 serverRun.bat
+
+doc/html
+doc/latex
