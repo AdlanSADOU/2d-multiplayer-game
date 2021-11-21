@@ -123,8 +123,8 @@ public:
             tmp = _tNReady;
             if (player.GetState() == RTypeMMPlayer::MPlayerState::READY) {
                 tmp = _tReady;
-                nuts::FloatRect pPos = _tPlayers[player.GetID()].GetGlobalBounds();
-                _tPlayers[player.GetID()].TEST_DRAW(_engine->window);
+                nuts::FloatRect pPos = _tPlayers[player.GetID() % 4].GetGlobalBounds();
+                _tPlayers[player.GetID() % 4].TEST_DRAW(_engine->window);
                 tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });
                 tmp.SetCharacterSize(8);
                 tmp.TEST_DRAW(_engine->window);

@@ -71,9 +71,7 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
         if (_monsters.find(id) == std::end(_monsters)) {
             _monsters.insert({id, GMonster((GMonster::MInfos){id, (GMonster::Type)type, (nuts::Vector2f){posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type])});
         }
-        else {
-            auto &tComp = _monsters[id].GetComponent<TransformComponent>();
-            tComp = {posX, posY};
-        }
+        auto &tComp = _monsters[id].GetComponent<TransformComponent>();
+        tComp = {posX, posY};
     }
 }
