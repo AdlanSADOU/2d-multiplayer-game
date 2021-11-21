@@ -16,6 +16,8 @@
 #include "Nuts/UI/Text.hpp"
 #include "Nuts/UI/Widget.hpp"
 #include "UIEvents.hpp"
+#include "Nuts/Networking.hpp"
+
 
 class RTypeMMPlayer
 {
@@ -123,8 +125,8 @@ public:
             tmp = _tNReady;
             if (player.GetState() == RTypeMMPlayer::MPlayerState::READY) {
                 tmp = _tReady;
-                nuts::FloatRect pPos = _tPlayers[player.GetID()].GetGlobalBounds();
-                _tPlayers[player.GetID()].Draw(_engine->window);
+                nuts::FloatRect pPos = _tPlayers[player.GetID() % MAX_CLIENTS].GetGlobalBounds();
+                _tPlayers[player.GetID() % MAX_CLIENTS].Draw(_engine->window);
                 tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });
                 tmp.SetCharacterSize(8);
                 tmp.Draw(_engine->window);

@@ -30,7 +30,7 @@
 
 using ClientID = sf::Int32;
 
-#define MAX_CLIENTS 4
+#define MAX_CLIENTS 3
 
 namespace Net {
 
