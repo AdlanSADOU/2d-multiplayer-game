@@ -85,7 +85,6 @@ class GameThread
                     receive();
                     _receiveClock.Restart();
                 }
-                UpdateMonstersPos();
                 UpdateMonsters();
                 _deltaClock.Restart();
             }
@@ -174,14 +173,15 @@ class GameThread
         void UpdateMonstersPos()
         {
             float dt = _deltaClock.GetElapsedTimeAsSeconds();
+
             for (auto &monster : _monsters) {
                 nuts::Vector2f &pos = monster.pos;
                 nuts::Vector2f &gotoPos = monster.gotoPos;
 
-                if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt;}
-                if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt;}
-                if (pos.y >= gotoPos.y + 10) { pos.y -= 100 * dt;}
-                if (pos.y <= gotoPos.y - 10) { pos.y += 100 * dt;}
+                if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt * 2;}
+                if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt * 2;}
+                if (pos.y >= gotoPos.y + 10) { pos.y -= 100 * dt * 2;}
+                if (pos.y <= gotoPos.y - 10) { pos.y += 100 * dt * 2;}
 
                 if ((pos.x >= gotoPos.x - 10 && pos.x <= gotoPos.x + 10) && (pos.y >= gotoPos.y - 10 && pos.y <= gotoPos.y + 10))
                 {
@@ -192,6 +192,8 @@ class GameThread
 
         void UpdateMonsters()
         {
+            UpdateMonstersPos();
+
             if (_monsterSpawn.GetElapsedTimeAsSeconds() >= 0.5f) {
                 _monsters.emplace_back((SMInfos){GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn()});
                 _monsterSpawn.Restart();
