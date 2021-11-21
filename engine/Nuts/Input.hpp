@@ -11,6 +11,10 @@
 
 namespace nuts {
 
+    /**
+     * @brief Utility enum representing the different buttons of the mouse.
+     * 
+     */
     enum Button {
         Left, ///< The left mouse button
         Right, ///< The right mouse button
@@ -30,6 +34,10 @@ namespace nuts {
         HorizontalWheel ///< The horizontal mouse wheel
     };
 
+    /**
+     * @brief Utility enum representing the different keys of the keyboard.
+     * 
+     */
     enum Key {
         Unknown = -1, ///< Unhandled key
         A       = 0, ///< The A key
