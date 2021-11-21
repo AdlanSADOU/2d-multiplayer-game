@@ -23,7 +23,7 @@
 
 Scene scene;
 
-#define FRAMERATE (1 / 66.f)
+#define FRAMERATE (1 / (33.f * 6))
 
 class EcsServer
 {

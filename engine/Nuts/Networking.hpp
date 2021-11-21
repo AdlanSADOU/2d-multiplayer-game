@@ -30,18 +30,18 @@
 
 using ClientID = sf::Int32;
 
-#define MAX_CLIENTS 3
+#define MAX_CLIENTS 4
 
 namespace Net {
 
     namespace Events {
-        const EventType CLIENT_CONNECT      = HASH(Events::CLIENT_CONNECT);
-        const EventType CLIENT_DISCONNECT   = HASH(Events::CLIENT_DISCONNECT);
-        const EventType CLIENT_QUIT         = HASH(Events::CLIENT_QUIT);
-        const EventType CLIENT_ID           = HASH(Events::CLIENT_ID);
-        const EventType CLIENTS_PRINT       = HASH(Events::CLIENTS_PRINT);
-        const EventType CLIENT_UDP          = HASH(Events::CLIENT_UDP);
-        const EventType REMOTE_CLIENT_KEYS  = HASH(Events::REMOTE_CLIENT_KEYS);
+        const EventType CLIENT_CONNECT     = HASH(Events::CLIENT_CONNECT);
+        const EventType CLIENT_DISCONNECT  = HASH(Events::CLIENT_DISCONNECT);
+        const EventType CLIENT_QUIT        = HASH(Events::CLIENT_QUIT);
+        const EventType CLIENT_ID          = HASH(Events::CLIENT_ID);
+        const EventType CLIENTS_PRINT      = HASH(Events::CLIENTS_PRINT);
+        const EventType CLIENT_UDP         = HASH(Events::CLIENT_UDP);
+        const EventType REMOTE_CLIENT_KEYS = HASH(Events::REMOTE_CLIENT_KEYS);
 
         const EventType NEW_CLIENT        = HASH(Events::NEW_CLIENT);
         const EventType UDP_OK            = HASH(Events::UDP_OK);
@@ -90,10 +90,12 @@ namespace Net {
 
         void UdpReceive()
         {
+            sf::Socket::Status status;
             sf::Packet         packet;
             sf::Uint16         tmpUdp;
-            sf::Socket::Status status;
+
             if ((status = _udpSocket.receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
+
                 EventType type {};
                 packet >> type;
                 _remoteGameUdpPort = tmpUdp;

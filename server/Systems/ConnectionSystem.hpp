@@ -71,6 +71,7 @@ public:
 
             sf::Socket::Status status = _conn.udpSock->receive(remotePacket, remoteAddress, remotePort);
             if (status == sf::Socket::Done) {
+
                 remotePacket >> type;
 
                 Event remoteEvent(type);

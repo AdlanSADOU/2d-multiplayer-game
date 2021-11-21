@@ -103,6 +103,8 @@ public:
     void OnClientQuit(Event &event);
     void OnStartGame(Event &event);
 
+    std::thread *clientUpdateThread;
+
     GameState _state = GameState::MENU;
 protected:
 private:

@@ -63,7 +63,8 @@ public:
 
             dt = _deltaClock.restart();
             acc += dt;
-            if (acc.asSeconds() > 1/(33.f * 6)) {
+            if (acc.asSeconds() > 1/(144.f))
+            {
                 receive();
                 acc = acc.Zero;
             }

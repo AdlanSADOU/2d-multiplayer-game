@@ -21,7 +21,7 @@ void RType::Init()
 {
     _engine = std::make_shared<nuts::Engine>();
 
-    _engine->InitWindow("R-Type", 800, 600);
+    _engine->InitWindow("R-Type", 400, 300);
     _engine->SetFramerateLimit(60);
 
     scene.Init();
@@ -81,6 +81,7 @@ void RType::OnBtnQuit(Event &event)
 
 void RType::Run()
 {
+
     while (_engine->IsRunning()) {
         _engine->Clear();
         _engine->HandleEvent();
@@ -127,7 +128,11 @@ void RType::Run()
 
             case GameState::GAME:
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (33.f)) {
+                if (GetLocalClientId() == -1) return;
+                _game->Draw();
+                _game->Update();
+
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (22.f)) {
                     INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
@@ -142,20 +147,10 @@ void RType::Run()
                                           << _game->GetLocalPlayer()->_directionalKeys[3]
                                           << _game->GetLocalPlayer()->IsFiering();
 
-
-                        // std::cout << "UdpSend(playerStatePacket) ------> " << _game->GetLocalPlayer()->_directionalKeys[0]
-                        //     << _game->GetLocalPlayer()->_directionalKeys[1]
-                        //     << _game->GetLocalPlayer()->_directionalKeys[2]
-                        //     << _game->GetLocalPlayer()->_directionalKeys[3]
-                        //     << _game->GetLocalPlayer()->IsFiering() << "\n";
-
                         INetClient::UdpSend(playerStatePacket);
                     }
                 }
 
-                if (GetLocalClientId() == -1) return;
-                _game->Draw();
-                _game->Update();
                 break;
 
             default:

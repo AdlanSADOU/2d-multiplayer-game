@@ -56,6 +56,9 @@ void RTypeGame::Update()
 {
     if (!isReady) return;
 
+    if (GetLocalPlayer())
+        LocalClientInputs();
+
     _background.Update();
     for (auto &player : _players) {
         player.second->Update();
@@ -64,8 +67,6 @@ void RTypeGame::Update()
 
 void RTypeGame::Draw()
 {
-    if (GetLocalPlayer())
-        LocalClientInputs();
 
     _ui.p1score.Draw(_engine->window);
     _ui.p2score.Draw(_engine->window);
