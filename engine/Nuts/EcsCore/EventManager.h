@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Event.hpp"
+#include <iostream>
 
 using Callback = std::function<void(Event &)>;
 
@@ -26,16 +27,22 @@ public:
     {
         EventType eventType = event.GetType();
 
-        for (auto const &callback : eventCallbacks[eventType]) {
-            callback(event);
-        }
+        if (eventCallbacks.find(eventType) != eventCallbacks.end())
+            for (auto const &callback : eventCallbacks[eventType]) {
+                callback(event);
+            }
+        else
+            std::cout << "ERROR! EventType does not exist!\n";
     }
 
     void InvokeEvent(EventType eventType)
     {
-        for (auto const &callback : eventCallbacks[eventType]) {
-            Event e(eventType);
-            callback(e);
-        }
+        if (eventCallbacks.find(eventType) != eventCallbacks.end())
+            for (auto const &callback : eventCallbacks[eventType]) {
+                Event e(eventType);
+                callback(e);
+            }
+        else
+            std::cout << "ERROR! EventType does not exist!\n";
     }
 };

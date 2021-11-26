@@ -100,21 +100,21 @@ namespace Net {
 
         void UdpReceive()
         {
+            int i = 0;
             while (1) {
-                static int i = 0;
-                if (i < 10) {
-                    i++;
-                    continue;
-                }
-
                 sf::Socket::Status status = {};
                 sf::Packet         packet = {};
                 sf::Uint16         tmpUdp = 0;
+
+                static std::uint64_t lastSequenceNumber = 0; // todo: packet sequence
+                    // std::uint64_t sequenceNumber = 0;
 
                 if ((status = _udpSocket->receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
 
                     EventType type {};
                     packet >> type;
+                    // packet >> sequenceNumber;
+
                     _remoteGameUdpPort = tmpUdp;
 
                     Event event(type);

@@ -19,7 +19,6 @@
 
 #include <../client/src/RTypeGame.hpp>
 
-
 class GameThread
 {
     struct SMInfos
@@ -59,14 +58,13 @@ public:
     GameThread()
     {
         _running = true;
-        srand(time(NULL));
+        srand((uint32_t)time(NULL));
 
         _eventManager.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&GameThread::OnClientKeyEvent, this));
     };
 
     void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
     {
-
 
         _clients = std::move(clients);
         _gameId  = gameId;
@@ -99,8 +97,6 @@ public:
         while (_running) {
 
             _dt = _deltaClock.restart();
-
-
 
             receive();
 
@@ -137,7 +133,8 @@ public:
 
                 acc = acc.Zero;
 
-                remotePacket >> type;
+                sf::Packet tmpPacket = remotePacket;
+                tmpPacket >> type;
                 Event remoteEvent(type);
                 remoteEvent.SetParam<sf::Packet>(0, remotePacket);
                 _eventManager.InvokeEvent(remoteEvent);
@@ -157,38 +154,19 @@ public:
     int  i = 0;
     void OnClientKeyEvent(Event &event)
     {
-        if (i < 50) {
+        if (i < 100) {
             i++;
             return;
         }
 
-
         sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
-        ClientID clientId = 0;
-        bool     left = 0, right = 0, up = 0, down = 0, isFiering = 0;
+        sf::Packet tmpPacket = inClientKeyPacket;
+        ClientID   clientId  = 0;
 
-        inClientKeyPacket
-            >> clientId
-            >> left
-            >> right
-            >> up
-            >> down
-            >> isFiering;
+        tmpPacket >> clientId;
 
-
-        sf::Packet outClientKeyPacket;
-
-        outClientKeyPacket
-            << Net::Events::REMOTE_CLIENT_KEYS
-            << clientId
-            << left
-            << right
-            << up
-            << down
-            << isFiering;
-
-        Broadcast(outClientKeyPacket, clientId);
+        Broadcast(inClientKeyPacket, clientId);
     }
 
     int GetNewMId()
@@ -204,16 +182,16 @@ public:
     nuts::Vector2f GetRandomPosSpawn()
     {
         nuts::Vector2f tmp;
-        tmp.x = 600 + (rand() % (1000 - 600 + 1));
-        tmp.y = 0 + (rand() % (400 - 0 + 1));
+        tmp.x = (float)(600 + (rand() % (1000 - 600 + 1)));
+        tmp.y = (float)(0 + (rand() % (400 - 0 + 1)));
         return (tmp);
     }
 
     nuts::Vector2f GetRandomPos()
     {
         nuts::Vector2f tmp;
-        tmp.x = (rand() % (800 - 0 + 1)) + 0;
-        tmp.y = (rand() % (400 - 0 + 1)) + 0;
+        tmp.x = (float)((rand() % (800 - 0 + 1)) + 0);
+        tmp.y = (float)((rand() % (400 - 0 + 1)) + 0);
         return (tmp);
     }
 

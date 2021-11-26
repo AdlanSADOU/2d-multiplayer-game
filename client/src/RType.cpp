@@ -9,6 +9,8 @@
 
 #include "Nuts/Input.hpp"
 
+#include <cstring>
+
 RType::RType()
 {
 }
@@ -131,10 +133,10 @@ void RType::Run()
             case GameState::GAME:
 
                 if (GetLocalClientId() == -1) return;
-                _game->Draw();
                 _game->Update();
+                _game->Draw();
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (60.f)) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (33.f)) {
                     INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
@@ -143,11 +145,13 @@ void RType::Run()
                         sf::Packet playerStatePacket;
                         playerStatePacket << Net::Events::REMOTE_CLIENT_KEYS
                                           << GetLocalClientId()
-                                          << _game->GetLocalPlayer()->_directionalKeys[0]
-                                          << _game->GetLocalPlayer()->_directionalKeys[1]
-                                          << _game->GetLocalPlayer()->_directionalKeys[2]
-                                          << _game->GetLocalPlayer()->_directionalKeys[3]
-                                          << _game->GetLocalPlayer()->IsFiering();
+                                          << localPlayer->_directionalKeys[0]
+                                          << localPlayer->_directionalKeys[1]
+                                          << localPlayer->_directionalKeys[2]
+                                          << localPlayer->_directionalKeys[3]
+                                          << localPlayer->GetPosition().x
+                                          << localPlayer->GetPosition().y
+                                          << localPlayer->IsFiering();
                         INetClient::UdpSend(playerStatePacket);
                     }
                 }

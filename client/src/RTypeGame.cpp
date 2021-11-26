@@ -24,20 +24,20 @@ RTypeGame::~RTypeGame()
 
 void RTypeGame::InitMonsterFrameCount()
 {
-    _MFrameCount.insert({GMonster::Type::FLY, 12});
-    _MFrameCount.insert({GMonster::Type::GROUND, 4});
+    _MFrameCount.insert({ GMonster::Type::FLY, 12 });
+    _MFrameCount.insert({ GMonster::Type::GROUND, 4 });
 }
 
 void RTypeGame::InitMonsterTexturesRect()
 {
-    _MTexturesRect.insert({GMonster::Type::FLY, { 0, 0, 16, 14 }});
-    _MTexturesRect.insert({GMonster::Type::GROUND, { 0, 0, 33, 32 }});
+    _MTexturesRect.insert({ GMonster::Type::FLY, { 0, 0, 16, 14 } });
+    _MTexturesRect.insert({ GMonster::Type::GROUND, { 0, 0, 33, 32 } });
 }
 
 void RTypeGame::InitMonsterTextures()
 {
-    _MTextures.insert({GMonster::Type::FLY, nuts::Texture("./resources/sprites/ball.gif")});
-    _MTextures.insert({GMonster::Type::GROUND, nuts::Texture("./resources/sprites/mecha.gif")});
+    _MTextures.insert({ GMonster::Type::FLY, nuts::Texture("./resources/sprites/ball.gif") });
+    _MTextures.insert({ GMonster::Type::GROUND, nuts::Texture("./resources/sprites/mecha.gif") });
 }
 
 void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
@@ -89,7 +89,6 @@ void RTypeGame::Update()
 
 void RTypeGame::Draw()
 {
-
     _ui.p1score.TEST_DRAW(_engine->window);
     _ui.p2score.TEST_DRAW(_engine->window);
     _ui.p3score.TEST_DRAW(_engine->window);
@@ -113,11 +112,12 @@ void RTypeGame::LocalClientInputs()
     if (_engine->IsKeyReleased(nuts::Key::S)) {
         _players[_localClientId]->_directionalKeys[3] = false;
     }
-
-    // key presss checks
-    if (_engine->IsKeyPressed(nuts::Key::Space)) {
+    if (_engine->IsKeyReleased(nuts::Key::Space)) {
         _players[_localClientId]->SetFiering(false);
     }
+
+    // key presss checks
+
     if (_engine->IsKeyPressed(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = true;
     }

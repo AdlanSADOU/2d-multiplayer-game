@@ -31,6 +31,7 @@ void RTypeGame::OnRemotePlayerState(Event &event)
     sf::Packet inClientStatePacket = event.GetParam<sf::Packet>(0);
 
     ClientID clientId = -1;
+    float x = 0, y = 0;
 
     if (clientId == _localClientId)
         return;
@@ -41,7 +42,11 @@ void RTypeGame::OnRemotePlayerState(Event &event)
         >> _players[clientId]->_directionalKeys[1]
         >> _players[clientId]->_directionalKeys[2]
         >> _players[clientId]->_directionalKeys[3]
-        >> _players[clientId]->_isFiering) {
+        >> x
+        >> y
+        >> _players[clientId]->_isFiering
+    ) {
+        _players[clientId]->SetPosition({ x, y });
         // std::cout << clientId << ": "
         //           << _players[clientId]->_directionalKeys[0]
         //           << _players[clientId]->_directionalKeys[1]

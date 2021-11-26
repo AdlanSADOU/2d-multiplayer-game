@@ -55,24 +55,36 @@ public:
         std::cout << "player destroyed\n";
     }
 
-    void SetId(int id)
-    {
-        _clientId = id;
-    }
-
-    int GetId()
+    int GetId() const
     {
         return (_clientId);
-    }
-
-    void SetFiering(bool value)
-    {
-        _isFiering = value;
     }
 
     bool IsFiering() const
     {
         return _isFiering;
+    }
+
+    nuts::Vector2f GetPosition()
+    {
+        auto transform = GetComponent<TransformComponent>();
+        return transform.position;
+    }
+
+    void SetPosition(nuts::Vector2f pos)
+    {
+        auto &transform = GetComponent<TransformComponent>();
+        transform.position = {pos.x, pos.y};
+    }
+
+    void SetId(int id)
+    {
+        _clientId = id;
+    }
+
+    void SetFiering(bool value)
+    {
+        _isFiering = value;
     }
 
     void Move()
@@ -110,7 +122,7 @@ public:
      */
     bool _directionalKeys[4] = { 0 };
 
-    bool   _isFiering = 0;
+    bool       _isFiering = 0;
     sf::Uint16 _score     = 0;
     sf::Uint16 _health    = 0;
     sf::Uint16 _maxHealth = 0;
