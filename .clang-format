@@ -12,7 +12,7 @@
   NamespaceIndentation: All,
   FixNamespaceComments: false,
   PointerAlignment: Right,
-
+  SortIncludes: false,
   BreakBeforeBraces: Custom,
   BraceWrapping:
     { AfterFunction: true, AfterClass: true, AfterEnum: true, AfterStruct: true, SplitEmptyFunction: false },

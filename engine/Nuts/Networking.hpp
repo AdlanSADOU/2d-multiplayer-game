@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <thread>
-
 #ifdef _WIN32
 #pragma warning(disable : 4091)
 #define threadID __threadid
@@ -25,6 +23,11 @@
 #include <iostream>
 #include <memory>
 #include <string>
+
+#include <thread>
+#include <mutex>
+
+#define MUGUARD(my_mutex) noexcept(std::lock_guard<std::mutex>(my_mutex))
 
 #include "EcsCore/Event.hpp"
 
@@ -61,8 +64,11 @@ namespace Net {
     class INetClient
     {
     private:
-        sf::TcpSocket _tcpSocket;
-        sf::UdpSocket _udpSocket;
+        std::thread *th_udpReceive;
+        std::mutex   _udpSocket_mutex;
+
+        sf::TcpSocket  _tcpSocket;
+        sf::UdpSocket *_udpSocket;
 
         sf::IpAddress _remoteGameIp;
         sf::Uint16    _remoteGameUdpPort;
@@ -81,6 +87,7 @@ namespace Net {
         {
             sf::Packet packet;
 
+            MUGUARD(_udpSocket_mutex);
             if (_tcpSocket.receive(packet) == sf::Socket::Done) {
                 EventType type;
                 packet >> type;
@@ -93,22 +100,31 @@ namespace Net {
 
         void UdpReceive()
         {
-            sf::Socket::Status status;
-            sf::Packet         packet;
-            sf::Uint16         tmpUdp;
+            while (1) {
+                static int i = 0;
+                if (i < 10) {
+                    i++;
+                    continue;
+                }
 
-            if ((status = _udpSocket.receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
+                sf::Socket::Status status = {};
+                sf::Packet         packet = {};
+                sf::Uint16         tmpUdp = 0;
 
-                EventType type {};
-                packet >> type;
-                _remoteGameUdpPort = tmpUdp;
+                if ((status = _udpSocket->receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
 
-                Event event(type);
-                event.SetParam<sf::Packet &>(0, packet);
-                scene.InvokeEvent(event);
+                    EventType type {};
+                    packet >> type;
+                    _remoteGameUdpPort = tmpUdp;
+
+                    Event event(type);
+                    event.SetParam<sf::Packet>(0, packet);
+                    scene.InvokeEvent(event);
+                }
+
+                if (status == sf::Socket::Partial)
+                    std::cerr << "[Net]: Received partial data\n";
             }
-            if (status == sf::Socket::Partial)
-                std::cerr << "[Net]: Received partial data\n";
         }
 
     public:
@@ -126,7 +142,7 @@ namespace Net {
 
         sf::Uint16 GetLocalUdpPort() const
         {
-            return _udpSocket.getLocalPort();
+            return _udpSocket->getLocalPort();
         }
 
         sf::IpAddress GetRemoteServerIp() const
@@ -155,7 +171,6 @@ namespace Net {
             _acc += _dt;
 
             this->TcpReceive();
-            this->UdpReceive();
         }
 
         sf::Time GetAccumulatorTime()
@@ -182,7 +197,8 @@ namespace Net {
             _remoteGameIp     = serverIp;
             // _remoteGameUdpPort = serverPort + 1;
 
-            if (_udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress()) != sf::Socket::Done) {
+            _udpSocket = new sf::UdpSocket();
+            if (_udpSocket->bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress()) != sf::Socket::Done) {
                 std::cerr << "[Net]: Failed to connect to ["
                           << serverIp << ":"
                           << serverPort << "]\n";
@@ -190,12 +206,15 @@ namespace Net {
             }
 
             _tcpSocket.setBlocking(false);
-            _udpSocket.setBlocking(false);
+            _udpSocket->setBlocking(true);
             _isConnected = true;
 
             std::cout << "[Net]: Connected to ["
                       << serverIp << ":"
                       << serverPort << "]\n";
+
+            // sf::UdpSocket *_udpSocket, sf::IpAddress _remoteServerIp, sf::Uint16 *_remoteGameUdpPort
+            th_udpReceive = new std::thread(&INetClient::UdpReceive, this);
 
             return true;
         }
@@ -204,6 +223,7 @@ namespace Net {
         {
             if (_isConnected)
                 _tcpSocket.disconnect();
+            th_udpReceive->join();
         }
 
         void TcpSend(sf::Packet &packet)
@@ -220,7 +240,7 @@ namespace Net {
             if (!_isConnected) return;
             sf::Socket::Status status;
 
-            if ((status = _udpSocket.send(packet, _remoteGameIp, _remoteGameUdpPort)) != sf::Socket::Done) {
+            if ((status = _udpSocket->send(packet, _remoteGameIp, _remoteGameUdpPort)) != sf::Socket::Done) {
                 std::cerr << "[Net-UDP]: Failed to send packet to [" << _remoteGameIp << ":" << _remoteGameUdpPort << "\n";
             }
             if (status == sf::Socket::Partial)

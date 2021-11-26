@@ -137,3 +137,10 @@ crashes
 
 # Client/Server Protocol
 https://www.netresec.com/index.ashx?page=RawCap
+
+- sequence diagram
+
+# UDP
+- Delivery of any given datagram is not guaranteed. Any datagram may be lost at any time.
+- Order of delivery is not guaranteed. Datagrams are not necessarily received in the same order in which they were sent.
+- Uniqueness of delivery is not guaranteed. Any given datagram may be delivered more than once.

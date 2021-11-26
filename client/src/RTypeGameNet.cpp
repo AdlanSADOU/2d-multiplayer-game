@@ -30,19 +30,26 @@ void RTypeGame::OnRemotePlayerState(Event &event)
 {
     sf::Packet inClientStatePacket = event.GetParam<sf::Packet>(0);
 
-    ClientID  clientId    = -1;
+    ClientID clientId = -1;
 
     if (clientId == _localClientId)
         return;
 
-    inClientStatePacket
+    if (inClientStatePacket
         >> clientId
         >> _players[clientId]->_directionalKeys[0]
         >> _players[clientId]->_directionalKeys[1]
         >> _players[clientId]->_directionalKeys[2]
         >> _players[clientId]->_directionalKeys[3]
-        >> _players[clientId]->_isFiering;
-
+        >> _players[clientId]->_isFiering) {
+        // std::cout << clientId << ": "
+        //           << _players[clientId]->_directionalKeys[0]
+        //           << _players[clientId]->_directionalKeys[1]
+        //           << _players[clientId]->_directionalKeys[2]
+        //           << _players[clientId]->_directionalKeys[3]
+        //           << _players[clientId]->_isFiering
+        //           << "\n";
+    }
 }
 
 bool RTypeGame::IsMonsterInList(int id)
@@ -54,8 +61,8 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
 {
     sf::Packet packet = event.GetParam<sf::Packet>(0);
 
-    int id;
-    int type;
+    int   id;
+    int   type;
     float posX;
     float posY;
 
@@ -63,11 +70,10 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
         packet >> id >> type >> posX >> posY;
 
         if (_monsters.find(id) == std::end(_monsters)) {
-            _monsters.insert({id, GMonster({id, (GMonster::Type)type, {posX, posY}}, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type])});
-        }
-        else {
+            _monsters.insert({ id, GMonster({ id, (GMonster::Type)type, { posX, posY } }, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]) });
+        } else {
             auto &tComp = _monsters[id].GetComponent<TransformComponent>();
-            tComp = {posX, posY};
+            tComp       = { posX, posY };
         }
     }
 }

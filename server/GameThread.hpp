@@ -19,6 +19,7 @@
 
 #include <../client/src/RTypeGame.hpp>
 
+
 class GameThread
 {
     struct SMInfos
@@ -33,11 +34,12 @@ private:
     std::vector<std::shared_ptr<SClientComponent>> _clients;
     EventManager                                   _eventManager;
 
-    nuts::Clock _deltaClock;
-    nuts::Clock _monsterSpawn;
-    nuts::Clock _tickrateClock;
-    nuts::Clock _receiveClock;
-    nuts::Clock _broadcastClock;
+    sf::Clock _deltaClock;
+    sf::Clock _monsterSpawn;
+    sf::Clock _tickrateClock;
+    sf::Clock _receiveClock;
+    sf::Clock _broadcastClock;
+    sf::Time  _dt;
 
     std::vector<SMInfos> _monsters;
 
@@ -48,6 +50,11 @@ private:
     bool          _running = false;
 
     std::vector<std::thread *> RecWorkers;
+
+    sf::RenderWindow _window;
+    sf::Packet       lastPacket = {};
+    int32_t          _receivesPerSecond;
+
 public:
     GameThread()
     {
@@ -59,16 +66,18 @@ public:
 
     void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
     {
+
+
         _clients = std::move(clients);
         _gameId  = gameId;
 
         _socket.bind(sf::Socket::AnyPort, sf::IpAddress::getLocalAddress());
-        _socket.setBlocking(false);
+        _socket.setBlocking(true);
+
         for (auto &client : _clients) {
             sf::Packet packet;
 
             packet << Net::Events::GAME_START << sf::IpAddress::getLocalAddress().toInteger() << _socket.getLocalPort();
-            // _socket.send(packet, client->ip, client->updPort);
             client->tcpSock->send(packet);
             packet.clear();
 
@@ -83,34 +92,57 @@ public:
             client->tcpSock->send(packet);
         }
 
-        // _socket.send(packet, client->ip, client->updPort);
+        sf::Time accReceiveRate;
+
+        sf::Packet remotePacket;
+
         while (_running) {
-            if (_receiveClock.GetElapsedTimeAsSeconds() > 1 / (144.f * 2)) {
-                receive();
-                _receiveClock.Restart();
-            }
+
+            _dt = _deltaClock.restart();
+
+
+
+            receive();
+
             UpdateMonsters();
-            _deltaClock.Restart();
         }
     }
 
     void receive()
     {
-        sf::Packet remotePacket;
-        EventType  type;
-
+        sf::Packet    remotePacket;
         sf::IpAddress remoteAddress;
         sf::Uint16    remotePort;
+        EventType     type;
 
-        sf::Socket::Status status = _socket.receive(remotePacket, remoteAddress, remotePort);
+        static sf::Time acc        = {};
+        static sf::Time receiveAcc = {};
+        acc += _dt;
+        receiveAcc += _dt;
 
-            sf::Packet packet = remotePacket;
-            if (status == sf::Socket::Done) {
+        sf::Socket::Status _status = _socket.receive(remotePacket, remoteAddress, remotePort);
+
+        lastPacket = remotePacket;
+
+        {
+
+            if (_status == sf::Socket::Done) {
+                static int receiveAccumulator = 0;
+                if (receiveAcc.asSeconds() >= 1.f) {
+                    _receivesPerSecond = receiveAccumulator;
+                    receiveAccumulator = 0;
+                    receiveAcc         = receiveAcc.Zero;
+                }
+                ++receiveAccumulator;
+
+                acc = acc.Zero;
+
                 remotePacket >> type;
                 Event remoteEvent(type);
                 remoteEvent.SetParam<sf::Packet>(0, remotePacket);
                 _eventManager.InvokeEvent(remoteEvent);
             }
+        }
     }
 
     void Broadcast(sf::Packet packet, ClientID ignoredClientId = -1)
@@ -122,13 +154,19 @@ public:
         }
     }
 
-    // relay key events to other clients
+    int  i = 0;
     void OnClientKeyEvent(Event &event)
     {
+        if (i < 50) {
+            i++;
+            return;
+        }
+
+
         sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
-        ClientID clientId;
-        bool     left, right, up, down, isFiering;
+        ClientID clientId = 0;
+        bool     left = 0, right = 0, up = 0, down = 0, isFiering = 0;
 
         inClientKeyPacket
             >> clientId
@@ -137,6 +175,7 @@ public:
             >> up
             >> down
             >> isFiering;
+
 
         sf::Packet outClientKeyPacket;
 
@@ -180,7 +219,7 @@ public:
 
     void UpdateMonstersPos()
     {
-        float dt = _deltaClock.GetElapsedTimeAsSeconds();
+        float dt = _deltaClock.getElapsedTime().asSeconds();
 
         for (auto &monster : _monsters) {
             nuts::Vector2f &pos     = monster.pos;
@@ -201,20 +240,20 @@ public:
     {
         UpdateMonstersPos();
 
-        if (_monsterSpawn.GetElapsedTimeAsSeconds() >= 0.5f) {
+        if (_monsters.size() < 10 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.8f) {
             SMInfos tmp { GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
             _monsters.emplace_back(tmp);
-            _monsterSpawn.Restart();
+            _monsterSpawn.restart();
         }
 
-        if (_broadcastClock.GetElapsedTimeAsSeconds() > 1 / 16.f) {
+        if (_broadcastClock.getElapsedTime().asSeconds() > 1 / 22.f) {
             sf::Packet mPacket;
             mPacket << Net::Events::MONSTER_UPDATE_POS;
             for (auto &monster : _monsters) {
                 mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y;
             }
             Broadcast(mPacket);
-            _broadcastClock.Restart();
+            _broadcastClock.restart();
         }
     }
 };

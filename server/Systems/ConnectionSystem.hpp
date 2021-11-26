@@ -18,6 +18,7 @@ private:
     sf::TcpSocket *_tmpSocket;
 
 public:
+    sf::Time _dt;
     ConnectionComponent _conn;
 
     int Init(sf::Uint16 port, const sf::IpAddress &address = sf::IpAddress::Any)

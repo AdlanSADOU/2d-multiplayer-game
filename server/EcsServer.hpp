@@ -8,6 +8,7 @@
 #pragma once
 #include <Nuts/GameObject.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Graphics.hpp>
 
 #include "Components/Components.hpp"
 
@@ -21,6 +22,9 @@
 #include <thread>
 #include <vector>
 
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 Scene scene;
 
 #define FRAMERATE (1 / (33.f * 6))
@@ -31,9 +35,9 @@ private:
     std::shared_ptr<ConnectionSystem> _connectionSystem;
     std::shared_ptr<SClientsSystem>   _sClientSystem;
     sf::Clock                         deltaClock;
-
-    std::vector<std::thread *> GameWorkers;
-    bool _running = false;
+    sf::RenderWindow                  _window;
+    std::vector<std::thread *>        GameWorkers;
+    bool                              _running = false;
 
 public:
     std::shared_ptr<ConnectionSystem> GetConnectionSystem() const
@@ -48,6 +52,9 @@ public:
 
     void Init()
     {
+        // _window.create({ 400, 300, 32 }, "Server");
+        // _window.setFramerateLimit(30);
+        ImGui::SFML::Init(_window);
 
         scene.Init();
         scene.RegisterComponent<SClientComponent>();
@@ -82,13 +89,22 @@ public:
         sf::Time acc;
 
         while (_running) {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
-                _running = false;
+            // sf::Event event;
+            // while (_window.pollEvent(event)) {
+            //     ImGui::SFML::ProcessEvent(event);
+            // }
 
             dt = deltaClock.restart();
             acc += dt;
 
-            if (acc.asSeconds() > FRAMERATE) {
+            // ImGui::SFML::Update(_window, dt);
+            _connectionSystem->_dt = dt;
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) )
+                _running = false;
+
+            // if (acc.asSeconds() > FRAMERATE)
+            {
                 _connectionSystem->Accept();
                 _connectionSystem->ReceiveUdp();
 
@@ -96,6 +112,15 @@ public:
 
                 acc = sf::Time::Zero;
             }
+
+            // ImGui::Begin("Info");
+            // ImGui::Text("dt: %f", dt.asSeconds());
+            // ImGui::End();
+
+            // _window.clear();
+            // // _window.draw(shape);
+            // ImGui::SFML::Render(_window);
+            // _window.display();
         }
     }
 
@@ -105,7 +130,8 @@ public:
         GameThread *gameTh = new GameThread;
 
         sf::Int32 gameId = event.GetParam<sf::Int32>(1);
+        auto &vec =event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0);
 
-        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0), gameId));
+        GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, vec, gameId));
     }
 };

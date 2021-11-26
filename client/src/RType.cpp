@@ -84,7 +84,6 @@ void RType::OnBtnQuit(Event &event)
 
 void RType::Run()
 {
-
     while (_engine->IsRunning()) {
         _engine->Clear();
         _engine->HandleEvent();
@@ -135,7 +134,7 @@ void RType::Run()
                 _game->Draw();
                 _game->Update();
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (26.f)) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (60.f)) {
                     INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
@@ -149,7 +148,6 @@ void RType::Run()
                                           << _game->GetLocalPlayer()->_directionalKeys[2]
                                           << _game->GetLocalPlayer()->_directionalKeys[3]
                                           << _game->GetLocalPlayer()->IsFiering();
-
                         INetClient::UdpSend(playerStatePacket);
                     }
                 }
@@ -159,7 +157,6 @@ void RType::Run()
             default:
                 break;
         }
-
         _deltaClock.Restart();
         _engine->Present();
     }

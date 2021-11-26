@@ -33,8 +33,8 @@ public:
         _playerTexture.LoadFromFile("./resources/sprites/players.gif");
 
         auto &spriteComp = GetComponent<SpriteComponent>();
-        auto &stateComp = GetComponent<StateComponent>();
-        stateComp.state = GameState::GAME;
+        auto &stateComp  = GetComponent<StateComponent>();
+        stateComp.state  = GameState::GAME;
         spriteComp.sprite.SetTexture(_playerTexture);
         spriteComp.sprite.SetTextureRect({ 0, 16 * (id % MAX_CLIENTS), 32, 16 });
         spriteComp.sprite.SetAnimated(false);
@@ -46,7 +46,7 @@ public:
         _vel->velocity = { 0.f, 0.f };
 
         for (size_t i = 0; i < 4; i++) {
-            _directionalKeys[i] = false;    
+            _directionalKeys[i] = false;
         }
     }
 
@@ -108,10 +108,10 @@ public:
      * left, right, up, down
      * in that order
      */
-    bool       _directionalKeys[4] = { 0 };
+    bool _directionalKeys[4] = { 0 };
 
-    bool       _isFiering          = false;
-    sf::Uint16 _score              = 0;
-    sf::Uint16 _health             = 0;
-    sf::Uint16 _maxHealth          = 0;
+    bool   _isFiering = 0;
+    sf::Uint16 _score     = 0;
+    sf::Uint16 _health    = 0;
+    sf::Uint16 _maxHealth = 0;
 };
