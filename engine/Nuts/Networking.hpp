@@ -33,7 +33,7 @@
 
 using ClientID = sf::Int32;
 
-#define MAX_CLIENTS 4
+#define MAX_CLIENTS 2
 
 namespace Net {
 
@@ -206,7 +206,7 @@ namespace Net {
             }
 
             _tcpSocket.setBlocking(false);
-            _udpSocket->setBlocking(true);
+            _udpSocket->setBlocking(false);
             _isConnected = true;
 
             std::cout << "[Net]: Connected to ["

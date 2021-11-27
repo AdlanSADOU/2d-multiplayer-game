@@ -12,6 +12,8 @@ set(SFML_EXT_LIBS_DIR ../SFML/extlibs/bin/x64)
 
 set(EXT_DLLS openal32.dll)
 
+set(NUTS_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/engine/Debug/)
+
 set(SFML_DLLS_DEBUG
 sfml-audio-d-2.dll
 sfml-graphics-d-2.dll

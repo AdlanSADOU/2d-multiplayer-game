@@ -167,7 +167,7 @@ namespace nuts
              *
              * @return sf::Sprite
              */
-            sf::Sprite GetSprite() const
+            sf::Sprite &GetSprite()
             {
                 return (_sprite);
             }

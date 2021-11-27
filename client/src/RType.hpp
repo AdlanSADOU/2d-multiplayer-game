@@ -46,7 +46,8 @@ public:
     void Init();
     void Run();
 
-    auto &GetGame() const {
+    auto &GetGame() const
+    {
         return _game;
     }
 
@@ -62,10 +63,11 @@ public:
     std::thread *clientUpdateThread;
 
     GameState _state = GameState::MENU;
+
 protected:
 private:
-    RTypeMenu                  _menu;
-    RTypeMatchmaking           _matchMaking;
+    RTypeMenu        _menu;
+    RTypeMatchmaking _matchMaking;
 
     std::shared_ptr<RTypeGame> _game;
 

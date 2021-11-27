@@ -25,7 +25,11 @@ target_compile_options(rtype_server PRIVATE /W3)
     target_link_directories(rtype_server PUBLIC ${SFML_LIBS_DIR_DEBUG})
     target_link_libraries(rtype_server ${SFML_LIBS_DEBUG})
 
-    file(GLOB SFML_DLLS_DEBUG "${SFML_LIBS_DIR_DEBUG}/*.dll")
+    add_custom_command(
+        TARGET rtype_server POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${NUTS_LIB_DIR}/nuts_engine.dll ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+
+        file(GLOB SFML_DLLS_DEBUG "${SFML_LIBS_DIR_DEBUG}/*.dll")
     foreach(myDll IN LISTS SFML_DLLS_DEBUG)
         add_custom_command(
             TARGET rtype_server POST_BUILD

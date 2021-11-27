@@ -83,7 +83,7 @@ void RTypeGame::Update()
 
     _background.Update();
     for (auto &player : _players) {
-        player.second->Update();
+        player.second->Update(_engine->dt, _engine->window);
     }
 }
 
@@ -116,8 +116,7 @@ void RTypeGame::LocalClientInputs()
         _players[_localClientId]->SetFiering(false);
     }
 
-    // key presss checks
-
+    // ----------
     if (_engine->IsKeyPressed(nuts::Key::A)) {
         _players[_localClientId]->_directionalKeys[0] = true;
     }

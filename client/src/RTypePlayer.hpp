@@ -8,18 +8,138 @@
 #pragma once
 
 #include <Nuts/GameObject.hpp>
+#include <Nuts/Utilities.hpp>
+#include <vector>
+
+class ProjectileManager
+{
+    struct Projectile
+    {
+        nuts::Sprite   sprite   = {};
+        nuts::Vector2f position = {};
+
+        bool  isDestroyed   = false;
+        bool  canFire       = true;
+        float timeAlive     = 0;
+        float maxTimetoLive = 2;
+        float speed;
+    };
+
+    nuts::Texture           _texture = {};
+    std::vector<Projectile> _projectiles;
+
+public:
+    enum Type
+    {
+        SMALL,
+        BIG,
+    };
+
+    ProjectileManager() {};
+
+    ProjectileManager(std::string texturePath)
+    {
+        if (!_texture.LoadFromFile(texturePath))
+            COUT("Failed to load texture: " << texturePath);
+    }
+
+    void FireProjectile(nuts::Vector2f startPosition, Type type, float dt)
+    {
+        static float acc = 0;
+        acc += dt;
+
+        if (acc < .08f)
+            return;
+        acc = 0;
+
+        if (type == BIG) {
+            Projectile tmpProj;
+            tmpProj.sprite.SetTexture(_texture);
+            tmpProj.sprite.SetTextureRect({ 134, 18, 32, 32 });
+            tmpProj.sprite.SetFirstFrame({ 134, 18, 32, 32 });
+            tmpProj.sprite.SetFrameCount(4);
+            tmpProj.sprite.SetFrameTime(.5f);
+            tmpProj.sprite.InitAnimationClock();
+            tmpProj.sprite.SetAnimated(true);
+
+            tmpProj.position = startPosition;
+            tmpProj.position.x += 20;
+            tmpProj.position.y += -6;
+
+            tmpProj.sprite.SetPosition(tmpProj.position);
+            tmpProj.speed = 180;
+
+            _projectiles.push_back(tmpProj);
+        } else if (type == SMALL) {
+            Projectile tmpProj;
+            tmpProj.sprite.SetTexture(_texture);
+            tmpProj.sprite.SetTextureRect({ 232, 103, 16, 12 });
+            tmpProj.sprite.SetFirstFrame({ 232, 103, 16, 12 });
+            tmpProj.sprite.SetFrameTime(.5f);
+            tmpProj.sprite.InitAnimationClock();
+            tmpProj.sprite.SetAnimated(true);
+            tmpProj.sprite.SetFrameCount(2);
+
+            tmpProj.position = startPosition;
+            tmpProj.position.x += 12;
+            tmpProj.position.y += 3;
+
+            tmpProj.sprite.SetPosition(tmpProj.position);
+            tmpProj.speed = 260;
+
+            _projectiles.push_back(tmpProj);
+        }
+    }
+
+    void Update(float dt, sf::RenderWindow &window)
+    {
+        int destroyedProjectileIdx = -1;
+
+        for (int i = 0; i < _projectiles.size(); i++) {
+            auto &p = _projectiles[i];
+
+            if (p.timeAlive < p.maxTimetoLive)
+                p.timeAlive += dt;
+            else {
+                destroyedProjectileIdx = i;
+            }
+
+            p.sprite.GetSprite().move((p.speed) * dt, 0);
+
+            window.draw(p.sprite.GetSprite());
+            // COUT("[proj]: dt: " << dt << " pos.x :" << p.sprite.GetPosition().x << "\n");
+        }
+
+        if (destroyedProjectileIdx != -1)
+            _projectiles.erase(_projectiles.begin() + destroyedProjectileIdx);
+
+        // for (auto &p : _projectiles) {
+
+        // }
+    }
+};
 
 class GPlayer : public nuts::GameObject
 {
-    enum PlayerColor
-    {
-        BLUE = 0,
-        RED,
-        GREEN,
-        PURPLE
-    };
+    ClientID          _clientId = -1;
+    nuts::Vector2f    _pos;
+    nuts::Texture     _playerTexture;
+    ProjectileManager _projectileManager;
 
 public:
+    VelocityComponent *_vel = nullptr;
+
+    /**
+     * left, right, up, down
+     * in that order
+     */
+    bool _directionalKeys[4] = { 0 };
+
+    bool       _isFiering = 0;
+    sf::Uint16 _score     = 0;
+    sf::Uint16 _health    = 0;
+    sf::Uint16 _maxHealth = 0;
+
     GPlayer(ClientID id)
     {
         _clientId = id;
@@ -31,6 +151,7 @@ public:
         AddComponent<StateComponent>();
 
         _playerTexture.LoadFromFile("./resources/sprites/players.gif");
+        _projectileManager = ProjectileManager("./resources/sprites/r-typesheet1.gif");
 
         auto &spriteComp = GetComponent<SpriteComponent>();
         auto &stateComp  = GetComponent<StateComponent>();
@@ -73,8 +194,8 @@ public:
 
     void SetPosition(nuts::Vector2f pos)
     {
-        auto &transform = GetComponent<TransformComponent>();
-        transform.position = {pos.x, pos.y};
+        auto &transform    = GetComponent<TransformComponent>();
+        transform.position = { pos.x, pos.y };
     }
 
     void SetId(int id)
@@ -103,27 +224,12 @@ public:
         *_vel = { vel.x, vel.y };
     }
 
-    void Update()
+    void Update(float dt, sf::RenderWindow &window)
     {
         Move();
+        if (_isFiering)
+            _projectileManager.FireProjectile(GetPosition(), ProjectileManager::SMALL, dt);
+
+        _projectileManager.Update(dt, window);
     }
-
-private:
-    ClientID       _clientId = -1;
-    nuts::Vector2f _pos;
-    nuts::Texture  _playerTexture;
-
-public:
-    VelocityComponent *_vel = nullptr;
-
-    /**
-     * left, right, up, down
-     * in that order
-     */
-    bool _directionalKeys[4] = { 0 };
-
-    bool       _isFiering = 0;
-    sf::Uint16 _score     = 0;
-    sf::Uint16 _health    = 0;
-    sf::Uint16 _maxHealth = 0;
 };

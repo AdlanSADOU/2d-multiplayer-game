@@ -31,7 +31,7 @@ class RenderSystem : public System
                 auto &stateComponent = scene.GetComponent<StateComponent>(entity);
 
                 if (stateComponent.state == currentState) {
-                    auto const& spriteComponent = scene.GetComponent<SpriteComponent>(entity);
+                    auto & spriteComponent = scene.GetComponent<SpriteComponent>(entity);
 
                     window.draw(spriteComponent.sprite.GetSprite());
                 }

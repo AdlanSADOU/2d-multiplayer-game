@@ -28,10 +28,14 @@ ${CMAKE_CURRENT_BINARY_DIR}/resources)
 
 if(MSVC)
 
-target_link_directories(rtype_client PUBLIC ${SFML_LIBS_DIR_DEBUG})
-target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
+# target_link_directories(rtype_client PUBLIC ${SFML_LIBS_DIR_DEBUG})
+# target_link_libraries(rtype_client ${SFML_LIBS_DEBUG})
 
 target_compile_options(rtype_client PRIVATE /W3)
+
+add_custom_command(
+        TARGET rtype_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${NUTS_LIB_DIR}/nuts_engine.dll ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 
     file(GLOB SFML_DLLS_DEBUG "${SFML_LIBS_DIR_DEBUG}/*.dll")
     foreach(myDll IN LISTS SFML_DLLS_DEBUG)

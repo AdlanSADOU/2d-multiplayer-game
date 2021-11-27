@@ -87,12 +87,12 @@ void RType::OnBtnQuit(Event &event)
 void RType::Run()
 {
     while (_engine->IsRunning()) {
-        _engine->Clear();
         _engine->HandleEvent();
 
-        if (_engine->IsKeyPressed(nuts::Key::LeftArrow)) {
-            scene.InvokeEvent(nuts::Key::LeftArrow);
-        }
+        _engine->Clear();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
+            COUT("KJJJJJJJ");
 
         if (_engine->IsKeyPressed(nuts::Key::P)) {
             sf::Packet packet;
@@ -136,7 +136,7 @@ void RType::Run()
                 _game->Update();
                 _game->Draw();
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (33.f)) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (16.f)) {
                     INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
