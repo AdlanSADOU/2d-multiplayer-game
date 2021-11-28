@@ -121,6 +121,7 @@ public:
         lastPacket = remotePacket;
 
         {
+            auto dt = _deltaClock.getElapsedTime().asSeconds();
 
             if (_status == sf::Socket::Done) {
                 static int receiveAccumulator = 0;
@@ -130,8 +131,6 @@ public:
                     receiveAcc         = receiveAcc.Zero;
                 }
                 ++receiveAccumulator;
-
-                acc = acc.Zero;
 
                 sf::Packet tmpPacket = remotePacket;
                 tmpPacket >> type;
@@ -203,10 +202,10 @@ public:
             nuts::Vector2f &pos     = monster.pos;
             nuts::Vector2f &gotoPos = monster.gotoPos;
 
-            if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt * 2; }
-            if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt * 2; }
-            if (pos.y >= gotoPos.y + 10) { pos.y -= 100 * dt * 2; }
-            if (pos.y <= gotoPos.y - 10) { pos.y += 100 * dt * 2; }
+            if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt; }
+            if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt; }
+            if (pos.y >= gotoPos.y + 10) { pos.y -= 100 * dt; }
+            if (pos.y <= gotoPos.y - 10) { pos.y += 100 * dt; }
 
             if ((pos.x >= gotoPos.x - 10 && pos.x <= gotoPos.x + 10) && (pos.y >= gotoPos.y - 10 && pos.y <= gotoPos.y + 10)) {
                 monster.gotoPos = GetRandomPos();
@@ -216,17 +215,18 @@ public:
 
     void UpdateMonsters()
     {
-        UpdateMonstersPos();
-
-        if (_monsters.size() < 10 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.8f) {
-            SMInfos tmp { GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
+        if (_monsterSpawn.getElapsedTime().asSeconds() >= 0.5f) {
+            SMInfos tmp = { GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
             _monsters.emplace_back(tmp);
             _monsterSpawn.restart();
         }
 
-        if (_broadcastClock.getElapsedTime().asSeconds() > 1 / 22.f) {
+        UpdateMonstersPos();
+
+        if (_broadcastClock.getElapsedTime().asSeconds() > 1 / 16.f) {
             sf::Packet mPacket;
             mPacket << Net::Events::MONSTER_UPDATE_POS;
+
             for (auto &monster : _monsters) {
                 mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y;
             }

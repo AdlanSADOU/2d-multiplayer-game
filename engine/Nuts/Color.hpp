@@ -11,6 +11,10 @@
 
 namespace nuts
 {
+    /**
+     * @brief Color defined by RGBA color code.
+     * 
+     */
     typedef struct
     {
         uint8_t r;

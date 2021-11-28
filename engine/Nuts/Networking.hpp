@@ -37,6 +37,10 @@ using ClientID = sf::Int32;
 
 namespace Net {
 
+    /**
+     * @brief Utility namespace representing all the networking events that can occurs between the server and the client.
+     *
+     */
     namespace Events {
         const EventType CLIENT_CONNECT     = HASH(Events::CLIENT_CONNECT);
         const EventType CLIENT_DISCONNECT  = HASH(Events::CLIENT_DISCONNECT);
@@ -61,8 +65,11 @@ namespace Net {
 
     }
 
-    class INetClient
-    {
+    /**
+     * @brief Networking instance of a Client.
+     * The client is represented by two networking packet type : TCP & UDP. It stores the IP address & UDP port of both game & server. It is represented by a client ID, and a current state, to check is the user is connected to the server or not.
+     */
+    class INetClient {
     private:
         std::thread *th_udpReceive;
         std::mutex   _udpSocket_mutex;
@@ -83,6 +90,10 @@ namespace Net {
         ClientID _clientId    = -1;
         bool     _isConnected = false;
 
+        /**
+         * @brief Receive the incoming packet from the TCP socket, and invoke the attached event.
+         *
+         */
         void TcpReceive()
         {
             sf::Packet packet;
@@ -98,6 +109,10 @@ namespace Net {
             }
         }
 
+        /**
+         * @brief Receive the incoming packet from the UDP socket, and invoke the attached event.
+         *
+         */
         void UdpReceive()
         {
             int i = 0;
@@ -128,43 +143,85 @@ namespace Net {
         }
 
     public:
+        /**
+         * @brief Construct a new INetClient object
+         *
+         */
         INetClient() {};
 
+        /**
+         * @brief Disconnect the client from the tcp socket before destroying it.
+         *
+         */
         ~INetClient()
         {
             _tcpSocket.disconnect();
         }
 
+        /**
+         * @brief Return the id of the current client.
+         *
+         * @return ClientID
+         */
         ClientID GetLocalClientId() const
         {
             return _clientId;
         }
 
+        /**
+         * @brief Return the port to which the UDP socket is bound locally
+         *
+         * @return sf::Uint16 if bound to a port, 0 otherwise
+         */
         sf::Uint16 GetLocalUdpPort() const
         {
             return _udpSocket->getLocalPort();
         }
 
+        /**
+         * @brief Return IP address of the remote server.
+         *
+         * @return sf::IpAddress
+         */
         sf::IpAddress GetRemoteServerIp() const
         {
             return _remoteServerIp;
         }
 
+        /**
+         * @brief Return the port the server is bound to.
+         *
+         * @return sf::Uint16
+         */
         sf::Uint16 GetRemoteServerPort() const
         {
             return _remoteServerPort;
         }
 
+        /**
+         * @brief Return the connection status of the client.
+         *
+         * @return True if the client is connected, False otherwise.
+         */
         bool IsConnected() const
         {
             return _isConnected;
         }
 
+        /**
+         * @brief Set the id of the client.
+         *
+         * @param id client id
+         */
         void SetLocalClientId(ClientID id)
         {
             _clientId = id;
         }
 
+        /**
+         * @brief Receive packets from both TCP & UDP sockets.
+         *
+         */
         void Update()
         {
             _dt = _clock.restart();
@@ -183,6 +240,13 @@ namespace Net {
             _acc = _acc.Zero;
         }
 
+        /**
+         * @brief Connect the client to the server's Ip adress and port.
+         *
+         * @param serverIp Ip address of the server.
+         * @param serverPort Port where the server is bound to.
+         * @return True if the client has successfully connected, False if the user has failed connection to TCP socket or UDP socket.
+         */
         bool Connect(sf::IpAddress serverIp, sf::Uint16 serverPort)
         {
             if (_tcpSocket.connect(serverIp, serverPort) != sf::Socket::Done) {
@@ -219,6 +283,10 @@ namespace Net {
             return true;
         }
 
+        /**
+         * @brief Disconnect the client from the Tcp socket, if connected.
+         *
+         */
         void Disconnect()
         {
             if (_isConnected)
@@ -226,6 +294,11 @@ namespace Net {
             th_udpReceive->join();
         }
 
+        /**
+         * @brief Send a packet through the Tcp socket.
+         * If the client is not connected, this function has no effect. Display an error in the terminal if it fails.
+         * @param packet Packet to send.
+         */
         void TcpSend(sf::Packet &packet)
         {
             if (!_isConnected) return;
@@ -235,6 +308,11 @@ namespace Net {
             }
         }
 
+        /**
+         * @brief Send a packet through the Udp socket.
+         * Displays an error in the output if it fails.
+         * @param packet Packet to send.
+         */
         void UdpSend(sf::Packet &packet)
         {
             if (!_isConnected) return;
@@ -247,6 +325,12 @@ namespace Net {
                 std::cerr << "[Net-UDP]: Sent partial data\n";
         }
 
+        /**
+         * @brief Set both Ip address & Udp port of the game.
+         *
+         * @param gameIp Ip address of the game.
+         * @param gamePort Port where the game if bound to.
+         */
         void SetRemoteGameUdpEndpoint(sf::IpAddress &gameIp, sf::Uint16 gamePort)
         {
             std::cerr << "[Net-UDP]: SetRemoteGameUdpEndpoint to [" << gameIp << ":" << gamePort << "\n";

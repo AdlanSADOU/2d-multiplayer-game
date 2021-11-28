@@ -72,13 +72,16 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
     float posY;
 
     while (!packet.endOfPacket()) {
+            COUT("mosters!");
+
         packet >> id >> type >> posX >> posY;
 
         if (_monsters.find(id) == std::end(_monsters)) {
-            _monsters.insert({ id, GMonster({ id, (GMonster::Type)type, { posX, posY } }, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]) });
-        } else {
-            auto &tComp = _monsters[id].GetComponent<TransformComponent>();
-            tComp       = { posX, posY };
+            GMonster::MInfos minfos = {id, (GMonster::Type)type, {posX, posY}};
+            GMonster tmp = GMonster(minfos, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]);
+            _monsters.insert({id, tmp});
         }
+        auto &tComp = _monsters[id].GetComponent<TransformComponent>();
+        tComp = {posX, posY};
     }
 }
