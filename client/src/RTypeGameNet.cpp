@@ -72,7 +72,6 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
     float posY;
 
     while (!packet.endOfPacket()) {
-            COUT("mosters!");
 
         packet >> id >> type >> posX >> posY;
 

@@ -215,7 +215,7 @@ public:
 
     void UpdateMonsters()
     {
-        if (_monsterSpawn.getElapsedTime().asSeconds() >= 0.5f) {
+        if (_monsters.size() < 100 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.8f) {
             SMInfos tmp = { GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
             _monsters.emplace_back(tmp);
             _monsterSpawn.restart();
