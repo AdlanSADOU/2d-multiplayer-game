@@ -31,6 +31,6 @@ sfml-system-2.dll
 sfml-window-2.dll)
 
 # UNIX
-set(SFML_LIBS_UNIX sfml-audio.so sfml-graphics.so sfml-network.so sfml-system.so sfml-window.so)
-set(SFML_LIB_DIR_UNIX ../SFML/lib)
+set(SFML_LIBS_UNIX sfml-audio-d.so sfml-graphics-d.so sfml-network-d.so sfml-system-d.so sfml-window-d.so)
+set(SFML_LIB_DIR_UNIX ../SFML/build/lib)
 

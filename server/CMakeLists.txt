@@ -6,24 +6,19 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(rtype_server
-ServerMain.cpp
-Imgui/imgui-SFML.cpp
-Imgui/imgui_draw.cpp
-Imgui/imgui_tables.cpp
-Imgui/imgui_widgets.cpp
-Imgui/imgui.cpp
-)
+ServerMain.cpp)
 
 target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Imgui)
 
-target_link_libraries(rtype_server nuts_engine opengl32)
 target_include_directories(rtype_server PUBLIC ${SFML_INCLUDE_DIR})
+
 
 if(MSVC)
 target_compile_options(rtype_server PRIVATE /W3)
     target_link_directories(rtype_server PUBLIC ${SFML_LIBS_DIR_DEBUG})
     target_link_libraries(rtype_server ${SFML_LIBS_DEBUG})
+    target_link_libraries(rtype_server nuts_engine opengl32)
 
     add_custom_command(
         TARGET rtype_server POST_BUILD
@@ -48,4 +43,6 @@ target_compile_options(rtype_server PRIVATE /W3)
 elseif(UNIX)
     target_link_directories(rtype_server PUBLIC ${SFML_LIB_DIR_UNIX})
     target_link_libraries(rtype_server ${SFML_LIBS_UNIX})
+target_link_libraries(rtype_server nuts_engine)
+
 endif()

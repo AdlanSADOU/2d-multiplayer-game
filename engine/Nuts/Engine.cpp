@@ -8,6 +8,7 @@
 #include "Engine.hpp"
 
 namespace nuts {
+    
     void Engine::InitWindow(char const *windowName, uint32_t width, uint32_t height)
     {
         window.create({ width, height, 32 }, windowName);

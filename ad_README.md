@@ -1,4 +1,5 @@
 # Remarks
+git submodule update --force --init --remote
 
 width 372
 start top 18

@@ -22,9 +22,6 @@
 #include <thread>
 #include <vector>
 
-#include "imgui.h"
-#include "imgui-SFML.h"
-
 Scene scene;
 
 #define FRAMERATE (1 / (33.f * 6))
@@ -52,10 +49,6 @@ public:
 
     void Init()
     {
-        // _window.create({ 400, 300, 32 }, "Server");
-        // _window.setFramerateLimit(30);
-        ImGui::SFML::Init(_window);
-
         scene.Init();
         scene.RegisterComponent<SClientComponent>();
         scene.RegisterComponent<ConnectionComponent>();
@@ -130,7 +123,7 @@ public:
         GameThread *gameTh = new GameThread;
 
         sf::Int32 gameId = event.GetParam<sf::Int32>(1);
-        auto &vec =event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0);
+        auto const &vec = event.GetParam<std::vector<std::shared_ptr<SClientComponent>>>(0);
 
         GameWorkers.push_back(new std::thread(&GameThread::Run, gameTh, vec, gameId));
     }

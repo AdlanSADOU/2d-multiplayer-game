@@ -87,5 +87,7 @@ void RType::OnStartGame(Event &event)
 
     _state = GameState::GAME;
     _game->SetLocalClientId(INetClient::GetLocalClientId());
-    INetClient::SetRemoteGameUdpEndpoint(sf::IpAddress(gameIp), gamePort);
+
+    sf::IpAddress ip = sf::IpAddress(gameIp);
+    INetClient::SetRemoteGameUdpEndpoint(ip, gamePort);
 }

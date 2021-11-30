@@ -14,8 +14,15 @@
 #include <iostream>
 #include <functional>
 
+#ifdef _wind32
+    #define EXPORT __declspec(dllexport)
+#elif __GNUC__
+    #define EXPORT __attribute__((visibility("default")))
+    // #define EXPORT
+#endif
+
 namespace nuts {
-    class __declspec(dllexport) Engine
+    class EXPORT Engine
     {
     private:
         nuts::Key            _downKey     = nuts::Unknown;
