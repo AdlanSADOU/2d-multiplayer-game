@@ -14,7 +14,7 @@
 #include <iostream>
 #include <functional>
 
-#ifdef _wind32
+#ifdef _WIN32
     #define EXPORT __declspec(dllexport)
 #elif __GNUC__
     #define EXPORT __attribute__((visibility("default")))
