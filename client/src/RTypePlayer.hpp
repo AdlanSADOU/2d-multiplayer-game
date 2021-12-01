@@ -100,8 +100,8 @@ public:
             tmpProj.position.x += 20;
             tmpProj.position.y += 3;
 
-            transformComp.position = {tmpProj.position.x, tmpProj.position.y};
-            tmpProj.speed = 260;
+            transformComp.position = { tmpProj.position.x, tmpProj.position.y };
+            tmpProj.speed          = 260;
 
             _projectiles.push_back(tmpProj);
         }
@@ -112,10 +112,10 @@ public:
         int destroyedProjectileIdx = -1;
 
         for (int i = 0; i < _projectiles.size(); i++) {
-            auto &p            = _projectiles[i];
-            auto &spriteComp   = p.GetComponent<SpriteComponent>();
-            auto &transComp = p.GetComponent<TransformComponent>();
-            auto &velComp = p.GetComponent<VelocityComponent>();
+            auto &p          = _projectiles[i];
+            auto &spriteComp = p.GetComponent<SpriteComponent>();
+            auto &transComp  = p.GetComponent<TransformComponent>();
+            auto &velComp    = p.GetComponent<VelocityComponent>();
 
             if (p.timeAlive < p.maxTimetoLive)
                 p.timeAlive += dt;
@@ -124,14 +124,15 @@ public:
             }
             // spriteComp.sprite.Move((p.speed) * dt, 0);
             // transComp.position
-            velComp.velocity.x =  p.speed;
+            velComp.velocity.x = p.speed;
             // window.draw(spriteComp.sprite.GetSprite());
             // COUT("[proj]: dt: " << dt << " pos.x :" << spriteComp.sprite.x << "\n");
         }
 
-        if (destroyedProjectileIdx != -1)
+        if (destroyedProjectileIdx != -1) {
+            scene.DestroyEntity(_projectiles[destroyedProjectileIdx].GetEntity());
             _projectiles.erase(_projectiles.begin() + destroyedProjectileIdx);
-
+        }
         // for (auto &p : _projectiles) {
 
         // }

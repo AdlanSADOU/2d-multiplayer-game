@@ -11,6 +11,7 @@
 #include <array>
 #include <cassert>
 #include <queue>
+#include "../Utilities.hpp"
 
 class EntityManager
 {
@@ -35,12 +36,18 @@ class EntityManager
             _EntitiesPool.pop();
             ++_ExistingEntitiesCount;
 
+            DEBUG_LOG("creating entity " << id);
+            DEBUG_LOG(" | count: " << _ExistingEntitiesCount << "\n");
+
             return id;
         }
 
         void DestroyEntity(Entity entity)
         {
             assert(entity < MAX_ENTITIES && "Entity out of range.");
+
+            DEBUG_LOG("destroying entity " << entity);
+            DEBUG_LOG(" | count: " << _ExistingEntitiesCount << "\n");
 
             _Signatures[entity].reset();
             _EntitiesPool.push(entity);

@@ -6,13 +6,14 @@
 */
 
 #pragma once
+#define DLOG 0
 
 #include <iostream>
 
 #define COUT(textStream) (std::cout << "$> " << textStream)
 
-#if defined(_DEBUG)
+#if (0)
 #define DEBUG_LOG(textStream) (std::cout << " " << textStream)
 #else
-#define DCOUT(textStream) (0)
+#define DEBUG_LOG(textStream) (0)
 #endif // _DEBUG
