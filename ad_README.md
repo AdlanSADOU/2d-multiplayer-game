@@ -1,10 +1,7 @@
 # Remarks
 git submodule update --force --init --remote
 
-width 372
-start top 18
-start left 134
-size 32x32
+
 
 RType.cpp => GameThread.hpp => RTypeGameNet.cpp
 

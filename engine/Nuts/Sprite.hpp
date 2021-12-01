@@ -60,6 +60,17 @@ namespace nuts
             }
 
             /**
+             * @brief Set the position of the sprite
+             *
+             * @param pos
+             */
+
+            void Move(float offsetX, float offsetY)
+            {
+                _sprite.move(offsetX, offsetY);
+            }
+
+            /**
              * @brief Get the position of the sprite
              *
              * @param pos
@@ -192,14 +203,14 @@ namespace nuts
             {
                 _current_frame.left += _current_frame.width;
 
-                if (_current_frame.left >= _current_frame.width * (_frame_count)) {
-                    if (_is_looping) {
-                        _current_frame.left = _first_frame.left;
-                    }
-                    else {
-                        _current_frame.left = _current_frame.width * (_frame_count);
-                    }
-                }
+                // if (_current_frame.left >= _current_frame.width * (_frame_count)) {
+                //     if (_is_looping) {
+                //         _current_frame.left = _first_frame.left;
+                //     }
+                //     else {
+                //         _current_frame.left = _current_frame.width * (_frame_count);
+                //     }
+                // }
 
                 SetCurrentFrame(_current_frame);
             }

@@ -13,15 +13,15 @@
 
 class ProjectileManager
 {
-    struct Projectile
+    class Projectile : public nuts::GameObject
     {
-        nuts::Sprite   sprite   = {};
+    public:
         nuts::Vector2f position = {};
 
         bool  isDestroyed   = false;
         bool  canFire       = true;
         float timeAlive     = 0;
-        float maxTimetoLive = 2;
+        float maxTimetoLive = 4;
         float speed;
     };
 
@@ -53,38 +53,54 @@ public:
         acc = 0;
 
         if (type == BIG) {
+            // Projectile tmpProj;
+            // tmpProj.sprite.SetTexture(_texture);
+            // tmpProj.sprite.SetTextureRect({ 134, 18, 32, 32 });
+            // tmpProj.sprite.SetFirstFrame({ 134, 18, 32, 32 });
+            // tmpProj.sprite.SetFrameCount(4);
+            // tmpProj.sprite.SetFrameTime(.5f);
+            // tmpProj.sprite.InitAnimationClock();
+            // tmpProj.sprite.SetAnimated(true);
+
+            // tmpProj.position = startPosition;
+            // tmpProj.position.x += 20;
+            // tmpProj.position.y += -6;
+
+            // tmpProj.sprite.SetPosition(tmpProj.position);
+            // tmpProj.speed = 180;
+
+            // _projectiles.push_back(tmpProj);
+        } else if (type == SMALL) {
             Projectile tmpProj;
-            tmpProj.sprite.SetTexture(_texture);
-            tmpProj.sprite.SetTextureRect({ 134, 18, 32, 32 });
-            tmpProj.sprite.SetFirstFrame({ 134, 18, 32, 32 });
-            tmpProj.sprite.SetFrameCount(4);
-            tmpProj.sprite.SetFrameTime(.5f);
-            tmpProj.sprite.InitAnimationClock();
-            tmpProj.sprite.SetAnimated(true);
+            tmpProj.Create("small projectile");
+            tmpProj.AddComponent<SpriteComponent>();
+            tmpProj.AddComponent<TransformComponent>();
+            tmpProj.AddComponent<VelocityComponent>();
+            tmpProj.AddComponent<StateComponent>();
+
+            auto &spriteComp    = tmpProj.GetComponent<SpriteComponent>();
+            auto &transformComp = tmpProj.GetComponent<TransformComponent>();
+            auto &velocityComp  = tmpProj.GetComponent<VelocityComponent>();
+            auto &stateComp     = tmpProj.GetComponent<StateComponent>();
+
+            stateComp.state       = GameState::GAME;
+            velocityComp.velocity = { 0, 0 };
+
+            spriteComp.sprite.SetTexture(_texture);
+            spriteComp.sprite.SetTextureRect({ 232, 103, 16, 12 });
+            spriteComp.sprite.SetFirstFrame({ 232, 103, 16, 12 });
+            spriteComp.sprite.SetFrameTime(0.2f);
+
+            spriteComp.sprite.SetAnimated(true);
+            // spriteComp.sprite.SetLooped(true);
+            spriteComp.sprite.SetFrameCount(2);
+            spriteComp.sprite.InitAnimationClock();
 
             tmpProj.position = startPosition;
             tmpProj.position.x += 20;
-            tmpProj.position.y += -6;
-
-            tmpProj.sprite.SetPosition(tmpProj.position);
-            tmpProj.speed = 180;
-
-            _projectiles.push_back(tmpProj);
-        } else if (type == SMALL) {
-            Projectile tmpProj;
-            tmpProj.sprite.SetTexture(_texture);
-            tmpProj.sprite.SetTextureRect({ 232, 103, 16, 12 });
-            tmpProj.sprite.SetFirstFrame({ 232, 103, 16, 12 });
-            tmpProj.sprite.SetFrameTime(.5f);
-            tmpProj.sprite.InitAnimationClock();
-            tmpProj.sprite.SetAnimated(true);
-            tmpProj.sprite.SetFrameCount(2);
-
-            tmpProj.position = startPosition;
-            tmpProj.position.x += 12;
             tmpProj.position.y += 3;
 
-            tmpProj.sprite.SetPosition(tmpProj.position);
+            transformComp.position = {tmpProj.position.x, tmpProj.position.y};
             tmpProj.speed = 260;
 
             _projectiles.push_back(tmpProj);
@@ -96,18 +112,21 @@ public:
         int destroyedProjectileIdx = -1;
 
         for (int i = 0; i < _projectiles.size(); i++) {
-            auto &p = _projectiles[i];
+            auto &p            = _projectiles[i];
+            auto &spriteComp   = p.GetComponent<SpriteComponent>();
+            auto &transComp = p.GetComponent<TransformComponent>();
+            auto &velComp = p.GetComponent<VelocityComponent>();
 
             if (p.timeAlive < p.maxTimetoLive)
                 p.timeAlive += dt;
             else {
                 destroyedProjectileIdx = i;
             }
-
-            p.sprite.GetSprite().move((p.speed) * dt, 0);
-
-            window.draw(p.sprite.GetSprite());
-            // COUT("[proj]: dt: " << dt << " pos.x :" << p.sprite.GetPosition().x << "\n");
+            // spriteComp.sprite.Move((p.speed) * dt, 0);
+            // transComp.position
+            velComp.velocity.x =  p.speed;
+            // window.draw(spriteComp.sprite.GetSprite());
+            // COUT("[proj]: dt: " << dt << " pos.x :" << spriteComp.sprite.x << "\n");
         }
 
         if (destroyedProjectileIdx != -1)

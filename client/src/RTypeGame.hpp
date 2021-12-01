@@ -190,6 +190,7 @@ class RTypeGame
         GBackground _background;
         nuts::Font  _font;
         GameUI      _ui;
+        
         std::unordered_map<GMonster::Type, nuts::Texture> _MTextures;
         std::unordered_map<GMonster::Type, nuts::IntRect> _MTexturesRect;
         std::unordered_map<GMonster::Type, int>           _MFrameCount;
