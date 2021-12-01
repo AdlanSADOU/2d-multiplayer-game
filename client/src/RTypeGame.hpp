@@ -134,7 +134,10 @@ class GMonster : public nuts::GameObject
             spriteComp.sprite.InitAnimationClock();
         }
 
-        ~GMonster() {}
+        ~GMonster() {
+            COUT("monster destroyed with id: "<< GetEntity() << "\n");
+            scene.DestroyEntity(GetEntity());
+        }
 
         GMonster::Type GetType()
         {
@@ -184,13 +187,13 @@ class RTypeGame
     private:
         std::shared_ptr<nuts::Engine>           _engine;
         std::unordered_map<ClientID, GPlayer *> _players;
-        std::unordered_map<int, GMonster> _monsters;
+        std::unordered_map<int, GMonster *> _monsters;
 
         ClientID    _localClientId;
         GBackground _background;
         nuts::Font  _font;
         GameUI      _ui;
-        
+
         std::unordered_map<GMonster::Type, nuts::Texture> _MTextures;
         std::unordered_map<GMonster::Type, nuts::IntRect> _MTexturesRect;
         std::unordered_map<GMonster::Type, int>           _MFrameCount;

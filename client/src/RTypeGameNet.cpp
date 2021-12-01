@@ -77,10 +77,12 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
 
         if (_monsters.find(id) == std::end(_monsters)) {
             GMonster::MInfos minfos = {id, (GMonster::Type)type, {posX, posY}};
-            GMonster tmp = GMonster(minfos, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]);
-            _monsters.insert({id, tmp});
+
+            //note(ad): monsters are now allocated to avoid double entity destruction
+            GMonster *tmp = new GMonster(minfos, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]);
+            _monsters.insert({id, std::move(tmp)});
         }
-        auto &tComp = _monsters[id].GetComponent<TransformComponent>();
+        auto &tComp = _monsters[id]->GetComponent<TransformComponent>();
         tComp = {posX, posY};
     }
 }
