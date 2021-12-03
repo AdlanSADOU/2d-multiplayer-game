@@ -152,7 +152,7 @@ void RTypeGame::Update()
             auto &spriteComp = projectiles[j].GetComponent<SpriteComponent>();
 
             if (m.second) {
-                auto &mrect = m.second->GetComponent<SpriteComponent>().sprite.GetSprite().getGlobalBounds();
+                auto const &mrect = m.second->GetComponent<SpriteComponent>().sprite.GetSprite().getGlobalBounds();
                 if (spriteComp.sprite.GetSprite().getGlobalBounds().intersects(mrect)) {
                     _destroyed_monster_id = m.first;
                     break;
