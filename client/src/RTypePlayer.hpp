@@ -92,7 +92,7 @@ public:
             spriteComp.sprite.SetFrameTime(0.2f);
 
             spriteComp.sprite.SetAnimated(true);
-            // spriteComp.sprite.SetLooped(true);
+            spriteComp.sprite.SetLooped(true);
             spriteComp.sprite.SetFrameCount(2);
             spriteComp.sprite.InitAnimationClock();
 
