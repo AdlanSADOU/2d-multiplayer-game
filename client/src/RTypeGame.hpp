@@ -100,7 +100,7 @@ public:
         int            id;
         GMonster::Type type;
         nuts::Vector2f pos;
-        bool is_destroyed = false;
+        bool           is_destroyed = false;
     };
 
     GMonster() { }
@@ -170,6 +170,7 @@ public:
     }
 
     MInfos _infos;
+
 private:
 };
 
@@ -186,6 +187,7 @@ private:
     std::shared_ptr<nuts::Engine>           _engine;
     std::unordered_map<ClientID, GPlayer *> _players;
     std::unordered_map<int, GMonster *>     _monsters;
+    std::queue<sf::Packet>                  _monster_packets_queue;
 
     ClientID    _localClientId;
     GBackground _background;
@@ -214,6 +216,7 @@ public:
     bool IsMonsterInList(int id);
 
     void Update();
+    void ProcessMonsterPackets();
     void Draw();
 
     void OnInitialGameInfo(Event &event);

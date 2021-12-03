@@ -73,6 +73,56 @@ void RTypeGame::SetLocalClientId(ClientID clientId)
     _localClientId = clientId;
 }
 
+void RTypeGame::ProcessMonsterPackets()
+{
+    for (int i = 0; i < _monster_packets_queue.size(); i++) {
+        sf::Packet packet = _monster_packets_queue.front();
+        _monster_packets_queue.pop();
+
+        while (!packet.endOfPacket()) {
+            int   id = -1;
+            int   type;
+            float posX;
+            float posY;
+            bool  destroyed = false;
+
+            packet >> id >> type >> posX >> posY >> destroyed;
+
+            if (id < 0) {
+                COUT("Error: monster id was less than 0 : " << id << "\n");
+                return;
+            }
+
+            if (!destroyed && _monsters.find(id) == std::end(_monsters)) {
+                GMonster::MInfos minfos      = { id, (GMonster::Type)type, { posX, posY } };
+                nuts::Texture   &texture     = _MTextures[(GMonster::Type)type];
+                nuts::IntRect    rect        = _MTexturesRect[(GMonster::Type)type];
+                int              frame_count = _MFrameCount[(GMonster::Type)type];
+
+                // note(ad): monsters are now allocated to avoid double entity destruction
+                GMonster *tmp = new GMonster(minfos, texture, rect, frame_count);
+                _monsters.insert({ id, std::move(tmp) });
+            }
+
+            if (!destroyed && _monsters[id]) {
+                auto &tComp                        = _monsters[id]->GetComponent<TransformComponent>();
+                tComp                              = { posX, posY };
+                _monsters[id]->_infos.is_destroyed = destroyed;
+            }
+
+            if (destroyed && (_monsters.find(id) != std::end(_monsters))) {
+                scene.DestroyEntity(_monsters[id]->GetEntity());
+                delete _monsters[id];
+                _monsters[id] = nullptr;
+                _monsters.erase(id);
+
+                COUT("[UDP-REC]: depop monster with id: " << id << "\n");
+                continue;
+            }
+        }
+    }
+}
+
 // Local client update
 void RTypeGame::Update()
 {
@@ -83,6 +133,8 @@ void RTypeGame::Update()
 
     _background.Update();
 
+    ProcessMonsterPackets();
+
     for (auto &player : _players) {
         player.second->Update(_engine->dt, _engine->window);
     }
@@ -91,7 +143,7 @@ void RTypeGame::Update()
 
     for (auto &m : _monsters) {
         if (!m.second || m.first < 0) break;
-         // this entity could be destroyed by receive() thread while accessing it here
+        // this entity could be destroyed by receive() thread while accessing it here
         if (m.second->GetEntity() < 0 || m.second->GetEntity() > MAX_ENTITIES) continue;
 
         auto projectiles = GetLocalPlayer()->_projectileManager._projectiles;

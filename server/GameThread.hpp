@@ -289,7 +289,7 @@ public:
 
         static int i = 0;
 
-        if (i >= 1024)
+        if (i >= 512)
             for (auto it = _monsters.begin(); it != _monsters.end();) {
                 if (it->destroyed) {
                     COUT("erased > monster with id: " << it->id << "\n");

@@ -65,45 +65,7 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
 {
     sf::Packet packet = event.GetParam<sf::Packet>(0);
 
-    while (!packet.endOfPacket()) {
-        int   id = -1;
-        int   type;
-        float posX;
-        float posY;
-        bool  destroyed = false;
-
-        packet >> id >> type >> posX >> posY >> destroyed;
-
-        if (id < 0) {
-            COUT("Error: monster id was less than 0 : " << id << "\n");
-            return;
-        }
-
-        if (!destroyed && _monsters.find(id) == std::end(_monsters)) {
-            GMonster::MInfos minfos      = { id, (GMonster::Type)type, { posX, posY } };
-            nuts::Texture   &texture     = _MTextures[(GMonster::Type)type];
-            nuts::IntRect    rect        = _MTexturesRect[(GMonster::Type)type];
-            int              frame_count = _MFrameCount[(GMonster::Type)type];
-
-            // note(ad): monsters are now allocated to avoid double entity destruction
-            GMonster *tmp = new GMonster(minfos, texture, rect, frame_count);
-            _monsters.insert({ id, std::move(tmp) });
-        }
-
-        if (!destroyed && _monsters[id]) {
-            auto &tComp                        = _monsters[id]->GetComponent<TransformComponent>();
-            tComp                              = { posX, posY };
-            _monsters[id]->_infos.is_destroyed = destroyed;
-        }
-
-        if (destroyed && (_monsters.find(id) != std::end(_monsters))) {
-            scene.DestroyEntity(_monsters[id]->GetEntity());
-            delete _monsters[id];
-            _monsters[id] = nullptr;
-            _monsters.erase(id);
-
-            COUT("[UDP-REC]: depop monster with id: " << id << "\n");
-            continue;
-        }
-    }
+    // pushing received packets into queue to process them later
+    // with thread safety. see RTypeGame::ProcessMonsterPackets()
+    _monster_packets_queue.push(packet);
 }
