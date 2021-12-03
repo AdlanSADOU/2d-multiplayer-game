@@ -19,14 +19,14 @@
 
 #include <../client/src/RTypeGame.hpp>
 
-class GameThread
-{
+class GameThread {
     struct SMInfos
     {
-        int            id;
+        int            id = 0;
         GMonster::Type type;
         nuts::Vector2f pos;
         nuts::Vector2f gotoPos;
+        bool           destroyed = 0;
     };
 
 private:
@@ -41,8 +41,6 @@ private:
     sf::Time  _dt;
 
     std::vector<SMInfos> _monsters;
-
-    int _monsterId;
 
     std::int32_t  _gameId;
     sf::UdpSocket _socket;
@@ -61,6 +59,7 @@ public:
         srand((uint32_t)time(NULL));
 
         _eventManager.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&GameThread::OnClientKeyEvent, this));
+        // _eventManager.AddEventCallback(Net::Events::MONSTER_DESTROYED, BIND_CALLBACK(&GameThread::OnMonsterDestoyedEvent, this));
     };
 
     void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId)
@@ -158,19 +157,68 @@ public:
             return;
         }
 
+        bool  key_left             = 0;
+        bool  key_right            = 0;
+        bool  key_up               = 0;
+        bool  key_down             = 0;
+        float x                    = 0;
+        float y                    = 0;
+        bool  is_fiering           = 0;
+        int   destroyed_monster_id = -1;
+
         sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
 
         sf::Packet tmpPacket = inClientKeyPacket;
-        ClientID   clientId  = 0;
+        EventType  type;
+        ClientID   clientId = 0;
 
-        tmpPacket >> clientId;
+        tmpPacket >> type
+            >> clientId
+            >> key_left
+            >> key_right
+            >> key_up
+            >> key_down
+            >> x
+            >> y
+            >> is_fiering
+            >> destroyed_monster_id;
+
+        // COUT(
+        //     clientId
+        //     << key_left
+        //     << key_right
+        //     << key_up
+        //     << key_down
+        //     << x
+        //     << y
+        //     << is_fiering
+        //     << destroyed_monster_id << "\n");
+
+        if (destroyed_monster_id != -1) {
+            COUT("received destroyed_monster_id: " << destroyed_monster_id << "\n");
+            OnMonsterDestoyed(destroyed_monster_id);
+        }
 
         Broadcast(inClientKeyPacket, clientId);
     }
 
-    int GetNewMId()
+    void OnMonsterDestoyed(int destroyed_monster_id)
     {
-        return (_monsterId++);
+        static int last_destroyed_id = -1;
+        // if (last_destroyed_id == destroyed_monster_id)
+        //     return;
+
+        for (auto it = _monsters.begin(); it != _monsters.end();) {
+            if (it->id == destroyed_monster_id) {
+                COUT("marking as destroyed > monster with id: " << it->id << "\n");
+                // we just mark the monster with matching id as being destroyed
+                // it will eventually get erased in UpdateMonsters()
+                it->destroyed = true;
+                return;
+            } else {
+                ++it;
+            }
+        }
     }
 
     GMonster::Type GetRandomType()
@@ -202,10 +250,10 @@ public:
             nuts::Vector2f &pos     = monster.pos;
             nuts::Vector2f &gotoPos = monster.gotoPos;
 
-            if (pos.x >= gotoPos.x + 10) { pos.x -= 100 * dt; }
-            if (pos.x <= gotoPos.x - 10) { pos.x += 100 * dt; }
-            if (pos.y >= gotoPos.y + 10) { pos.y -= 100 * dt; }
-            if (pos.y <= gotoPos.y - 10) { pos.y += 100 * dt; }
+            if (pos.x >= gotoPos.x + 10) { pos.x -= 50 * dt; }
+            if (pos.x <= gotoPos.x - 10) { pos.x += 50 * dt; }
+            if (pos.y >= gotoPos.y + 10) { pos.y -= 50 * dt; }
+            if (pos.y <= gotoPos.y - 10) { pos.y += 50 * dt; }
 
             if ((pos.x >= gotoPos.x - 10 && pos.x <= gotoPos.x + 10) && (pos.y >= gotoPos.y - 10 && pos.y <= gotoPos.y + 10)) {
                 monster.gotoPos = GetRandomPos();
@@ -215,10 +263,14 @@ public:
 
     void UpdateMonsters()
     {
-        if (_monsters.size() < 100 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.8f) {
-            SMInfos tmp = { GetNewMId(), GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
+        static int monster_id = 0;
+
+        if (_monsters.size() < 40 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.4f) {
+            COUT("spawned monster with id: " << monster_id << "\n");
+            SMInfos tmp = { monster_id, GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
             _monsters.emplace_back(tmp);
             _monsterSpawn.restart();
+            ++monster_id;
         }
 
         UpdateMonstersPos();
@@ -228,10 +280,25 @@ public:
             mPacket << Net::Events::MONSTER_UPDATE_POS;
 
             for (auto &monster : _monsters) {
-                mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y;
+                mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y << monster.destroyed;
             }
+
             Broadcast(mPacket);
             _broadcastClock.restart();
         }
+
+        static int i = 0;
+
+        if (i >= 1024)
+            for (auto it = _monsters.begin(); it != _monsters.end();) {
+                if (it->destroyed) {
+                    COUT("erased > monster with id: " << it->id << "\n");
+                    it = _monsters.erase(it);
+                    i  = 0;
+                } else {
+                    ++it;
+                }
+            }
+        ++i;
     }
 };

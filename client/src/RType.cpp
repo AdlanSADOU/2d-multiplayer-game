@@ -7,7 +7,8 @@
 
 #include "RType.hpp"
 
-#include "Nuts/Input.hpp"
+#include <Nuts/Input.hpp>
+#include <Nuts/Utilities.hpp>
 
 #include <cstring>
 
@@ -23,7 +24,7 @@ void RType::Init()
 {
     _engine = std::make_shared<nuts::Engine>();
 
-    _engine->InitWindow("R-Type", 400, 300);
+    _engine->InitWindow("R-Type", 800, 400);
     _engine->SetFramerateLimit(60);
 
     scene.Init();
@@ -151,7 +152,22 @@ void RType::Run()
                                           << localPlayer->_directionalKeys[3]
                                           << localPlayer->GetPosition().x
                                           << localPlayer->GetPosition().y
-                                          << localPlayer->IsFiering();
+                                          << localPlayer->IsFiering()
+                                          << _game->_destroyed_monster_id;
+                        // COUT(
+                        //     GetLocalClientId()
+                        //     << localPlayer->_directionalKeys[0]
+                        //     << localPlayer->_directionalKeys[1]
+                        //     << localPlayer->_directionalKeys[2]
+                        //     << localPlayer->_directionalKeys[3]
+                        //     << localPlayer->GetPosition().x
+                        //     << localPlayer->GetPosition().y
+                        //     << localPlayer->IsFiering()
+                        //     << _game->_destroyed_monster_id << "\n");
+
+                        if (_game->_destroyed_monster_id != -1)
+                            COUT("[UDP-SEND]: destroyed monster with id: " << _game->_destroyed_monster_id << "\n");
+
                         INetClient::UdpSend(playerStatePacket);
                     }
                 }
@@ -163,5 +179,6 @@ void RType::Run()
         }
         _deltaClock.Restart();
         _engine->Present();
+
     }
 }

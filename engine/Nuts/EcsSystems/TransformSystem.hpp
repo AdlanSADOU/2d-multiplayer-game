@@ -38,6 +38,8 @@ class TransformSystem : public System
         void Update(nuts::Clock deltaClock, GameState currentState)
         {
             for (auto const &entity : _entities) {
+                if (entity < 0 || entity > MAX_ENTITIES) continue;
+
                 auto &stateComponent = scene.GetComponent<StateComponent>(entity);
 
                 if (stateComponent.state == currentState) {

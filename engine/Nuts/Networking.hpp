@@ -50,6 +50,7 @@ namespace Net {
         const EventType CLIENT_UDP         = HASH(Events::CLIENT_UDP);
         const EventType REMOTE_CLIENT_KEYS = HASH(Events::REMOTE_CLIENT_KEYS);
 
+        const EventType MONSTER_DESTROYED   = HASH(Events::Net::Events::MONSTER_DESTROYED);
         const EventType MONSTER_UPDATE_POS  = HASH(Events::MONSTER_UPDATE_POS);
         const EventType PLAYER_UPDATE_SCORE = HASH(Events::PLAYER_UPDATE_SCORE);
 
@@ -122,7 +123,7 @@ namespace Net {
                 sf::Uint16         tmpUdp = 0;
 
                 static std::uint64_t lastSequenceNumber = 0; // todo: packet sequence
-                    // std::uint64_t sequenceNumber = 0;
+                                                             // std::uint64_t sequenceNumber = 0;
 
                 if ((status = _udpSocket->receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
 

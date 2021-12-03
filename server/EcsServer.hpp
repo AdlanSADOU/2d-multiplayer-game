@@ -82,19 +82,10 @@ public:
         sf::Time acc;
 
         while (_running) {
-            // sf::Event event;
-            // while (_window.pollEvent(event)) {
-            //     ImGui::SFML::ProcessEvent(event);
-            // }
-
             dt = deltaClock.restart();
             acc += dt;
 
-            // ImGui::SFML::Update(_window, dt);
             _connectionSystem->_dt = dt;
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q) )
-                _running = false;
 
             // if (acc.asSeconds() > FRAMERATE)
             {
@@ -105,15 +96,6 @@ public:
 
                 acc = sf::Time::Zero;
             }
-
-            // ImGui::Begin("Info");
-            // ImGui::Text("dt: %f", dt.asSeconds());
-            // ImGui::End();
-
-            // _window.clear();
-            // // _window.draw(shape);
-            // ImGui::SFML::Render(_window);
-            // _window.display();
         }
     }
 

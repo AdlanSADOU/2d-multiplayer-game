@@ -82,8 +82,31 @@ void RTypeGame::Update()
         LocalClientInputs();
 
     _background.Update();
+
     for (auto &player : _players) {
         player.second->Update(_engine->dt, _engine->window);
+    }
+
+    _destroyed_monster_id = -1;
+
+    for (auto &m : _monsters) {
+        if (!m.second || m.first < 0) break;
+         // this entity could be destroyed by receive() thread while accessing it here
+        if (m.second->GetEntity() < 0 || m.second->GetEntity() > MAX_ENTITIES) continue;
+
+        auto projectiles = GetLocalPlayer()->_projectileManager._projectiles;
+
+        for (int j = 0; j < projectiles.size(); j++) {
+            auto &spriteComp = projectiles[j].GetComponent<SpriteComponent>();
+
+            if (m.second) {
+                auto &mrect = m.second->GetComponent<SpriteComponent>().sprite.GetSprite().getGlobalBounds();
+                if (spriteComp.sprite.GetSprite().getGlobalBounds().intersects(mrect)) {
+                    _destroyed_monster_id = m.first;
+                    break;
+                }
+            }
+        }
     }
 }
 
