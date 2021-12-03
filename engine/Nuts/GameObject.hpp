@@ -13,57 +13,59 @@
 
 extern Scene scene;
 
-namespace nuts
-{
-    class GameObject
-    {
-        protected:
-            std::string _name;
-            Entity      _entity;
+namespace nuts {
+    class GameObject {
+    protected:
+        std::string _name;
+        Entity      _entity;
 
-        public:
-            GameObject()
-            {
-            }
+    public:
+        GameObject()
+        {
+        }
 
-            GameObject(std::string name)
-            {
-                Create(name);
-            }
+        GameObject(std::string name)
+        {
+            Create(name);
+        }
 
-            void Create(std::string name)
-            {
-                _name   = name;
-                _entity = scene.CreateEntity();
-            }
+        ~GameObject() {
+            // scene.DestroyEntity(_entity);
+        }
 
-            template <typename T>
-            void AddComponent()
-            {
-                scene.AddComponent(_entity, T {});
-            }
+        void Create(std::string name)
+        {
+            _name   = name;
+            _entity = scene.CreateEntity();
+        }
 
-            template <typename T>
-            void RemoveComponent()
-            {
-                scene.RemoveComponent<T>(_entity);
-            }
+        template <typename T>
+        void AddComponent()
+        {
+            scene.AddComponent(_entity, T {});
+        }
 
-            template <typename T>
-            T &GetComponent()
-            {
-                return scene.GetComponent<T>(_entity);
-            }
+        template <typename T>
+        void RemoveComponent()
+        {
+            scene.RemoveComponent<T>(_entity);
+        }
 
-            Entity GetEntity() const
-            {
-                return _entity;
-            }
+        template <typename T>
+        T &GetComponent()
+        {
+            return scene.GetComponent<T>(_entity);
+        }
 
-            std::string GetName() const
-            {
-                return _name;
-            }
+        Entity GetEntity() const
+        {
+            return _entity;
+        }
+
+        std::string GetName() const
+        {
+            return _name;
+        }
     };
 
 } // namespace nuts

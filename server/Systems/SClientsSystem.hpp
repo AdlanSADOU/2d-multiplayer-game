@@ -163,8 +163,8 @@ public:
         //     _gameInstances.push_back(std::make_shared<Matchmaker>(gameIds++));
         // }
 
-        std::int32_t nonRunningInstanceIdx = -1;
-        for (std::int32_t i = 0; i < _gameInstances.size(); i++) {
+        size_t nonRunningInstanceIdx = -1;
+        for (size_t i = 0; i < _gameInstances.size(); i++) {
             auto &game = _gameInstances[i];
 
             if (!game->IsRunning()

@@ -30,6 +30,7 @@
 #define MUGUARD(my_mutex) noexcept(std::lock_guard<std::mutex>(my_mutex))
 
 #include "EcsCore/Event.hpp"
+#include <type_traits>
 
 using ClientID = sf::Int32;
 
@@ -41,29 +42,33 @@ namespace Net {
      * @brief Utility namespace representing all the networking events that can occurs between the server and the client.
      *
      */
-    namespace Events {
-        const EventType CLIENT_CONNECT     = HASH(Events::CLIENT_CONNECT);
-        const EventType CLIENT_DISCONNECT  = HASH(Events::CLIENT_DISCONNECT);
-        const EventType CLIENT_QUIT        = HASH(Events::CLIENT_QUIT);
-        const EventType CLIENT_ID          = HASH(Events::CLIENT_ID);
-        const EventType CLIENTS_PRINT      = HASH(Events::CLIENTS_PRINT);
-        const EventType CLIENT_UDP         = HASH(Events::CLIENT_UDP);
-        const EventType REMOTE_CLIENT_KEYS = HASH(Events::REMOTE_CLIENT_KEYS);
 
-        const EventType MONSTER_UPDATE_POS  = HASH(Events::MONSTER_UPDATE_POS);
-        const EventType PLAYER_UPDATE_SCORE = HASH(Events::PLAYER_UPDATE_SCORE);
 
-        const EventType NEW_CLIENT        = HASH(Events::NEW_CLIENT);
-        const EventType UDP_OK            = HASH(Events::UDP_OK);
-        const EventType MATCHM_INIT       = HASH(Events::MATCHM_INIT);
-        const EventType MATCHM_OK         = HASH(Events::MATCHM_OK);
-        const EventType MATCHM_PLAY       = HASH(Events::MATCHM_PLAY);
-        const EventType GAMEID            = HASH(Events::GAMEID);
-        const EventType GAMEID_OK         = HASH(Events::GAMEID_OK);
-        const EventType INITIAL_GAME_INFO = HASH(Events::INITIAL_GAME_INFO);
-        const EventType GAME_START        = HASH(Events::GAME_START);
+     enum Events
+    {
+        CLIENT_CONNECT = 1000,
+        CLIENT_DISCONNECT,
+        CLIENT_QUIT,
+        CLIENT_ID,
+        CLIENTS_PRINT,
+        CLIENT_UDP,
+        REMOTE_CLIENT_KEYS,
 
-    }
+        MONSTER_DESTROYED,
+        MONSTER_UPDATE_POS,
+        PLAYER_UPDATE_SCORE,
+
+        NEW_CLIENT,
+        UDP_OK,
+        MATCHM_INIT,
+        MATCHM_OK,
+        MATCHM_PLAY,
+        GAMEID,
+        GAMEID_OK,
+        INITIAL_GAME_INFO,
+        GAME_START,
+
+    };
 
     /**
      * @brief Networking instance of a Client.
@@ -122,7 +127,7 @@ namespace Net {
                 sf::Uint16         tmpUdp = 0;
 
                 static std::uint64_t lastSequenceNumber = 0; // todo: packet sequence
-                    // std::uint64_t sequenceNumber = 0;
+                                                             // std::uint64_t sequenceNumber = 0;
 
                 if ((status = _udpSocket->receive(packet, _remoteServerIp, tmpUdp)) == sf::Socket::Done) {
 

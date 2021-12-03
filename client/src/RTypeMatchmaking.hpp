@@ -18,9 +18,7 @@
 #include "UIEvents.hpp"
 #include "Nuts/Networking.hpp"
 
-
-class RTypeMMPlayer
-{
+class RTypeMMPlayer {
 public:
     enum MPlayerState
     {
@@ -75,8 +73,7 @@ private:
     int          _id;
 };
 
-class RTypeMatchmaking
-{
+class RTypeMatchmaking {
     struct WidgetMenu
     {
         nuts::UI::Widget panel;
@@ -124,7 +121,7 @@ public:
             nuts::Text tmp;
             tmp = _tNReady;
             if (player.GetState() == RTypeMMPlayer::MPlayerState::READY) {
-                tmp = _tReady;
+                tmp                  = _tReady;
                 nuts::FloatRect pPos = _tPlayers[player.GetID() % MAX_CLIENTS].GetGlobalBounds();
                 _tPlayers[player.GetID() % MAX_CLIENTS].TEST_DRAW(_engine->window);
                 tmp.SetPosition({ pPos.left + pPos.width + 15, pPos.top });

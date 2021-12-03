@@ -11,24 +11,24 @@
 #include <Nuts/Utilities.hpp>
 #include <vector>
 
-class ProjectileManager
-{
-    class Projectile : public nuts::GameObject
+class ProjectileManager {
+    struct Projectile : public nuts::GameObject
     {
-    public:
         nuts::Vector2f position = {};
 
         bool  isDestroyed   = false;
         bool  canFire       = true;
         float timeAlive     = 0;
-        float maxTimetoLive = 4;
+        float maxTimetoLive = 2;
         float speed;
     };
 
-    nuts::Texture           _texture = {};
-    std::vector<Projectile> _projectiles;
+    nuts::Texture _texture = {};
 
 public:
+    std::vector<Projectile> _projectiles;
+    float _firerate_acc = 0;
+
     enum Type
     {
         SMALL,
@@ -45,12 +45,11 @@ public:
 
     void FireProjectile(nuts::Vector2f startPosition, Type type, float dt)
     {
-        static float acc = 0;
-        acc += dt;
+        _firerate_acc += dt;
 
-        if (acc < .08f)
+        if (_firerate_acc < .1)
             return;
-        acc = 0;
+        _firerate_acc = 0;
 
         if (type == BIG) {
             // Projectile tmpProj;
@@ -89,10 +88,11 @@ public:
             spriteComp.sprite.SetTexture(_texture);
             spriteComp.sprite.SetTextureRect({ 232, 103, 16, 12 });
             spriteComp.sprite.SetFirstFrame({ 232, 103, 16, 12 });
-            spriteComp.sprite.SetFrameTime(0.2f);
+            spriteComp.sprite.SetFrameTime(0.08f);
 
             spriteComp.sprite.SetAnimated(true);
-            spriteComp.sprite.SetLooped(true);
+            spriteComp.sprite.SetLooped(false);
+
             spriteComp.sprite.SetFrameCount(2);
             spriteComp.sprite.InitAnimationClock();
 
@@ -101,7 +101,7 @@ public:
             tmpProj.position.y += 3;
 
             transformComp.position = { tmpProj.position.x, tmpProj.position.y };
-            tmpProj.speed          = 260;
+            tmpProj.speed          = 460;
 
             _projectiles.push_back(tmpProj);
         }
@@ -109,9 +109,9 @@ public:
 
     void Update(float dt, sf::RenderWindow &window)
     {
-        int destroyedProjectileIdx = -1;
+        size_t destroyedProjectileIdx = -1;
 
-        for (int i = 0; i < _projectiles.size(); i++) {
+        for (size_t i = 0; i < _projectiles.size(); i++) {
             auto &p          = _projectiles[i];
             auto &spriteComp = p.GetComponent<SpriteComponent>();
             auto &transComp  = p.GetComponent<TransformComponent>();
@@ -125,6 +125,8 @@ public:
             // spriteComp.sprite.Move((p.speed) * dt, 0);
             // transComp.position
             velComp.velocity.x = p.speed;
+            // COUT( "current rect [" << spriteComp.sprite.GetCurrentFrame().left << ":" << spriteComp.sprite.GetCurrentFrame().top << "]\n");
+
             // window.draw(spriteComp.sprite.GetSprite());
             // COUT("[proj]: dt: " << dt << " pos.x :" << spriteComp.sprite.x << "\n");
         }
@@ -133,20 +135,16 @@ public:
             scene.DestroyEntity(_projectiles[destroyedProjectileIdx].GetEntity());
             _projectiles.erase(_projectiles.begin() + destroyedProjectileIdx);
         }
-        // for (auto &p : _projectiles) {
-
-        // }
     }
 };
 
-class GPlayer : public nuts::GameObject
-{
-    ClientID          _clientId = -1;
-    nuts::Vector2f    _pos;
-    nuts::Texture     _playerTexture;
-    ProjectileManager _projectileManager;
+class GPlayer : public nuts::GameObject {
+    ClientID       _clientId = -1;
+    nuts::Vector2f _pos;
+    nuts::Texture  _playerTexture;
 
 public:
+    ProjectileManager  _projectileManager;
     VelocityComponent *_vel = nullptr;
 
     /**
@@ -159,6 +157,7 @@ public:
     sf::Uint16 _score     = 0;
     sf::Uint16 _health    = 0;
     sf::Uint16 _maxHealth = 0;
+    float speed = 256;
 
     GPlayer(ClientID id)
     {
@@ -233,13 +232,13 @@ public:
         nuts::Vector2f vel = {};
 
         if (_directionalKeys[0])
-            vel.x = -125;
+            vel.x = -speed;
         if (_directionalKeys[1])
-            vel.x = 125;
+            vel.x = speed;
         if (_directionalKeys[2])
-            vel.y = -125;
+            vel.y = -speed;
         if (_directionalKeys[3])
-            vel.y = 125;
+            vel.y = speed;
 
         *_vel = { vel.x, vel.y };
     }

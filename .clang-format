@@ -15,7 +15,7 @@
   SortIncludes: false,
   BreakBeforeBraces: Custom,
   BraceWrapping:
-    { AfterFunction: true, AfterClass: true, AfterEnum: true, AfterStruct: true, SplitEmptyFunction: false },
+    { AfterFunction: true, AfterClass: false, AfterEnum: true, AfterStruct: true, SplitEmptyFunction: false },
 
   AlignConsecutiveBitFields: Consecutive,
   AlignConsecutiveDeclarations: Consecutive,

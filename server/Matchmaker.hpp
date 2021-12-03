@@ -69,7 +69,7 @@ public:
                   << _clients.size() << " Player(s) joined\n";
 
         if (_clients.size() == MAX_CLIENTS) {
-            Event event(Events::MATCHM_READY);
+            Event event(Events::UI::MATCHM_READY);
             event.SetParam<std::vector<std::shared_ptr<SClientComponent>>>(0, _clients);
             event.SetParam<sf::Int32>(1, _gameId);
 

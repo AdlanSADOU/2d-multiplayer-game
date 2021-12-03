@@ -9,8 +9,13 @@
 
 #include <Nuts/EcsCore/Event.hpp>
 
-namespace Events::Btn {
-    const EventType BTN_LOBBY_SCREEN = HASH(Events::BTN_LOBBY_SCREEN);
-    const EventType BTN_QUIT         = HASH(Events::BTN_QUIT);
-    const EventType BTN_START         = HASH(Events::BTN_START);
-} // namespace nuts::UI
+namespace Events
+
+{
+    enum Btn
+    {
+        BTN_LOBBY_SCREEN = 300,
+        BTN_QUIT,
+        BTN_START,
+    }; // namespace nuts::UI
+}

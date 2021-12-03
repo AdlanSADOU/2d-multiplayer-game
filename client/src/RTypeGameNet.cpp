@@ -31,7 +31,7 @@ void RTypeGame::OnRemotePlayerState(Event &event)
     sf::Packet inClientStatePacket = event.GetParam<sf::Packet>(0);
 
     ClientID clientId = -1;
-    float x = 0, y = 0;
+    float    x = 0, y = 0;
 
     if (clientId == _localClientId)
         return;
@@ -44,8 +44,7 @@ void RTypeGame::OnRemotePlayerState(Event &event)
         >> _players[clientId]->_directionalKeys[3]
         >> x
         >> y
-        >> _players[clientId]->_isFiering
-    ) {
+        >> _players[clientId]->_isFiering) {
         _players[clientId]->SetPosition({ x, y });
         // std::cout << clientId << ": "
         //           << _players[clientId]->_directionalKeys[0]
@@ -66,23 +65,7 @@ void RTypeGame::OnMonsterUpdatePos(Event &event)
 {
     sf::Packet packet = event.GetParam<sf::Packet>(0);
 
-    int   id;
-    int   type;
-    float posX;
-    float posY;
-
-    while (!packet.endOfPacket()) {
-
-        packet >> id >> type >> posX >> posY;
-
-        if (_monsters.find(id) == std::end(_monsters)) {
-            GMonster::MInfos minfos = {id, (GMonster::Type)type, {posX, posY}};
-
-            //note(ad): monsters are now allocated to avoid double entity destruction
-            GMonster *tmp = new GMonster(minfos, _MTextures[(GMonster::Type)type], _MTexturesRect[(GMonster::Type)type], _MFrameCount[(GMonster::Type)type]);
-            _monsters.insert({id, std::move(tmp)});
-        }
-        auto &tComp = _monsters[id]->GetComponent<TransformComponent>();
-        tComp = {posX, posY};
-    }
+    // pushing received packets into queue to process them later
+    // with thread safety. see RTypeGame::ProcessMonsterPackets()
+    _monster_packets_queue.push(packet);
 }
