@@ -10,6 +10,8 @@
 #include <Nuts/EcsCore/Event.hpp>
 
 namespace Events {
-    const EventType MATCHM_READY = HASH(Events::MATCHM_READY);
-
+    enum UI
+    {
+        MATCHM_READY = 400,
+    };
 } // namespace name

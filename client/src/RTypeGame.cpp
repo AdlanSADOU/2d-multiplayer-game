@@ -75,7 +75,7 @@ void RTypeGame::SetLocalClientId(ClientID clientId)
 
 void RTypeGame::ProcessMonsterPackets()
 {
-    for (int i = 0; i < _monster_packets_queue.size(); i++) {
+    for (size_t i = 0; i < _monster_packets_queue.size(); i++) {
         sf::Packet packet = _monster_packets_queue.front();
         _monster_packets_queue.pop();
 
@@ -148,7 +148,7 @@ void RTypeGame::Update()
 
         auto projectiles = GetLocalPlayer()->_projectileManager._projectiles;
 
-        for (int j = 0; j < projectiles.size(); j++) {
+        for (size_t j = 0; j < projectiles.size(); j++) {
             auto &spriteComp = projectiles[j].GetComponent<SpriteComponent>();
 
             if (m.second) {

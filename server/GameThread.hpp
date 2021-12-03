@@ -75,6 +75,7 @@ public:
             sf::Packet packet;
 
             packet << Net::Events::GAME_START << sf::IpAddress::getLocalAddress().toInteger() << _socket.getLocalPort();
+            COUT("sent eventType: " << Net::Events::GAME_START);
             client->tcpSock->send(packet);
             packet.clear();
 
@@ -87,6 +88,7 @@ public:
             }
 
             client->tcpSock->send(packet);
+            COUT("sent eventType: " << Net::Events::INITIAL_GAME_INFO);
         }
 
         sf::Time accReceiveRate;

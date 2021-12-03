@@ -108,9 +108,9 @@ public:
 
     void Update(float dt, sf::RenderWindow &window)
     {
-        int destroyedProjectileIdx = -1;
+        size_t destroyedProjectileIdx = -1;
 
-        for (int i = 0; i < _projectiles.size(); i++) {
+        for (size_t i = 0; i < _projectiles.size(); i++) {
             auto &p          = _projectiles[i];
             auto &spriteComp = p.GetComponent<SpriteComponent>();
             auto &transComp  = p.GetComponent<TransformComponent>();

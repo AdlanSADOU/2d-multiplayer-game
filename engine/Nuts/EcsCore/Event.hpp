@@ -14,7 +14,7 @@
 #include <string>
 #include <SFML/Config.hpp>
 
-using EventType   = sf::Uint64;
+using EventType   = std::int32_t;
 using ParameterId = std::int32_t;
 
 

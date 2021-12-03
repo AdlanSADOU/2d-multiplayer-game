@@ -71,7 +71,7 @@ public:
         serverConnector.Create("");
         serverConnector.AddComponent<ConnectionComponent>();
 
-        scene.AddEventCallback(Events::MATCHM_READY, BIND_CALLBACK(&EcsServer::OnMatchMReady, this));
+        scene.AddEventCallback(Events::UI::MATCHM_READY, BIND_CALLBACK(&EcsServer::OnMatchMReady, this));
         _running = true;
     }
 
