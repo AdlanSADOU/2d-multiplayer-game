@@ -1,95 +1,39 @@
-# Remarks
-git submodule update --force --init --remote
-
-
-
-RType.cpp => GameThread.hpp => RTypeGameNet.cpp
-
-- ditch Lobby
-
-CLIENT_ID       : server sends
-MATCHM_OK       : server responds
-GAMEID          : server responds
-GAMEID_OK       : client responds
-INITIAL_GAME_INFO : server sends
-
-CLIENT_UDP      : client sends
-MATCHM_INIT     : client sends
-MATCHM_PLAY     : client sends
-
-[Quick Play] ==>
-- [client] connect
-
-- [server]  accept - respond with CLIENT_ID|clientId
-
-- [client]  store id -
-            UdpSend(sIp, sPort+1, CLIENT_UDP|ClienId|UdpPort)
-            respond with MATCHM_INIT|clientId
-
-- [server]  onMATCHM_INIT:
-            Machmaking is running?:
-                YES: Matchm.addClient(SClient)
-                    Broadcast("new client joined")
-                    Send(MATCHM_OK|ClienId)
-
-                NO: create new Machmacking
-                    Matchm.addClient(SClient)
-                    Send(MATCHM_OK|ClienId)
-
-- [client]  onMATCHM_OK:
-            screen shows: "Waiting for players..."
-            with blurred background
-            players can click on [Play] or wait for others
-                [Play] Send(MATCHM_PLAY|ClientId)
-
-- [server]  onMATCHM_PLAY: inits new Game thread
-            pushes all clients from Matchm to Game
-            binds Game udpSock
-            tcpBroadCast(GAMEID|gameId)
-
-- [client]  onGAMEID:
-            store gameId
-            TcpSend(GAMEID_OK|gameId|clienId)
-
-- [server] TcpSend(INITIAL_GAME_INFO|color|InitialGamePos)
-           UdpBroadcast(UDP_INFO)
-
-now clients can start sendind input commands in Udp
-
-## Matchmaking
-
-# Notes
-VSCODE: possible conflicts for includes between c_cpp_configuration.json
-and Cmake configuration provider in settings.json
-
-x64 == x86_64 == x86_amd64 == Amd64
-
-
-conan install .. --build=missing -s build_type=Debug
-cmake .. -G "Visual Studio 16 2019" -A x64
-
-
-cmake build static libraries:
-https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Shared%20Libraries.html
-https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
-
-
-
-# Server Issues
-
 # TODO
 Event loop must be run by the client
 not the engine
 cause engine is a shared lib, so static function isKeyPressed() executes on all clients...
 
 
-# TODO Engine
-sfml types must be typedefed by nuts or somehow encapsulated for consistency's sake
+- monster projectiles
+- monster projectiles/player collision
+- player scores
+    - player#1 kills mob > ++score
+- score milestones
+    - if score reaches 20, increase mob density & spawn rate
+- sounds
+- handle player disconnection/death
 
-prediction
-le plus proche de rtype
-design
-sounds
+player#x kills mob ---------------- server
+                                    increase player score
+                                    broadcast player score
+
+
+# TODO Engine
+
+
+# Remarks
+
+
+
+# Notes
+git submodule update --force --init --remote
+
+cmake build static libraries:
+https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Shared%20Libraries.html
+https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
+
+# Server Issues
+
 
 # Client/Server
 

@@ -144,7 +144,7 @@ void RType::Run()
                     if (_game->isReady && localPlayer != nullptr) {
 
                         sf::Packet playerStatePacket;
-                        playerStatePacket << Net::Events::REMOTE_CLIENT_KEYS
+                        playerStatePacket << Net::Events::CLIENT_UPDATE_PACKETS
                                           << GetLocalClientId()
                                           << localPlayer->_directionalKeys[0]
                                           << localPlayer->_directionalKeys[1]

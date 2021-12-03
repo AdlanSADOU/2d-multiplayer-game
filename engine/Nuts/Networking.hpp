@@ -30,11 +30,15 @@
 #define MUGUARD(my_mutex) noexcept(std::lock_guard<std::mutex>(my_mutex))
 
 #include "EcsCore/Event.hpp"
+#include "EcsCore/Scene.hpp"
+
 #include <type_traits>
 
 using ClientID = sf::Int32;
 
 #define MAX_CLIENTS 2
+
+extern Scene scene;
 
 namespace Net {
 
@@ -52,7 +56,7 @@ namespace Net {
         CLIENT_ID,
         CLIENTS_PRINT,
         CLIENT_UDP,
-        REMOTE_CLIENT_KEYS,
+        CLIENT_UPDATE_PACKETS,
 
         MONSTER_DESTROYED,
         MONSTER_UPDATE_POS,

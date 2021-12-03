@@ -6,7 +6,8 @@ endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(rtype_server
-ServerMain.cpp)
+ServerMain.cpp
+GameThread.cpp)
 
 target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(rtype_server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Imgui)

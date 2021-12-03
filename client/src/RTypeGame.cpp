@@ -13,7 +13,7 @@ RTypeGame::RTypeGame()
 
 RTypeGame::~RTypeGame()
 {
-    std::cout << "game destroyed\n";
+    std::cout << "game is_destroyed\n";
 
     // for (auto &c = _players.begin(); c != _players.end();)
     // {
@@ -65,7 +65,7 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
     scene.AddEventCallback(Net::Events::MONSTER_UPDATE_POS, BIND_CALLBACK(&RTypeGame::OnMonsterUpdatePos, this));
-    scene.AddEventCallback(Net::Events::REMOTE_CLIENT_KEYS, BIND_CALLBACK(&RTypeGame::OnRemotePlayerState, this));
+    scene.AddEventCallback(Net::Events::CLIENT_UPDATE_PACKETS, BIND_CALLBACK(&RTypeGame::OnRemotePlayerState, this));
 }
 
 void RTypeGame::SetLocalClientId(ClientID clientId)
@@ -82,44 +82,43 @@ void RTypeGame::ProcessMonsterPackets()
         while (!packet.endOfPacket()) {
             int   id = -1;
             int   type;
-            float posX;
-            float posY;
-            bool  destroyed = false;
+            float pos_x;
+            float pos_y;
+            bool  is_destroyed = false;
 
-            packet >> id >> type >> posX >> posY >> destroyed;
+            packet >> id >> type >> pos_x >> pos_y >> is_destroyed;
 
             if (id < 0) {
                 COUT("Error: monster id was less than 0 : " << id << "\n");
                 return;
             }
 
-            if (!destroyed && _monsters.find(id) == std::end(_monsters)) {
-                GMonster::MInfos minfos      = { id, (GMonster::Type)type, { posX, posY } };
+            if (!is_destroyed && _monsters.find(id) == std::end(_monsters)) {
+                GMonster::MInfos minfos      = { id, (GMonster::Type)type, { pos_x, pos_y } };
                 nuts::Texture   &texture     = _MTextures[(GMonster::Type)type];
                 nuts::IntRect    rect        = _MTexturesRect[(GMonster::Type)type];
                 int              frame_count = _MFrameCount[(GMonster::Type)type];
 
                 // note(ad): monsters are now allocated to avoid double entity destruction
+                // not great but, whatever..
                 GMonster *tmp = new GMonster(minfos, texture, rect, frame_count);
                 _monsters.insert({ id, std::move(tmp) });
             }
 
-            if (!destroyed && _monsters[id]) {
-                auto &tComp      = _monsters[id]->GetComponent<TransformComponent>();
-                auto &spriteComp = _monsters[id]->GetComponent<SpriteComponent>();
+            if (!is_destroyed && _monsters[id]) {
+                auto &tComp = _monsters[id]->GetComponent<TransformComponent>();
 
-                tComp                              = { posX, posY };
-                _monsters[id]->_infos.is_destroyed = destroyed;
+                tComp = { pos_x, pos_y };
+
+                _monsters[id]->_infos.is_destroyed = is_destroyed;
             }
 
-            if (destroyed && (_monsters.find(id) != std::end(_monsters))) {
+            if (is_destroyed && (_monsters.find(id) != std::end(_monsters))) {
                 scene.DestroyEntity(_monsters[id]->GetEntity());
                 delete _monsters[id];
-                _monsters[id] = nullptr;
                 _monsters.erase(id);
 
                 COUT("[UDP-REC]: depop monster with id: " << id << "\n");
-                continue;
             }
         }
     }
@@ -145,7 +144,7 @@ void RTypeGame::Update()
 
     for (auto &m : _monsters) {
         if (!m.second || m.first < 0) break;
-        // this entity could be destroyed by receive() thread while accessing it here
+        // this entity could be is_destroyed by receive() thread while accessing it here
         if (m.second->GetEntity() < 0 || m.second->GetEntity() > MAX_ENTITIES) continue;
 
         auto projectiles = GetLocalPlayer()->_projectileManager._projectiles;
