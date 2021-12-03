@@ -198,32 +198,21 @@ namespace nuts {
          *
          */
 
-        // new
-        void Animate()
+          void NextFrame()
         {
+            bool is_last_frame = (_frame_in_flight >= _frame_count);
 
-        }
+            if (!_is_looping && is_last_frame)
+                return;
 
-        void NextFrame()
-        {
-            // if (_frame_in_flight >= _frame_count - 1)
-            //     return;
+            if (_is_looping && is_last_frame) {
+                _frame_in_flight    = 0;
+                _current_frame.left = _first_frame.left;
+            }
 
-            // _current_frame.left += _current_frame.width;
+            _current_frame.left = _first_frame.left + _first_frame.width * _frame_in_flight;
 
-            // if (_current_frame.left >= _current_frame.width * (_frame_count) + _first_frame.left) {
-            //     if (_is_looping) {
-            //         _current_frame.left = _first_frame.left;
-            //         _frame_in_flight    = 0;
-            //     } else {
-            //         _current_frame.left = _current_frame.width;
-            //     }
-            // }
-
-            // SetCurrentFrame(_current_frame);
-            // _frame_in_flight++;
-
-            _current_frame.
+            ++_frame_in_flight;
         }
 
         nuts::IntRect GetCurrentFrame() const
