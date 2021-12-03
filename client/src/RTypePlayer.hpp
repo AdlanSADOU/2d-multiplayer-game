@@ -27,6 +27,7 @@ class ProjectileManager {
 
 public:
     std::vector<Projectile> _projectiles;
+    float _firerate_acc = 0;
 
     enum Type
     {
@@ -44,12 +45,11 @@ public:
 
     void FireProjectile(nuts::Vector2f startPosition, Type type, float dt)
     {
-        static float acc = 0;
-        acc += dt;
+        _firerate_acc += dt;
 
-        if (acc < .1)
+        if (_firerate_acc < .1)
             return;
-        acc = 0;
+        _firerate_acc = 0;
 
         if (type == BIG) {
             // Projectile tmpProj;
