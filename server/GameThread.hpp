@@ -33,11 +33,19 @@ struct SMInfos
     nuts::Vector2f goto_pos  = {};
     bool           destroyed = 0;
 };
-class GameThread {
-private:
-    std::vector<std::shared_ptr<SClientComponent>> _clients = {};
 
-    std::queue<sf::Packet> _client_update_packets_queue = {};
+struct ClientData
+{
+    int32_t _score     = 0;
+    int32_t _health    = 0;
+    int32_t _maxHealth = 0;
+};
+class GameThread {
+
+    std::vector<std::shared_ptr<SClientComponent>> _clients     = {};
+    std::unordered_map<ClientID, ClientData>       _clientsData = {};
+
+    // std::queue<sf::Packet> _client_update_packets_queue = {}; deprecated
 
     sf::Clock _deltaClock     = {};
     sf::Clock _monsterSpawn   = {};
@@ -46,28 +54,30 @@ private:
     sf::Clock _broadcastClock = {};
     sf::Time  _dt             = {};
 
-    std::vector<SMInfos> _monsters     = {};
-    EventManager         _eventManager = {};
-    sf::UdpSocket        _socket       = {};
-    int                  _gameId       = 0;
-    bool                 _running      = false;
+    std::vector<SMInfos> _monsters                   = {};
+    EventManager         _eventManager               = {};
+    sf::UdpSocket        _socket                     = {};
+    int                  _gameId                     = 0;
+    bool                 _running                    = false;
+    int                  client_update_start_counter = 0;
 
     std::thread th_receive         = {};
     int32_t     _receivesPerSecond = 0;
 
-public:
-    GameThread();
-
-    void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId);
-    void receive();
+    void Receive();
     void Broadcast(sf::Packet packet, ClientID ignoredClientId);
 
     void OnClientUpdate(Event &event);
 
-    void           OnMonsterDestoyed(int destroyed_monster_id);
+    void           OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id);
     MonsterType    GetRandomType();
     nuts::Vector2f GetRandomPosSpawn();
     nuts::Vector2f GetRandomPos();
     void           UpdateMonstersPos();
     void           UpdateMonsters();
+
+public:
+    GameThread();
+
+    void Run(std::vector<std::shared_ptr<SClientComponent>> clients, std::int32_t gameId);
 };

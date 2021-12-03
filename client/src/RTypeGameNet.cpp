@@ -14,13 +14,27 @@ void RTypeGame::OnInitialGameInfo(Event &event)
     std::vector<ClientID> clientIds;
 
     while (!packet.endOfPacket()) {
-        ClientID tmpId;
-        packet >> tmpId;
+        ClientID tmp_client_id;
+        packet >> tmp_client_id;
 
-        clientIds.push_back(tmpId);
-        _players.insert({ tmpId, new GPlayer(tmpId) });
+        clientIds.push_back(tmp_client_id);
+        _players.insert({ tmp_client_id, new GPlayer(tmp_client_id) });
 
-        std::cout << "[Client]: Starting game with playerId:[" << tmpId << "]\n";
+        nuts::Text tmp_text = {};
+        std::string tmp_str = "P.";
+        tmp_str.append(std::to_string(tmp_client_id));
+
+        tmp_text.SetString(tmp_str);
+
+        tmp_text.SetFont(_font);
+        tmp_text.SetCharacterSize(12);
+
+        thread_local float text_pos = 100;
+        tmp_text.SetPosition({ text_pos, (float)_engine->GetWindowSize().y / 6 * 5 });
+        _player_scores.insert({tmp_client_id, tmp_text});
+        text_pos += 100;
+
+        std::cout << "[Client]: Starting game with playerId:[" << tmp_client_id << "]\n";
     }
     isReady = true;
 };
@@ -30,29 +44,39 @@ void RTypeGame::OnRemotePlayerState(Event &event)
 {
     sf::Packet inClientStatePacket = event.GetParam<sf::Packet>(0);
 
-    ClientID clientId = -1;
+    ClientID client_id = -1;
     float    x = 0, y = 0;
 
-    if (clientId == _localClientId)
+    if (client_id == _localClientId)
         return;
 
+    thread_local int32_t last_score;
+
     if (inClientStatePacket
-        >> clientId
-        >> _players[clientId]->_directionalKeys[0]
-        >> _players[clientId]->_directionalKeys[1]
-        >> _players[clientId]->_directionalKeys[2]
-        >> _players[clientId]->_directionalKeys[3]
+        >> client_id
+        >> _players[client_id]->_directionalKeys[0]
+        >> _players[client_id]->_directionalKeys[1]
+        >> _players[client_id]->_directionalKeys[2]
+        >> _players[client_id]->_directionalKeys[3]
         >> x
         >> y
-        >> _players[clientId]->_isFiering) {
-        _players[clientId]->SetPosition({ x, y });
-        // std::cout << clientId << ": "
-        //           << _players[clientId]->_directionalKeys[0]
-        //           << _players[clientId]->_directionalKeys[1]
-        //           << _players[clientId]->_directionalKeys[2]
-        //           << _players[clientId]->_directionalKeys[3]
-        //           << _players[clientId]->_isFiering
+        >> _players[client_id]->_isFiering
+        >> _players[client_id]->_score
+
+    ) {
+        _players[client_id]->SetPosition({ x, y });
+
+        if (last_score != _players[client_id]->_score)
+            COUT("player " << client_id << " Score: " << _players[client_id]->_score << "\n");
+
+        // std::cout << client_id << ": "
+        //           << _players[client_id]->_directionalKeys[0]
+        //           << _players[client_id]->_directionalKeys[1]
+        //           << _players[client_id]->_directionalKeys[2]
+        //           << _players[client_id]->_directionalKeys[3]
+        //           << _players[client_id]->_isFiering
         //           << "\n";
+        last_score = _players[client_id]->_score;
     }
 }
 

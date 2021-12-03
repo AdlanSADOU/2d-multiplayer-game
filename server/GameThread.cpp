@@ -36,17 +36,19 @@ void GameThread::Run(std::vector<std::shared_ptr<SClientComponent>> clients, std
 
         client->tcpSock->send(packet);
         COUT("sent eventType: " << Net::Events::INITIAL_GAME_INFO);
+
+        _clientsData.insert({ client->id, ClientData { 0, 0, 100 } });
     }
 
     sf::Time accReceiveRate;
 
-    // th_receive = std::thread(&GameThread::receive, this);
+    // th_receive = std::thread(&GameThread::receive, this); // deprecated
 
     while (_running) {
 
         _dt = _deltaClock.restart();
 
-        receive();
+        Receive();
 
         UpdateMonsters();
     }
@@ -54,9 +56,9 @@ void GameThread::Run(std::vector<std::shared_ptr<SClientComponent>> clients, std
     th_receive.join();
 }
 
-void GameThread::receive()
+void GameThread::Receive()
 {
-    // while (_running)
+    // while (_running) // deprecated
     {
         sf::Packet    remotePacket;
         sf::IpAddress remoteAddress;
@@ -101,11 +103,10 @@ void GameThread::Broadcast(sf::Packet packet, ClientID ignoredClientId = -1)
     }
 }
 
-int  i = 0;
 void GameThread::OnClientUpdate(Event &event)
 {
-    if (i < 100) {
-        i++;
+    if (client_update_start_counter < 100) {
+        ++client_update_start_counter;
         return;
     }
 
@@ -118,14 +119,14 @@ void GameThread::OnClientUpdate(Event &event)
     bool  is_fiering           = 0;
     int   destroyed_monster_id = -1;
 
-    sf::Packet inClientKeyPacket = event.GetParam<sf::Packet>(0);
+    sf::Packet in_client_packet = event.GetParam<sf::Packet>(0);
 
-    sf::Packet tmpPacket = inClientKeyPacket;
+    sf::Packet tmpPacket = in_client_packet;
     EventType  type;
-    ClientID   clientId = 0;
+    ClientID   client_id = 0;
 
     tmpPacket >> type
-        >> clientId
+        >> client_id
         >> key_left
         >> key_right
         >> key_up
@@ -136,7 +137,7 @@ void GameThread::OnClientUpdate(Event &event)
         >> destroyed_monster_id;
 
     // COUT(
-    //     clientId
+    //     client_id
     //     << key_left
     //     << key_right
     //     << key_up
@@ -146,15 +147,33 @@ void GameThread::OnClientUpdate(Event &event)
     //     << is_fiering
     //     << destroyed_monster_id << "\n");
 
+
+    // process packets & client actions/updates
     if (destroyed_monster_id != -1) {
-        COUT("received destroyed_monster_id: " << destroyed_monster_id << "\n");
-        OnMonsterDestoyed(destroyed_monster_id);
+        COUT("player [" << client_id << "] destroyed monster: " << destroyed_monster_id << "\n");
+        OnMonsterDestoyed(destroyed_monster_id, client_id);
     }
 
-    Broadcast(inClientKeyPacket, clientId);
+    // outgoing packet after client updates have been processed
+    // looks the same as in_client_packet but is not!
+    sf::Packet outClientPacket = {};
+
+    outClientPacket
+        << type
+        << client_id
+        << key_left
+        << key_right
+        << key_up
+        << key_down
+        << x
+        << y
+        << is_fiering
+        << _clientsData[client_id]._score;
+
+    Broadcast(outClientPacket);
 }
 
-void GameThread::OnMonsterDestoyed(int destroyed_monster_id)
+void GameThread::OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id)
 {
     thread_local int last_destroyed_id = -1;
     // if (last_destroyed_id == destroyed_monster_id)
@@ -162,10 +181,13 @@ void GameThread::OnMonsterDestoyed(int destroyed_monster_id)
 
     for (auto it = _monsters.begin(); it != _monsters.end();) {
         if (it->id == destroyed_monster_id) {
-            COUT("marking as destroyed > monster with id: " << it->id << "\n");
+            // COUT("marking as destroyed > monster with id: " << it->id << "\n");
+
             // we just mark the monster with matching id as being destroyed
             // it will eventually get erased in UpdateMonsters()
             it->destroyed = true;
+            _clientsData[client_id]._score += 1;
+
             return;
         } else {
             ++it;
@@ -173,6 +195,7 @@ void GameThread::OnMonsterDestoyed(int destroyed_monster_id)
     }
 }
 
+// Monster updates -- maybe a class on its own?
 MonsterType GameThread::GetRandomType()
 {
     return ((MonsterType)(0 + (rand() % (1 - 0 + 1))));
@@ -218,7 +241,7 @@ void GameThread::UpdateMonsters()
     thread_local int monster_id = 0;
 
     if (_monsters.size() < 30 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
-        COUT("spawned monster with id: " << monster_id << "\n");
+        // COUT("spawned monster with id: " << monster_id << "\n");
         SMInfos tmp = { monster_id, GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
         _monsters.emplace_back(tmp);
         _monsterSpawn.restart();
@@ -244,7 +267,7 @@ void GameThread::UpdateMonsters()
     if (i >= 600)
         for (auto it = _monsters.begin(); it != _monsters.end();) {
             if (it->destroyed) {
-                COUT("erased > monster with id: " << it->id << "\n");
+                // COUT("erased > monster with id: " << it->id << "\n");
                 it = _monsters.erase(it);
                 i  = 0;
             } else {
