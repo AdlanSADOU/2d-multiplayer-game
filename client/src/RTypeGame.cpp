@@ -130,7 +130,6 @@ void RTypeGame::UpdateExplosions()
         auto &sprite = e->second.GetComponent<SpriteComponent>().sprite;
         auto &state = e->second.GetComponent<StateComponent>().state;
         if (sprite.IsLastFrame() && state == GameState::GAME) {
-            auto &state = e->second.GetComponent<StateComponent>().state;
             state = GameState::NONE;
             _RExplosions.erase(e);
             break;
@@ -189,9 +188,9 @@ void RTypeGame::Draw()
     for (auto &p_scores : _player_scores) {
         ClientID client_id = p_scores.first;
 
-        std::string tmp_str = "p";
-        tmp_str.append(std::to_string(client_id % MAX_CLIENTS));
-        tmp_str.append("-");
+        std::string tmp_str = "P";
+        tmp_str.append(std::to_string(client_id % MAX_CLIENTS + 1));
+        tmp_str.append("\n\n");
         tmp_str.append(std::to_string(_players[client_id]->_score));
         p_scores.second.SetString(tmp_str);
 

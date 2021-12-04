@@ -40,7 +40,8 @@ extern Scene scene;
 class GBackground {
 private:
     std::vector<nuts::GameObject> _backgrounds;
-    nuts::Texture                 _texture;
+    nuts::Texture                 _planets;
+    nuts::Texture                 _stars;
 
 public:
     GBackground() {};
@@ -60,33 +61,71 @@ public:
         }
     }
 
-    void InitBackground()
+    void AddLayer(const std::string &name, int layerCount)
     {
-        _texture.LoadFromFile("./resources/sprites/starfield.png");
-        _backgrounds.emplace_back(nuts::GameObject("Background"));
-        _backgrounds.emplace_back(nuts::GameObject("Background"));
-        _backgrounds.emplace_back(nuts::GameObject("Background"));
-
-        nuts::FloatRect spritePos = { 0.f, 0.f, 0.f, 0.f };
-        for (auto &bg : _backgrounds) {
+        for (int i = 0; i < layerCount; ++i) {
+            auto bg = nuts::GameObject(name);
             bg.AddComponent<SpriteComponent>();
             bg.AddComponent<TransformComponent>();
             bg.AddComponent<VelocityComponent>();
             bg.AddComponent<StateComponent>();
-
-            auto &spriteComp = bg.GetComponent<SpriteComponent>();
-            auto &tComp      = bg.GetComponent<TransformComponent>();
-            auto &velComp    = bg.GetComponent<VelocityComponent>();
-            auto &stateComp  = bg.GetComponent<StateComponent>();
-            stateComp.state  = GAME;
-
-            velComp.velocity.x = -SCROLL_SPEED;
-
-            spriteComp.sprite.SetTexture(_texture);
-            tComp.position.x = spritePos.left;
-            tComp.position.y = spritePos.top;
-            spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
+            _backgrounds.emplace_back(bg);
         }
+    }
+
+    void InitPlanets()
+    {
+        nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
+        for (auto &bg : _backgrounds) {
+            if (bg.GetName().compare("Planets")) {
+                auto &spriteComp = bg.GetComponent<SpriteComponent>();
+                auto &tComp      = bg.GetComponent<TransformComponent>();
+                auto &velComp    = bg.GetComponent<VelocityComponent>();
+                auto &stateComp  = bg.GetComponent<StateComponent>();
+                stateComp.state  = GAME;
+                spriteComp.sprite.SetTexture(_planets);
+                spriteComp.sprite.SetScale({2.2f, 2.2f});
+                velComp.velocity.x = -SCROLL_SPEED;
+                tComp.position.x = spritePos.left;
+                tComp.position.y = spritePos.top;
+                spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
+            }
+        }
+    }
+
+    void InitStars()
+    {
+        nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
+        for (auto &bg : _backgrounds) {
+            if (bg.GetName().compare("Stars")) {
+                auto &spriteComp = bg.GetComponent<SpriteComponent>();
+                auto &tComp      = bg.GetComponent<TransformComponent>();
+                auto &velComp    = bg.GetComponent<VelocityComponent>();
+                auto &stateComp  = bg.GetComponent<StateComponent>();
+                stateComp.state  = GAME;
+                spriteComp.sprite.SetTexture(_stars);
+                velComp.velocity.x = -SCROLL_SPEED * 1.5;
+                tComp.position.x = spritePos.left;
+                tComp.position.y = spritePos.top;
+                spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
+            }
+        }
+    }
+
+    void InitLayers()
+    {
+        InitPlanets();
+        InitStars();
+    }
+
+    void InitBackground()
+    {
+        _planets.LoadFromFile("./resources/sprites/planets.png");
+        _stars.LoadFromFile("./resources/sprites/stars.png");
+
+        AddLayer("Stars", 3);
+        AddLayer("Planets", 3);
+        InitLayers();
     }
 };
 
@@ -179,101 +218,99 @@ private:
 
 class RTypeSounds {
 
-    public:
-        enum Sounds
-        {
-            LASER,
-            EXPLOSION
-        };
+public:
+    enum Sounds
+    {
+        LASER,
+        EXPLOSION
+    };
 
-        RTypeSounds()
-        {
+    RTypeSounds()
+    {
+    }
 
-        }
+    ~RTypeSounds()
+    {
+    }
 
-        ~RTypeSounds()
-        {
+    void AddSound(RTypeSounds::Sounds soundType, const std::string &path)
+    {
+        _RSoundBufs.emplace(std::make_pair(soundType, nuts::SoundBuffer(path)));
+        _RSounds.emplace(std::make_pair(soundType, nuts::Sound(_RSoundBufs[soundType])));
+    }
 
-        }
+    void Play(RTypeSounds::Sounds soundType)
+    {
+        _RSounds[soundType].Play();
+    }
 
-        void AddSound(RTypeSounds::Sounds soundType, const std::string &path)
-        {
-            _RSoundBufs.emplace(std::make_pair(soundType, nuts::SoundBuffer(path)));
-            _RSounds.emplace(std::make_pair(soundType, nuts::Sound(_RSoundBufs[soundType])));
-        }
-
-        void Play(RTypeSounds::Sounds soundType)
-        {
-            _RSounds[soundType].Play();
-        }
-
-    private:
-        std::unordered_map<RTypeSounds::Sounds, nuts::SoundBuffer> _RSoundBufs;
-        std::unordered_map<RTypeSounds::Sounds, nuts::Sound> _RSounds;
+private:
+    std::unordered_map<RTypeSounds::Sounds, nuts::SoundBuffer> _RSoundBufs;
+    std::unordered_map<RTypeSounds::Sounds, nuts::Sound>       _RSounds;
 };
 
 class RExplosion : public nuts::GameObject {
-    public:
-        RExplosion() {}
+public:
+    RExplosion() { }
 
-        RExplosion(nuts::Texture &txt)
-        {
-            Create("Explosion");
+    RExplosion(nuts::Texture &txt)
+    {
+        Create("Explosion");
 
-            AddComponent<StateComponent>();
-            AddComponent<SpriteComponent>();
-            AddComponent<VelocityComponent>();
-            AddComponent<TransformComponent>();
+        AddComponent<StateComponent>();
+        AddComponent<SpriteComponent>();
+        AddComponent<VelocityComponent>();
+        AddComponent<TransformComponent>();
 
-            auto &stateComp = GetComponent<StateComponent>();
-            auto &sprite = GetComponent<SpriteComponent>().sprite;
-            auto &velocity = GetComponent<VelocityComponent>().velocity;
-            auto &pos = GetComponent<TransformComponent>().position;
+        auto &stateComp = GetComponent<StateComponent>();
+        auto &sprite    = GetComponent<SpriteComponent>().sprite;
+        auto &velocity  = GetComponent<VelocityComponent>().velocity;
+        auto &pos       = GetComponent<TransformComponent>().position;
 
-            stateComp.state = GameState::GAME;
+        stateComp.state = GameState::GAME;
 
-            pos = {0, 0};
-            velocity = {0, 0};
-            sprite.SetTexture(txt);
-            sprite.SetTextureRect({128, 0, 33, 33});
-            sprite.SetFirstFrame({128, 0, 33, 33});
-            sprite.SetAnimated(true);
-            sprite.SetFrameTime(0.05f);
-            sprite.SetFrameCount(6);
-            sprite.InitAnimationClock();
-        }
+        pos      = { 0, 0 };
+        velocity = { 0, 0 };
+        sprite.SetTexture(txt);
+        sprite.SetTextureRect({ 128, 0, 33, 33 });
+        sprite.SetFirstFrame({ 128, 0, 33, 33 });
+        sprite.SetAnimated(true);
+        sprite.SetFrameTime(0.05f);
+        sprite.SetFrameCount(6);
+        sprite.InitAnimationClock();
+    }
 
-        RExplosion(nuts::Texture &txt, nuts::Vector2f pos) : RExplosion(txt)
-        {
-            SetPosition(pos);
-        }
+    RExplosion(nuts::Texture &txt, nuts::Vector2f pos)
+        : RExplosion(txt)
+    {
+        SetPosition(pos);
+    }
 
-        ~RExplosion() {}
+    ~RExplosion() { }
 
-        void SetPosition(nuts::Vector2f pos)
-        {
-            auto &position = GetComponent<TransformComponent>().position;
+    void SetPosition(nuts::Vector2f pos)
+    {
+        auto &position = GetComponent<TransformComponent>().position;
 
-            position = pos;
-        }
+        position = pos;
+    }
 
-    private:
-
+private:
 };
 
 class RTypeGame {
 
 private:
-    std::shared_ptr<nuts::Engine>           _engine;
-    std::unordered_map<ClientID, GPlayer *> _players;
+    std::shared_ptr<nuts::Engine>            _engine;
+    std::unordered_map<ClientID, GPlayer *>  _players;
     std::unordered_map<ClientID, nuts::Text> _player_scores;
 
-    std::unordered_map<int, GMonster *>     _monsters;
-    std::queue<sf::Packet>                  _monster_packets_queue;
+    std::unordered_map<int, GMonster *> _monsters;
+    std::queue<sf::Packet>              _monster_packets_queue;
 
-    nuts::Texture _ExplosionTxt;
+    nuts::Texture                       _ExplosionTxt;
     std::unordered_map<int, RExplosion> _RExplosions;
-    RTypeSounds _RSounds;
+    RTypeSounds                         _RSounds;
 
     ClientID    _localClientId;
     GBackground _background;

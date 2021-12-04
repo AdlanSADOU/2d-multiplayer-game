@@ -24,7 +24,7 @@ void RType::Init()
 {
     _engine = std::make_shared<nuts::Engine>();
 
-    _engine->InitWindow("R-Type", 800, 400);
+    _engine->InitWindow("R-Type", 800, 600);
     _engine->SetFramerateLimit(60);
 
     scene.Init();
