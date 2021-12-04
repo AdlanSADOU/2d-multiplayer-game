@@ -40,13 +40,26 @@ void RTypeGame::InitMonsterTextures()
     _MTextures.insert({ GMonster::Type::GROUND, nuts::Texture("./resources/sprites/mecha.gif") });
 }
 
+void RTypeGame::InitSounds()
+{
+    _RSounds.AddSound(RTypeSounds::Sounds::EXPLOSION, "./resources/sounds/explosion.wav");
+    _RSounds.AddSound(RTypeSounds::Sounds::LASER, "./resources/sounds/laserShoot.wav");
+}
+
+void RTypeGame::InitExplosionTexture()
+{
+    _ExplosionTxt.LoadFromFile("./resources/sprites/explosions.gif");
+}
+
 void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
 {
     _engine = engine;
     _font.LoadFromFile("./resources/fonts/arcade.ttf");
+    InitExplosionTexture();
     InitMonsterTextures();
     InitMonsterTexturesRect();
     InitMonsterFrameCount();
+    InitSounds();
 
     _ui.p1score = nuts::Text("0", 10, _font);
     _ui.p2score = nuts::Text("0", 10, _font);
@@ -109,17 +122,33 @@ void RTypeGame::ProcessMonsterPackets()
                 auto &tComp = _monsters[id]->GetComponent<TransformComponent>();
 
                 tComp = { pos_x, pos_y };
-
                 _monsters[id]->_infos.is_destroyed = is_destroyed;
             }
 
             if (is_destroyed && (_monsters.find(id) != std::end(_monsters))) {
+                nuts::Vector2f expPos = _monsters[id]->GetComponent<TransformComponent>().position;
+                AddExplosion(expPos, id);
                 scene.DestroyEntity(_monsters[id]->GetEntity());
                 delete _monsters[id];
                 _monsters.erase(id);
 
                 COUT("[UDP-REC]: depop monster with id: " << id << "\n");
             }
+        }
+    }
+}
+
+void RTypeGame::UpdateExplosions()
+{
+    for (auto e = std::begin(_RExplosions); e != std::end(_RExplosions); ++e)
+    {
+        auto &sprite = e->second.GetComponent<SpriteComponent>().sprite;
+        auto &state = e->second.GetComponent<StateComponent>().state;
+        if (sprite.IsLastFrame() && state == GameState::GAME) {
+            auto &state = e->second.GetComponent<StateComponent>().state;
+            state = GameState::NONE;
+            _RExplosions.erase(e);
+            break;
         }
     }
 }
@@ -161,6 +190,13 @@ void RTypeGame::Update()
             }
         }
     }
+
+    UpdateExplosions();
+}
+
+void RTypeGame::AddExplosion(nuts::Vector2f pos, int id)
+{
+    _RExplosions.insert( {id, RExplosion(_ExplosionTxt, pos)} );
 }
 
 void RTypeGame::Draw()

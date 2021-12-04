@@ -27,7 +27,7 @@ namespace nuts
 
     /**
      * @brief Storage for audio samples defining a sound.
-     * 
+     *
      */
     class SoundBuffer
     {
@@ -37,25 +37,30 @@ namespace nuts
         public:
             /**
              * @brief Construct a new Sound Buffer object
-             * 
+             *
              */
             SoundBuffer()
             {
-
+                std::cout << "Sound buffer created" << std::endl;
             };
-            
+
+            SoundBuffer(const std::string &path)
+            {
+                _sound_buffer.loadFromFile(path);
+            };
+
             /**
              * @brief Destroy the Sound Buffer object
-             * 
+             *
              */
             ~SoundBuffer()
             {
-
+                std::cout << "Sound buffer destroyed" << std::endl;
             };
 
             /**
              * @brief Load the sound buffer from a file.
-             * 
+             *
              * @param path Path of the sound file to load
              * @return True if loading suceeded, false if it failed
              */
@@ -63,11 +68,11 @@ namespace nuts
             {
                 return (_sound_buffer.loadFromFile(path));
             }
-            
+
             /**
              * @brief Get the sound buffer at its current state
-             * 
-             * @return const sf::SoundBuffer& 
+             *
+             * @return const sf::SoundBuffer&
              */
             const sf::SoundBuffer &GetSoundBuffer()
             {
@@ -77,7 +82,7 @@ namespace nuts
 
     /**
      * @brief Regular sound that can be played in the audio environment
-     * 
+     *
      */
     class Sound
     {
@@ -87,15 +92,15 @@ namespace nuts
         public:
             /**
              * @brief Construct a new Sound object
-             * 
+             *
              */
             Sound() {
                 // std::cout << "Sound class created" << std::endl;
             };
-            
+
             /**
              * @brief Destroy the Sound object
-             * 
+             *
              */
             ~Sound() {
                 // std::cout << "Sound class destroyed" << std::endl;
@@ -103,7 +108,7 @@ namespace nuts
 
             /**
              * @brief Construct a new Sound object with a buffer
-             * 
+             *
              * @param buf buffer containing the audio data to play with the sound
              */
             Sound(nuts::SoundBuffer &buf) {
@@ -141,7 +146,7 @@ namespace nuts
 
             /**
              * @brief Set the source buffer containing the audio data to play.
-             * 
+             *
              * @param buf buffer to attach to the sound
              */
             void SetSoundBuffer(const sf::SoundBuffer &buf)
@@ -159,7 +164,7 @@ namespace nuts
             {
                 _sound->setVolume(volume);
             }
-            
+
             /**
              * @brief Set the pitch of the sound.
              * The pitch represents the perceived fundamental frequency of a sound; thus you can make a sound more acute or grave by changing its pitch. A side effect of changing the pitch is to modify the playing speed of the sound as well. The default value for the pitch is 1.
@@ -172,7 +177,7 @@ namespace nuts
 
             /**
              * @brief Get the audio buffer attached to the sound.
-             * 
+             *
              * @return const sf::SoundBuffer* Buffer attached to the sound (can be NULL)
              */
             const sf::SoundBuffer *GetBufferFromSound()
@@ -183,7 +188,7 @@ namespace nuts
 
     /**
      * @brief Streamed Music played from an audi file
-     * 
+     *
      */
     class Music
     {
@@ -214,17 +219,17 @@ namespace nuts
              * @brief Open a music from an audio file.
              * his function doesn't start playing the music (call play() to do so). See the documentation of sf::InputSoundFile for the list of supported formats.
              * @param path Path of the music file to open
-             * @return true 
-             * @return false 
+             * @return true
+             * @return false
              */
             bool OpenFromFile(const std::string &path)
             {
                 return (_music.openFromFile(path));
             }
-            
+
             /**
              * @brief Destroy the Music object
-             * 
+             *
              */
             ~Music()
             {
@@ -242,7 +247,7 @@ namespace nuts
 
             /**
              * @brief Stops playing the audio stream
-             * 
+             *
              */
             void Stop()
             {

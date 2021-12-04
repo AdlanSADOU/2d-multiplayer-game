@@ -40,6 +40,7 @@ class SoundSystem : public System
                 auto &soundComponent = scene.GetComponent<SoundComponent>(entity);
 
                 if (soundComponent.shouldPlay) {
+                    std::cout << "SYSTEM : Playing sounds" << std::endl;
                     soundComponent.sound.Play();
                     soundComponent.shouldPlay = false;
                 }

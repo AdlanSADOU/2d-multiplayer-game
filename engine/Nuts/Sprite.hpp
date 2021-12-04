@@ -303,5 +303,12 @@ namespace nuts {
             res.height = rect.height;
             return (res);
         }
+
+        bool IsLastFrame()
+        {
+            if (_frame_in_flight >= _frame_count)
+                return true;
+            return false;
+        }
     };
 }

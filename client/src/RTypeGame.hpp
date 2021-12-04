@@ -18,17 +18,20 @@
 #include "Nuts/Networking.hpp"
 #include "Nuts/Texture.hpp"
 #include "Nuts/Vect.hpp"
+#include "Nuts/Audio.hpp"
 
 #include "Nuts/EcsComponents/SpriteComponent.hpp"
 #include "Nuts/EcsComponents/TransformComponent.hpp"
 #include "Nuts/EcsComponents/VelocityComponent.hpp"
 #include "Nuts/EcsComponents/StateComponent.hpp"
+#include "Nuts/EcsComponents/SoundComponent.hpp"
 
 #include "RTypePlayer.hpp"
 #include "../client/src/RGameState.hpp"
 
 #include <iostream>
 #include <unordered_map>
+#include <algorithm>
 
 extern Scene scene;
 
@@ -174,6 +177,90 @@ public:
 private:
 };
 
+class RTypeSounds {
+
+    public:
+        enum Sounds
+        {
+            LASER,
+            EXPLOSION
+        };
+
+        RTypeSounds()
+        {
+
+        }
+
+        ~RTypeSounds()
+        {
+
+        }
+
+        void AddSound(RTypeSounds::Sounds soundType, const std::string &path)
+        {
+            _RSoundBufs.emplace(std::make_pair(soundType, nuts::SoundBuffer(path)));
+            _RSounds.emplace(std::make_pair(soundType, nuts::Sound(_RSoundBufs[soundType])));
+        }
+
+        void Play(RTypeSounds::Sounds soundType)
+        {
+            _RSounds[soundType].Play();
+        }
+
+    private:
+        std::unordered_map<RTypeSounds::Sounds, nuts::SoundBuffer> _RSoundBufs;
+        std::unordered_map<RTypeSounds::Sounds, nuts::Sound> _RSounds;
+};
+
+class RExplosion : public nuts::GameObject {
+    public:
+        RExplosion() {}
+
+        RExplosion(nuts::Texture &txt)
+        {
+            Create("Explosion");
+
+            AddComponent<StateComponent>();
+            AddComponent<SpriteComponent>();
+            AddComponent<VelocityComponent>();
+            AddComponent<TransformComponent>();
+
+            auto &stateComp = GetComponent<StateComponent>();
+            auto &sprite = GetComponent<SpriteComponent>().sprite;
+            auto &velocity = GetComponent<VelocityComponent>().velocity;
+            auto &pos = GetComponent<TransformComponent>().position;
+
+            stateComp.state = GameState::GAME;
+
+            pos = {0, 0};
+            velocity = {0, 0};
+            sprite.SetTexture(txt);
+            sprite.SetTextureRect({128, 0, 33, 33});
+            sprite.SetFirstFrame({128, 0, 33, 33});
+            sprite.SetAnimated(true);
+            sprite.SetFrameTime(0.05f);
+            sprite.SetFrameCount(6);
+            sprite.InitAnimationClock();
+        }
+
+        RExplosion(nuts::Texture &txt, nuts::Vector2f pos) : RExplosion(txt)
+        {
+            SetPosition(pos);
+        }
+
+        ~RExplosion() {}
+
+        void SetPosition(nuts::Vector2f pos)
+        {
+            auto &position = GetComponent<TransformComponent>().position;
+
+            position = pos;
+        }
+
+    private:
+
+};
+
 class RTypeGame {
     struct GameUI
     {
@@ -188,6 +275,10 @@ private:
     std::unordered_map<ClientID, GPlayer *> _players;
     std::unordered_map<int, GMonster *>     _monsters;
     std::queue<sf::Packet>                  _monster_packets_queue;
+
+    nuts::Texture _ExplosionTxt;
+    std::unordered_map<int, RExplosion> _RExplosions;
+    RTypeSounds _RSounds;
 
     ClientID    _localClientId;
     GBackground _background;
@@ -211,11 +302,15 @@ public:
     void InitMonsterTextures();
     void InitMonsterTexturesRect();
     void InitMonsterFrameCount();
+    void InitSounds();
+    void InitExplosionTexture();
 
     void SetLocalClientId(ClientID clientId);
     bool IsMonsterInList(int id);
+    void AddExplosion(nuts::Vector2f pos, int id);
 
     void Update();
+    void UpdateExplosions();
     void ProcessMonsterPackets();
     void Draw();
 
