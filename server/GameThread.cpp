@@ -195,6 +195,7 @@ void GameThread::OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id)
     }
 }
 
+// -------------------------------------------------------------
 // Monster updates -- maybe a class on its own?
 MonsterType GameThread::GetRandomType()
 {
@@ -264,7 +265,7 @@ void GameThread::UpdateMonsters()
 
     thread_local int i = 0;
 
-    if (i >= 600)
+    if (_monsterSpawn.getElapsedTime().asSeconds() >= 0.9f)
         for (auto it = _monsters.begin(); it != _monsters.end();) {
             if (it->destroyed) {
                 // COUT("erased > monster with id: " << it->id << "\n");

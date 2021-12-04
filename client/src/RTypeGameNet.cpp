@@ -13,25 +13,34 @@ void RTypeGame::OnInitialGameInfo(Event &event)
 
     std::vector<ClientID> clientIds;
 
-    while (!packet.endOfPacket()) {
+    nuts::Color score_colors[4] = {
+        nuts::Color(128, 0, 128, 120),
+        nuts::Color(0, 255, 0, 120),
+        nuts::Color(255, 0, 0, 120),
+        nuts::Color(0, 0, 255, 120),
+    };
+
+    while (!packet.endOfPacket())
+    {
         ClientID tmp_client_id;
         packet >> tmp_client_id;
 
         clientIds.push_back(tmp_client_id);
         _players.insert({ tmp_client_id, new GPlayer(tmp_client_id) });
 
-        nuts::Text tmp_text = {};
-        std::string tmp_str = "P.";
+        nuts::Text  tmp_text = {};
+        std::string tmp_str  = "P.";
         tmp_str.append(std::to_string(tmp_client_id));
 
         tmp_text.SetString(tmp_str);
-
+        tmp_text.SetOutlineThickness(1);
+        tmp_text.SetOulineColor(score_colors[tmp_client_id % MAX_CLIENTS]);
         tmp_text.SetFont(_font);
         tmp_text.SetCharacterSize(12);
 
         thread_local float text_pos = 100;
         tmp_text.SetPosition({ text_pos, (float)_engine->GetWindowSize().y / 6 * 5 });
-        _player_scores.insert({tmp_client_id, tmp_text});
+        _player_scores.insert({ tmp_client_id, tmp_text });
         text_pos += 100;
 
         std::cout << "[Client]: Starting game with playerId:[" << tmp_client_id << "]\n";
