@@ -4,19 +4,15 @@ not the engine
 cause engine is a shared lib, so static function isKeyPressed() executes on all clients...
 
 
+<!-- - player scores -->
+<!-- - sounds -->
 - monster projectiles
 - monster projectiles/player collision
-- player scores
-    - player#1 kills mob > ++score
 - score milestones
     - if score reaches 20, increase mob density & spawn rate
-- sounds
 - handle player disconnection/death
 
-player#x kills mob ---------------- server
-                                    increase player score
-                                    broadcast player score
-
+does each player receive monster inputs?
 
 # TODO Engine
 

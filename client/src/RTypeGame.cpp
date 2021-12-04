@@ -61,19 +61,6 @@ void RTypeGame::Init(std::shared_ptr<nuts::Engine> engine)
     InitMonsterFrameCount();
     InitSounds();
 
-    _ui.p1score = nuts::Text("0", 10, _font);
-    _ui.p2score = nuts::Text("0", 10, _font);
-    _ui.p3score = nuts::Text("0", 10, _font);
-    _ui.p4score = nuts::Text("0", 10, _font);
-
-    nuts::Vector2u winSize = _engine->GetWindowSize();
-    float          sXpos   = 0;
-
-    _ui.p1score.SetPosition({ sXpos + 100, (float)winSize.y / 6 * 5 });
-    _ui.p2score.SetPosition({ sXpos + 200, (float)winSize.y / 6 * 5 });
-    _ui.p3score.SetPosition({ sXpos + 300, (float)winSize.y / 6 * 5 });
-    _ui.p4score.SetPosition({ sXpos + 400, (float)winSize.y / 6 * 5 });
-
     _background.InitBackground();
 
     scene.AddEventCallback(Net::Events::INITIAL_GAME_INFO, BIND_CALLBACK(&RTypeGame::OnInitialGameInfo, this));
@@ -131,8 +118,6 @@ void RTypeGame::ProcessMonsterPackets()
                 scene.DestroyEntity(_monsters[id]->GetEntity());
                 delete _monsters[id];
                 _monsters.erase(id);
-
-                COUT("[UDP-REC]: depop monster with id: " << id << "\n");
             }
         }
     }
@@ -201,10 +186,17 @@ void RTypeGame::AddExplosion(nuts::Vector2f pos, int id)
 
 void RTypeGame::Draw()
 {
-    _ui.p1score.TEST_DRAW(_engine->window);
-    _ui.p2score.TEST_DRAW(_engine->window);
-    _ui.p3score.TEST_DRAW(_engine->window);
-    _ui.p4score.TEST_DRAW(_engine->window);
+    for (auto &p_scores : _player_scores) {
+        ClientID client_id = p_scores.first;
+
+        std::string tmp_str = "p";
+        tmp_str.append(std::to_string(client_id % MAX_CLIENTS));
+        tmp_str.append("-");
+        tmp_str.append(std::to_string(_players[client_id]->_score));
+        p_scores.second.SetString(tmp_str);
+
+        p_scores.second.TEST_DRAW(_engine->window);
+    }
 }
 
 void RTypeGame::LocalClientInputs()

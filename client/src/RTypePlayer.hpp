@@ -140,7 +140,7 @@ public:
 
 class GPlayer : public nuts::GameObject {
     ClientID       _clientId = -1;
-    nuts::Vector2f _pos;
+    nuts::Vector2f _pos; // deprecated ?
     nuts::Texture  _playerTexture;
 
 public:
@@ -154,9 +154,9 @@ public:
     bool _directionalKeys[4] = { 0 };
 
     bool       _isFiering = 0;
-    sf::Uint16 _score     = 0;
-    sf::Uint16 _health    = 0;
-    sf::Uint16 _maxHealth = 0;
+    int32_t _score     = 0;
+    int32_t _health    = 0;
+    int32_t _maxHealth = 0;
     float speed = 256;
 
     GPlayer(ClientID id)

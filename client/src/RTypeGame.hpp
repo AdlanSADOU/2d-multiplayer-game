@@ -262,17 +262,12 @@ class RExplosion : public nuts::GameObject {
 };
 
 class RTypeGame {
-    struct GameUI
-    {
-        nuts::Text p1score;
-        nuts::Text p2score;
-        nuts::Text p3score;
-        nuts::Text p4score;
-    };
 
 private:
     std::shared_ptr<nuts::Engine>           _engine;
     std::unordered_map<ClientID, GPlayer *> _players;
+    std::unordered_map<ClientID, nuts::Text> _player_scores;
+
     std::unordered_map<int, GMonster *>     _monsters;
     std::queue<sf::Packet>                  _monster_packets_queue;
 
@@ -283,7 +278,6 @@ private:
     ClientID    _localClientId;
     GBackground _background;
     nuts::Font  _font;
-    GameUI      _ui;
 
     std::unordered_map<GMonster::Type, nuts::Texture> _MTextures;
     std::unordered_map<GMonster::Type, nuts::IntRect> _MTexturesRect;
