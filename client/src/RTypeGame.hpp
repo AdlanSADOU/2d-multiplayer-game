@@ -177,7 +177,7 @@ public:
 
     ~GMonster()
     {
-        COUT("[ENTT]: monster destroyed with id: [" << GetEntity() << "\n");
+        // COUT("[ENTT]: monster destroyed with id: [" << GetEntity() << "\n");
         // scene.DestroyEntity(GetEntity());
     }
 

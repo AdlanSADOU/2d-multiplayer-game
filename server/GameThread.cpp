@@ -45,7 +45,6 @@ void GameThread::Run(std::vector<std::shared_ptr<SClientComponent>> clients, std
     // th_receive = std::thread(&GameThread::receive, this); // deprecated
 
     while (_running) {
-
         _dt = _deltaClock.restart();
 
         Receive();
@@ -243,7 +242,7 @@ void GameThread::UpdateMonsters()
 
     if (_monsters.size() < 30 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
         // COUT("spawned monster with id: " << monster_id << "\n");
-        SMInfos tmp = { monster_id, GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
+        SMInfos tmp = { monster_id, GetRandomType(), GetRandomPosSpawn(), GetRandomPos() };
         _monsters.emplace_back(tmp);
         _monsterSpawn.restart();
         ++monster_id;
