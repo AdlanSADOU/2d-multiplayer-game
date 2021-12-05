@@ -97,11 +97,11 @@ public:
             spriteComp.sprite.InitAnimationClock();
 
             tmpProj.position = startPosition;
-            tmpProj.position.x += 20;
-            tmpProj.position.y += 3;
+            tmpProj.position.x += 30;
+            tmpProj.position.y += 4;
 
             transformComp.position = { tmpProj.position.x, tmpProj.position.y };
-            tmpProj.speed          = 460;
+            tmpProj.speed          = 500;
 
             _projectiles.push_back(tmpProj);
         }
@@ -180,6 +180,7 @@ public:
         spriteComp.sprite.SetAnimated(false);
         spriteComp.sprite.SetLooped(false);
         spriteComp.sprite.SetFirstFrame({ 0, 16 * (id % MAX_CLIENTS), 32, 16 });
+        spriteComp.sprite.SetScale({1.2f,1.2f});
 
         _vel = &GetComponent<VelocityComponent>();
 
