@@ -24,21 +24,25 @@ RTypeGame::~RTypeGame()
 
 void RTypeGame::InitMonsterFrameCount()
 {
-    _MFrameCount.insert({ GMonster::Type::FLY, 12 });
+    _MFrameCount.insert({ GMonster::Type::ORB, 12 });
     _MFrameCount.insert({ GMonster::Type::GROUND, 4 });
+    _MFrameCount.insert({ GMonster::Type::REDSHIP, 8 });
 }
 
 void RTypeGame::InitMonsterTexturesRect()
 {
-    _MTexturesRect.insert({ GMonster::Type::FLY, { 0, 0, 16, 14 } });
+    _MTexturesRect.insert({ GMonster::Type::ORB, { 0, 0, 16, 14 } });
     _MTexturesRect.insert({ GMonster::Type::GROUND, { 0, 0, 33, 32 } });
+    _MTexturesRect.insert({ GMonster::Type::REDSHIP, { 0, 0, 33, 36 } });
 }
 
 void RTypeGame::InitMonsterTextures()
 {
-    _MTextures.insert({ GMonster::Type::FLY, nuts::Texture("./resources/sprites/ball.gif") });
+    _MTextures.insert({ GMonster::Type::ORB, nuts::Texture("./resources/sprites/ball.gif") });
     _MTextures.insert({ GMonster::Type::GROUND, nuts::Texture("./resources/sprites/mecha.gif") });
+    _MTextures.insert({ GMonster::Type::REDSHIP, nuts::Texture("./resources/sprites/redship.gif") });
 }
+
 
 void RTypeGame::InitSounds()
 {

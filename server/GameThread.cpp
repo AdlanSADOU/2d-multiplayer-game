@@ -198,7 +198,7 @@ void GameThread::OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id)
 // Monster updates -- maybe a class on its own?
 MonsterType GameThread::GetRandomType()
 {
-    return ((MonsterType)(0 + (rand() % (1 - 0 + 1))));
+    return ((MonsterType)(0 + (rand() % (2 - 0 + 1))));
 }
 
 nuts::Vector2f GameThread::GetRandomPosSpawn()
@@ -225,10 +225,10 @@ void GameThread::UpdateMonstersPos()
         nuts::Vector2f &pos      = monster.pos;
         nuts::Vector2f &goto_pos = monster.goto_pos;
 
-        if (pos.x >= goto_pos.x + 10) { pos.x -= 50 * dt; }
-        if (pos.x <= goto_pos.x - 10) { pos.x += 50 * dt; }
-        if (pos.y >= goto_pos.y + 10) { pos.y -= 50 * dt; }
-        if (pos.y <= goto_pos.y - 10) { pos.y += 50 * dt; }
+        if (pos.x >= goto_pos.x + 10) { pos.x -= 75 * dt; }
+        if (pos.x <= goto_pos.x - 10) { pos.x += 75 * dt; }
+        if (pos.y >= goto_pos.y + 10) { pos.y -= 75 * dt; }
+        if (pos.y <= goto_pos.y - 10) { pos.y += 75 * dt; }
 
         if ((pos.x >= goto_pos.x - 10 && pos.x <= goto_pos.x + 10) && (pos.y >= goto_pos.y - 10 && pos.y <= goto_pos.y + 10)) {
             monster.goto_pos = GetRandomPos();
@@ -240,7 +240,7 @@ void GameThread::UpdateMonsters()
 {
     thread_local int monster_id = 0;
 
-    if (_monsters.size() < 30 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
+    if (_monsters.size() < 30 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.1f) {
         // COUT("spawned monster with id: " << monster_id << "\n");
         SMInfos tmp = { monster_id, GetRandomType(), GetRandomPosSpawn(), GetRandomPos() };
         _monsters.emplace_back(tmp);

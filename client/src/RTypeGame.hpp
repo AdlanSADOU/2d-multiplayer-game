@@ -134,7 +134,8 @@ public:
     enum Type
     {
         GROUND = 0,
-        FLY,
+        ORB,
+        REDSHIP
     };
 
     struct MInfos
