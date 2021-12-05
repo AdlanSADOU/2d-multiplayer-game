@@ -139,7 +139,7 @@ public:
 };
 
 class GPlayer : public nuts::GameObject {
-    ClientID       _clientId = -1;
+    ClientID       _client_id = -1;
     nuts::Vector2f _pos; // deprecated ?
     nuts::Texture  _playerTexture;
 
@@ -161,7 +161,7 @@ public:
 
     GPlayer(ClientID id)
     {
-        _clientId = id;
+        _client_id = id;
 
         Create("");
         AddComponent<SpriteComponent>();
@@ -198,7 +198,7 @@ public:
 
     int GetId() const
     {
-        return (_clientId);
+        return (_client_id);
     }
 
     bool IsFiering() const
@@ -220,7 +220,7 @@ public:
 
     void SetId(int id)
     {
-        _clientId = id;
+        _client_id = id;
     }
 
     void SetFiering(bool value)

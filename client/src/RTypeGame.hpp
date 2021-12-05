@@ -75,7 +75,7 @@ public:
 
     void InitPlanets()
     {
-        nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
+        nuts::FloatRect spritePos = { 0.f, 0.f, 0.f, 0.f };
         for (auto &bg : _backgrounds) {
             if (bg.GetName().compare("Planets")) {
                 auto &spriteComp = bg.GetComponent<SpriteComponent>();
@@ -84,10 +84,10 @@ public:
                 auto &stateComp  = bg.GetComponent<StateComponent>();
                 stateComp.state  = GAME;
                 spriteComp.sprite.SetTexture(_planets);
-                spriteComp.sprite.SetScale({2.2f, 2.2f});
+                spriteComp.sprite.SetScale({ 2.2f, 2.2f });
                 velComp.velocity.x = -SCROLL_SPEED;
-                tComp.position.x = spritePos.left;
-                tComp.position.y = spritePos.top;
+                tComp.position.x   = spritePos.left;
+                tComp.position.y   = spritePos.top;
                 spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
             }
         }
@@ -95,7 +95,7 @@ public:
 
     void InitStars()
     {
-        nuts::FloatRect spritePos = {0.f, 0.f, 0.f, 0.f};
+        nuts::FloatRect spritePos = { 0.f, 0.f, 0.f, 0.f };
         for (auto &bg : _backgrounds) {
             if (bg.GetName().compare("Stars")) {
                 auto &spriteComp = bg.GetComponent<SpriteComponent>();
@@ -105,8 +105,8 @@ public:
                 stateComp.state  = GAME;
                 spriteComp.sprite.SetTexture(_stars);
                 velComp.velocity.x = -SCROLL_SPEED * 1.5;
-                tComp.position.x = spritePos.left;
-                tComp.position.y = spritePos.top;
+                tComp.position.x   = spritePos.left;
+                tComp.position.y   = spritePos.top;
                 spritePos.left += spriteComp.sprite.GetGlobalBounds().width;
             }
         }
@@ -235,8 +235,8 @@ public:
 
     void AddSound(RTypeSounds::Sounds soundType, const std::string &path)
     {
-        _RSoundBufs.emplace(std::make_pair(soundType, nuts::SoundBuffer(path)));
-        _RSounds.emplace(std::make_pair(soundType, nuts::Sound(_RSoundBufs[soundType])));
+        _RSoundBufs.insert(std::make_pair(soundType, new nuts::SoundBuffer(path)));
+        _RSounds.insert(std::make_pair(soundType, nuts::Sound(*_RSoundBufs[soundType])));
     }
 
     void Play(RTypeSounds::Sounds soundType)
@@ -244,9 +244,9 @@ public:
         _RSounds[soundType].Play();
     }
 
-private:
-    std::unordered_map<RTypeSounds::Sounds, nuts::SoundBuffer> _RSoundBufs;
-    std::unordered_map<RTypeSounds::Sounds, nuts::Sound>       _RSounds;
+public:
+    std::unordered_map<RTypeSounds::Sounds, nuts::SoundBuffer *> _RSoundBufs;
+    std::unordered_map<RTypeSounds::Sounds, nuts::Sound>         _RSounds;
 };
 
 class RExplosion : public nuts::GameObject {

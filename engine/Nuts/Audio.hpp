@@ -88,6 +88,7 @@ namespace nuts
     {
         private:
             sf::Sound *_sound = nullptr;
+            sf::Sound::Status _status;
 
         public:
             /**
@@ -142,6 +143,11 @@ namespace nuts
             void Stop()
             {
                 _sound->stop();
+            }
+
+            bool IsPlaying()
+            {
+                return _status == _sound->Playing;
             }
 
             /**
