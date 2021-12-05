@@ -92,18 +92,16 @@ void RType::Run()
 
         _engine->Clear();
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::J))
-            COUT("KJJJJJJJ");
-
         if (_engine->IsKeyPressed(nuts::Key::P)) {
             sf::Packet packet;
             packet << (EventType)Net::Events::CLIENTS_PRINT;
             INetClient::TcpSend(packet);
         }
 
-        _transformSystem.get()->Update(_deltaClock, _state);
-        _animationSystem.get()->Update(_deltaClock, _state);
-        _renderSystem.get()->Update(_engine->window, _state);
+        _transformSystem->Update(_deltaClock, _state);
+        _animationSystem->Update(_deltaClock, _state);
+        _renderSystem->Update(_engine->window, _state);
+        _soundSystem->Update();
 
         INetClient::Update();
 
@@ -137,7 +135,8 @@ void RType::Run()
                 _game->Update();
                 _game->Draw();
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (16.f)) {
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (44.f))
+                {
                     INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
@@ -165,8 +164,8 @@ void RType::Run()
                         //     << localPlayer->IsFiering()
                         //     << _game->_destroyed_monster_id << "\n");
 
-                        if (_game->_destroyed_monster_id != -1)
-                            COUT("[UDP-SEND]: destroyed monster with id: " << _game->_destroyed_monster_id << "\n");
+                        // if (_game->_destroyed_monster_id != -1)
+                            // COUT("[UDP-SEND]: destroyed monster with id: " << _game->_destroyed_monster_id << "\n");
 
                         INetClient::UdpSend(playerStatePacket);
                     }

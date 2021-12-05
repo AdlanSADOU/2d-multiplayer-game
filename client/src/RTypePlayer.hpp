@@ -97,11 +97,11 @@ public:
             spriteComp.sprite.InitAnimationClock();
 
             tmpProj.position = startPosition;
-            tmpProj.position.x += 20;
-            tmpProj.position.y += 3;
+            tmpProj.position.x += 30;
+            tmpProj.position.y += 4;
 
             transformComp.position = { tmpProj.position.x, tmpProj.position.y };
-            tmpProj.speed          = 460;
+            tmpProj.speed          = 500;
 
             _projectiles.push_back(tmpProj);
         }
@@ -139,7 +139,7 @@ public:
 };
 
 class GPlayer : public nuts::GameObject {
-    ClientID       _clientId = -1;
+    ClientID       _client_id = -1;
     nuts::Vector2f _pos; // deprecated ?
     nuts::Texture  _playerTexture;
 
@@ -161,7 +161,7 @@ public:
 
     GPlayer(ClientID id)
     {
-        _clientId = id;
+        _client_id = id;
 
         Create("");
         AddComponent<SpriteComponent>();
@@ -180,6 +180,7 @@ public:
         spriteComp.sprite.SetAnimated(false);
         spriteComp.sprite.SetLooped(false);
         spriteComp.sprite.SetFirstFrame({ 0, 16 * (id % MAX_CLIENTS), 32, 16 });
+        spriteComp.sprite.SetScale({1.2f,1.2f});
 
         _vel = &GetComponent<VelocityComponent>();
 
@@ -197,7 +198,7 @@ public:
 
     int GetId() const
     {
-        return (_clientId);
+        return (_client_id);
     }
 
     bool IsFiering() const
@@ -219,7 +220,7 @@ public:
 
     void SetId(int id)
     {
-        _clientId = id;
+        _client_id = id;
     }
 
     void SetFiering(bool value)
@@ -246,6 +247,7 @@ public:
     void Update(float dt, sf::RenderWindow &window)
     {
         Move();
+
         if (_isFiering)
             _projectileManager.FireProjectile(GetPosition(), ProjectileManager::SMALL, dt);
 

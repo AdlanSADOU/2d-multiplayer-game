@@ -104,8 +104,11 @@ void GameThread::Broadcast(sf::Packet packet, ClientID ignoredClientId = -1)
 
 void GameThread::OnClientUpdate(Event &event)
 {
-    if (client_update_start_counter < 100) {
-        ++client_update_start_counter;
+    // wait for 50 server ticks before starting
+    // to process client packets
+    // ugly workaround for a weird bug
+    if (tick_count < 10) {
+        ++tick_count;
         return;
     }
 

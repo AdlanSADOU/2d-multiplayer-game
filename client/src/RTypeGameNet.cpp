@@ -14,10 +14,10 @@ void RTypeGame::OnInitialGameInfo(Event &event)
     std::vector<ClientID> clientIds;
 
     nuts::Color score_colors[4] = {
-        nuts::Color(128, 0, 128, 120),
-        nuts::Color(0, 255, 0, 120),
-        nuts::Color(255, 0, 0, 120),
-        nuts::Color(0, 0, 255, 120),
+        nuts::Color(128, 0, 128, 100),
+        nuts::Color(0, 255, 0, 100),
+        nuts::Color(255, 0, 0, 100),
+        nuts::Color(0, 0, 255, 100),
     };
 
     while (!packet.endOfPacket())
@@ -33,7 +33,7 @@ void RTypeGame::OnInitialGameInfo(Event &event)
         tmp_str.append(std::to_string(tmp_client_id));
 
         tmp_text.SetString(tmp_str);
-        tmp_text.SetOutlineThickness(1);
+        tmp_text.SetOutlineThickness(.8f);
         tmp_text.SetOulineColor(score_colors[tmp_client_id % MAX_CLIENTS]);
         tmp_text.SetFont(_font);
         tmp_text.SetCharacterSize(12);
@@ -59,8 +59,6 @@ void RTypeGame::OnRemotePlayerState(Event &event)
     if (client_id == _localClientId)
         return;
 
-    thread_local int32_t last_score;
-
     if (inClientStatePacket
         >> client_id
         >> _players[client_id]->_directionalKeys[0]
@@ -74,18 +72,6 @@ void RTypeGame::OnRemotePlayerState(Event &event)
 
     ) {
         _players[client_id]->SetPosition({ x, y });
-
-        if (last_score != _players[client_id]->_score)
-            COUT("player " << client_id << " Score: " << _players[client_id]->_score << "\n");
-
-        // std::cout << client_id << ": "
-        //           << _players[client_id]->_directionalKeys[0]
-        //           << _players[client_id]->_directionalKeys[1]
-        //           << _players[client_id]->_directionalKeys[2]
-        //           << _players[client_id]->_directionalKeys[3]
-        //           << _players[client_id]->_isFiering
-        //           << "\n";
-        last_score = _players[client_id]->_score;
     }
 }
 

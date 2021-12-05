@@ -59,7 +59,7 @@ class GameThread {
     sf::UdpSocket        _socket                     = {};
     int                  _gameId                     = 0;
     bool                 _running                    = false;
-    int                  client_update_start_counter = 0;
+    int                  tick_count = 0;
 
     std::thread th_receive         = {};
     int32_t     _receivesPerSecond = 0;
