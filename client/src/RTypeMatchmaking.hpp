@@ -47,7 +47,6 @@ public:
 
     void SetState(MPlayerState state)
     {
-        std::cout << "mmPlayerId:" << _id << " state changed\n";
         _state = state;
     }
 
@@ -58,7 +57,6 @@ public:
 
     void SetID(int id)
     {
-        std::cout << "mmPlayerId:" << id << "\n";
         _id = id;
     }
 

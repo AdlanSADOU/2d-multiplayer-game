@@ -75,16 +75,6 @@ void RTypeGame::OnRemotePlayerState(Event &event)
     ) {
         _players[client_id]->SetPosition({ x, y });
 
-        if (last_score != _players[client_id]->_score)
-            COUT("player " << client_id << " Score: " << _players[client_id]->_score << "\n");
-
-        // std::cout << client_id << ": "
-        //           << _players[client_id]->_directionalKeys[0]
-        //           << _players[client_id]->_directionalKeys[1]
-        //           << _players[client_id]->_directionalKeys[2]
-        //           << _players[client_id]->_directionalKeys[3]
-        //           << _players[client_id]->_isFiering
-        //           << "\n";
         last_score = _players[client_id]->_score;
     }
 }
