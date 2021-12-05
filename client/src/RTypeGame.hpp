@@ -177,7 +177,7 @@ public:
 
     ~GMonster()
     {
-        COUT("[ENTT]: monster destroyed with id: [" << GetEntity() << "\n");
+        // COUT("[ENTT]: monster destroyed with id: [" << GetEntity() << "\n");
         // scene.DestroyEntity(GetEntity());
     }
 
@@ -286,7 +286,10 @@ public:
         SetPosition(pos);
     }
 
-    ~RExplosion() { }
+    ~RExplosion()
+    {
+        scene.DestroyEntity(GetEntity());
+    }
 
     void SetPosition(nuts::Vector2f pos)
     {
@@ -309,7 +312,7 @@ private:
     std::queue<sf::Packet>              _monster_packets_queue;
 
     nuts::Texture                       _ExplosionTxt;
-    std::unordered_map<int, RExplosion> _RExplosions;
+    std::unordered_map<int, RExplosion *> _RExplosions;
     RTypeSounds                         _RSounds;
 
     ClientID    _localClientId;

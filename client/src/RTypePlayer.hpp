@@ -247,6 +247,7 @@ public:
     void Update(float dt, sf::RenderWindow &window)
     {
         Move();
+
         if (_isFiering)
             _projectileManager.FireProjectile(GetPosition(), ProjectileManager::SMALL, dt);
 

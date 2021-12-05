@@ -108,7 +108,6 @@ void GameThread::OnClientUpdate(Event &event)
     // wait for 50 server ticks before starting
     // to process client packets
     // ugly workaround for a weird bug
-
     if (tick_count < 10) {
         ++tick_count;
         return;

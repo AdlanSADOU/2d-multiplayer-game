@@ -126,10 +126,11 @@ void RTypeGame::ProcessMonsterPackets()
 void RTypeGame::UpdateExplosions()
 {
     for (auto e = std::begin(_RExplosions); e != std::end(_RExplosions); ++e) {
-        auto &sprite = e->second.GetComponent<SpriteComponent>().sprite;
-        auto &state  = e->second.GetComponent<StateComponent>().state;
+        auto &sprite = e->second->GetComponent<SpriteComponent>().sprite;
+        auto &state  = e->second->GetComponent<StateComponent>().state;
         if (sprite.IsLastFrame() && state == GameState::GAME) {
             state = GameState::NONE;
+
             _RExplosions.erase(e);
             break;
         }
@@ -151,29 +152,42 @@ void RTypeGame::Update()
     for (auto &player : _players) {
         player.second->Update(_engine->dt, _engine->window);
     }
+    if (GetLocalPlayer()->_isFiering && !_RSounds._RSounds[RTypeSounds::LASER].IsPlaying())
+        _RSounds.Play(RTypeSounds::LASER);
 
     _destroyed_monster_id = -1;
 
-    for (auto &m : _monsters) {
-        // if (!m.second || m.first < 0) break;
-        // // this entity could be is_destroyed by receive() thread while accessing it here
-        // if (m.second->GetEntity() < 0 || m.second->GetEntity() > MAX_ENTITIES) continue;
-        if (m.second->_infos.is_destroyed) continue;
+    auto it = _monsters.begin();
+
+    while (it != _monsters.end()) {
         auto projectiles = GetLocalPlayer()->_projectileManager._projectiles;
 
-        for (size_t j = 0; j < projectiles.size(); j++) {
-            auto &spriteComp = projectiles[j].GetComponent<SpriteComponent>();
+        if (it != _monsters.cend()) {
+            for (size_t j = 0; j < projectiles.size(); j++) {
+                auto &spriteComp = projectiles[j].GetComponent<SpriteComponent>();
 
-            if (m.second) {
-                auto const &mrect = m.second->GetComponent<SpriteComponent>().sprite.GetSprite().getGlobalBounds();
+                auto const &mrect = it->second->GetComponent<SpriteComponent>().sprite.GetSprite().getGlobalBounds();
+
                 if (spriteComp.sprite.GetSprite().getGlobalBounds().intersects(mrect)) {
-                    _destroyed_monster_id         = m.first;
-                    m.second->_infos.is_destroyed = true;
+                    _destroyed_monster_id = it->first;
+
+                    it->second->_infos.is_destroyed = true;
+
                     if (!_RSounds._RSounds[RTypeSounds::EXPLOSION].IsPlaying())
                         _RSounds.Play(RTypeSounds::EXPLOSION);
+
+                    // nuts::Vector2f expPos = it->second->GetComponent<TransformComponent>().position;
+                    // AddExplosion(expPos, it->first);
+                    // _destroyed_monster_id = it->first;
+                    // scene.DestroyEntity(_monsters[it->first]->GetEntity());
+                    // delete it->second;
+                    // it = _monsters.erase(it);
+                    break;
                 }
             }
         }
+        if (it != _monsters.end())
+            ++it;
     }
 
     UpdateExplosions();
@@ -181,7 +195,7 @@ void RTypeGame::Update()
 
 void RTypeGame::AddExplosion(nuts::Vector2f pos, int id)
 {
-    _RExplosions.insert({ id, RExplosion(_ExplosionTxt, pos) });
+    _RExplosions.insert({ id, std::move(new RExplosion(_ExplosionTxt, pos)) });
 }
 
 void RTypeGame::Draw()

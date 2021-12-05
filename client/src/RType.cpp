@@ -135,9 +135,9 @@ void RType::Run()
                 _game->Update();
                 _game->Draw();
 
-                // if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (58.f))
+                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (44.f))
                 {
-                    // INetClient::ResetAccumulatorTime();
+                    INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
                     if (_game->isReady && localPlayer != nullptr) {
@@ -164,8 +164,8 @@ void RType::Run()
                         //     << localPlayer->IsFiering()
                         //     << _game->_destroyed_monster_id << "\n");
 
-                        if (_game->_destroyed_monster_id != -1)
-                            COUT("[UDP-SEND]: destroyed monster with id: " << _game->_destroyed_monster_id << "\n");
+                        // if (_game->_destroyed_monster_id != -1)
+                            // COUT("[UDP-SEND]: destroyed monster with id: " << _game->_destroyed_monster_id << "\n");
 
                         INetClient::UdpSend(playerStatePacket);
                     }
