@@ -126,18 +126,17 @@ void RType::Run()
                 break;
 
             case GameState::MATCHM:
-                _matchMaking.Draw();
+                // _matchMaking.Draw();
                 break;
 
             case GameState::GAME:
-
                 if (GetLocalClientId() == -1) return;
-                _game->Update();
-                _game->Draw();
 
-                if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (44.f))
+                _game->Update();
+
+                // if (INetClient::GetAccumulatorTime().asSeconds() > 1 / (44.f))
                 {
-                    INetClient::ResetAccumulatorTime();
+                    // INetClient::ResetAccumulatorTime();
 
                     GPlayer *localPlayer = (_game->GetLocalPlayer());
                     if (_game->isReady && localPlayer != nullptr) {
@@ -152,7 +151,7 @@ void RType::Run()
                                           << localPlayer->GetPosition().x
                                           << localPlayer->GetPosition().y
                                           << localPlayer->IsFiering()
-                                          << _game->_destroyed_monster_id;
+                                          << _game->_last_destroyed_monster_id;
                         // COUT(
                         //     GetLocalClientId()
                         //     << localPlayer->_directionalKeys[0]
@@ -162,15 +161,16 @@ void RType::Run()
                         //     << localPlayer->GetPosition().x
                         //     << localPlayer->GetPosition().y
                         //     << localPlayer->IsFiering()
-                        //     << _game->_destroyed_monster_id << "\n");
+                        //     << _game->_last_destroyed_monster_id << "\n");
 
-                        // if (_game->_destroyed_monster_id != -1)
-                            // COUT("[UDP-SEND]: destroyed monster with id: " << _game->_destroyed_monster_id << "\n");
+                        // if (_game->_last_destroyed_monster_id != -1)
+                        // COUT("[UDP-SEND]: destroyed monster with id: " << _game->_last_destroyed_monster_id << "\n");
 
                         INetClient::UdpSend(playerStatePacket);
                     }
                 }
 
+                _game->Draw();
                 break;
 
             default:
@@ -178,6 +178,5 @@ void RType::Run()
         }
         _deltaClock.Restart();
         _engine->Present();
-
     }
 }

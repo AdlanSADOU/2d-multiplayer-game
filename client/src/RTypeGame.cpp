@@ -87,6 +87,7 @@ void RTypeGame::ProcessMonsterPackets()
             bool  is_destroyed = false;
 
             packet >> id >> type >> pos_x >> pos_y >> is_destroyed;
+            if (!packet) COUT("---> ERROR: packet not fully read?\n");
 
             if (id < 0) {
                 COUT("Error: monster id was less than 0 : " << id << "\n");
@@ -112,12 +113,15 @@ void RTypeGame::ProcessMonsterPackets()
                 _monsters[id]->_infos.is_destroyed = is_destroyed;
             }
 
-            if (is_destroyed && (_monsters.find(id) != std::end(_monsters))) {
+            bool not_erased = (_monsters.find(id) != std::end(_monsters));
+            if (is_destroyed && not_erased) {
                 nuts::Vector2f expPos = _monsters[id]->GetComponent<TransformComponent>().position;
                 AddExplosion(expPos, id);
                 scene.DestroyEntity(_monsters[id]->GetEntity());
                 delete _monsters[id];
                 _monsters.erase(id);
+                // COUT("mob erased > _destroyed_monster_id [" << _last_destroyed_monster_id << "\n");
+                // COUT("mob erased > id [" << id << "\n");
             }
         }
     }
@@ -155,7 +159,7 @@ void RTypeGame::Update()
     if (GetLocalPlayer()->_isFiering && !_RSounds._RSounds[RTypeSounds::LASER].IsPlaying())
         _RSounds.Play(RTypeSounds::LASER);
 
-    _destroyed_monster_id = -1;
+    _last_destroyed_monster_id = -1;
 
     auto it = _monsters.begin();
 
@@ -169,10 +173,10 @@ void RTypeGame::Update()
                 auto const &mrect = it->second->GetComponent<SpriteComponent>().sprite.GetSprite().getGlobalBounds();
 
                 if (spriteComp.sprite.GetSprite().getGlobalBounds().intersects(mrect)) {
-                    _destroyed_monster_id = it->first;
+                    _last_destroyed_monster_id = it->first;
 
                     it->second->_infos.is_destroyed = true;
-
+                    COUT("mob marked as destroyed > id [" << _last_destroyed_monster_id << "\n");
                     if (!_RSounds._RSounds[RTypeSounds::EXPLOSION].IsPlaying())
                         _RSounds.Play(RTypeSounds::EXPLOSION);
 

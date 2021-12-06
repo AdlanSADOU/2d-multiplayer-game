@@ -18,8 +18,14 @@ does each player receive monster inputs?
 
 
 # Remarks
+$[Client]> mob marked as destroyed > id [0
 
+$[Server]> player [2] destroyed monster: 0
+$[Server]> sent out > monster with id: 0
 
+$[Client]> mob erased > id [0
+
+$[Server]> erased > monster with id: 0
 
 # Notes
 git submodule update --force --init --remote

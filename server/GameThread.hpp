@@ -32,6 +32,9 @@ struct SMInfos
     nuts::Vector2f pos       = {};
     nuts::Vector2f goto_pos  = {};
     bool           destroyed = 0;
+
+    bool update_sent_upon_destroy = 0;
+    int  send_count               = 0;
 };
 
 struct ClientData
@@ -54,12 +57,12 @@ class GameThread {
     sf::Clock _broadcastClock = {};
     sf::Time  _dt             = {};
 
-    std::vector<SMInfos> _monsters                   = {};
-    EventManager         _eventManager               = {};
-    sf::UdpSocket        _socket                     = {};
-    int                  _gameId                     = 0;
-    bool                 _running                    = false;
-    int                  tick_count = 0;
+    std::vector<SMInfos> _monsters     = {};
+    EventManager         _eventManager = {};
+    sf::UdpSocket        _socket       = {};
+    int                  _gameId       = 0;
+    bool                 _running      = false;
+    int                  tick_count    = 0;
 
     std::thread th_receive         = {};
     int32_t     _receivesPerSecond = 0;

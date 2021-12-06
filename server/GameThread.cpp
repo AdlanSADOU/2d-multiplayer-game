@@ -150,7 +150,6 @@ void GameThread::OnClientUpdate(Event &event)
     //     << is_fiering
     //     << destroyed_monster_id << "\n");
 
-
     // process packets & client actions/updates
     if (destroyed_monster_id != -1) {
         COUT("player [" << client_id << "] destroyed monster: " << destroyed_monster_id << "\n");
@@ -178,11 +177,8 @@ void GameThread::OnClientUpdate(Event &event)
 
 void GameThread::OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id)
 {
-    thread_local int last_destroyed_id = -1;
-    // if (last_destroyed_id == destroyed_monster_id)
-    //     return;
 
-    for (auto it = _monsters.begin(); it != _monsters.end();) {
+    for (auto &it = _monsters.begin(); it != _monsters.end();) {
         if (it->id == destroyed_monster_id) {
             // COUT("marking as destroyed > monster with id: " << it->id << "\n");
 
@@ -242,9 +238,10 @@ void GameThread::UpdateMonstersPos()
 
 void GameThread::UpdateMonsters()
 {
-    thread_local int monster_id = 0;
+    thread_local int monster_id    = 0;
+    static const int mobs_to_spawn = 30;
 
-    if (_monsters.size() < 30 && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
+    if (_monsters.size() < mobs_to_spawn && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
         // COUT("spawned monster with id: " << monster_id << "\n");
         SMInfos tmp = { monster_id, GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
         _monsters.emplace_back(tmp);
@@ -254,12 +251,17 @@ void GameThread::UpdateMonsters()
 
     UpdateMonstersPos();
 
-    if (_broadcastClock.getElapsedTime().asSeconds() > 1 / 22.f) {
+    if (_broadcastClock.getElapsedTime().asSeconds() > 1 / 60.f) {
         sf::Packet mPacket;
         mPacket << Net::Events::MONSTER_UPDATE_POS;
 
         for (auto &monster : _monsters) {
             mPacket << monster.id << monster.type << monster.pos.x << monster.pos.y << monster.destroyed;
+            if (monster.destroyed) {
+                monster.update_sent_upon_destroy = true;
+            }
+            // ids_of_updated_mobs.push_back(monster.id);
+            COUT("sent out > monster with id: " << monster.id << "\n");
         }
 
         Broadcast(mPacket);
@@ -268,10 +270,10 @@ void GameThread::UpdateMonsters()
 
     thread_local int i = 0;
 
-    if (_monsterSpawn.getElapsedTime().asSeconds() >= 0.9f)
+    if (_monsterSpawn.getElapsedTime().asSeconds() > 1 / 5.f)
         for (auto it = _monsters.begin(); it != _monsters.end();) {
-            if (it->destroyed) {
-                // COUT("erased > monster with id: " << it->id << "\n");
+            if (it->destroyed && it->update_sent_upon_destroy) {
+                COUT("erased > monster with id: " << it->id << "\n");
                 it = _monsters.erase(it);
                 i  = 0;
             } else {

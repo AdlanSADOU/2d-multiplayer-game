@@ -14,12 +14,15 @@ void RType::OnNetReceivedId(Event &event)
     packet >> id;
 
     SetLocalClientId(id);
+
+#if (MAX_CLIENTS <= 4)
     auto &mmPlayers = _matchMaking.GetPlayers();
     mmPlayers[id % MAX_CLIENTS].SetID(id);
     mmPlayers[id % MAX_CLIENTS].SetState(RTypeMMPlayer::READY);
 
     _matchMaking._localClientId = id;
     _matchMaking._isInitiated   = true;
+#endif
 
     sf::Packet udpInfoPacket;
     udpInfoPacket << Net::Events::CLIENT_UDP
@@ -38,8 +41,8 @@ void RType::OnNetReceivedId(Event &event)
 void RType::OnQuickPlayBtn(Event &event)
 {
     /** TODO(adlan):
-    * if already connected, just relaunch matchmaking
-    */
+     * if already connected, just relaunch matchmaking
+     */
     if (INetClient::IsConnected()) return;
 
     if (INetClient::Connect(sf::IpAddress::getLocalAddress(), 55001))
@@ -59,9 +62,11 @@ void RType::OnNewClient(Event &event)
                   << "] joined matchmaking "
                   << "]\n";
 
+#if (MAX_CLIENTS <= 4)
         auto &mmPlayers = _matchMaking.GetPlayers();
         mmPlayers[tmpId % MAX_CLIENTS].SetID(tmpId);
         mmPlayers[tmpId % MAX_CLIENTS].SetState(RTypeMMPlayer::READY);
+#endif
     }
 }
 

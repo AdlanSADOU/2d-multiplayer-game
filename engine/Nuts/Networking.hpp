@@ -36,7 +36,7 @@
 
 using ClientID = sf::Int32;
 
-#define MAX_CLIENTS 2
+#define MAX_CLIENTS 4
 
 extern Scene scene;
 

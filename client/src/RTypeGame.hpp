@@ -327,7 +327,7 @@ private:
     void LocalClientInputs();
 
 public:
-    int _destroyed_monster_id = -1;
+    int _last_destroyed_monster_id = -1;
 
     RTypeGame();
     ~RTypeGame();
