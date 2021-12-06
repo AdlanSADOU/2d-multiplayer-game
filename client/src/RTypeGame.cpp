@@ -138,7 +138,7 @@ void RTypeGame::UpdateExplosions()
         auto &state  = e->second->GetComponent<StateComponent>().state;
         if (sprite.IsLastFrame() && state == GameState::GAME) {
             state = GameState::NONE;
-
+            delete e->second;
             _RExplosions.erase(e);
             break;
         }

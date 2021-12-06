@@ -177,7 +177,7 @@ void GameThread::OnClientUpdate(Event &event)
 void GameThread::OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id)
 {
 
-    for (auto &it = _monsters.begin(); it != _monsters.end();) {
+    for (auto it = _monsters.begin(); it != _monsters.end();) {
         if (it->id == destroyed_monster_id) {
             // COUT("marking as destroyed > monster with id: " << it->id << "\n");
 
@@ -240,7 +240,7 @@ void GameThread::UpdateMonsters()
     thread_local int monster_id    = 0;
     static const int mobs_to_spawn = 30;
 
-    if (_monsters.size() < mobs_to_spawn && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
+    if (_monsters.size() < mobs_to_spawn && _monsterSpawn.getElapsedTime().asSeconds() >= 0.1f) {
         // COUT("spawned monster with id: " << monster_id << "\n");
         SMInfos tmp = { monster_id, GetRandomType(), GetRandomPosSpawn(), GetRandomPos() };
         _monsters.emplace_back(tmp);
