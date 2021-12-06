@@ -45,7 +45,6 @@ void GameThread::Run(std::vector<std::shared_ptr<SClientComponent>> clients, std
     // th_receive = std::thread(&GameThread::receive, this); // deprecated
 
     while (_running) {
-
         _dt = _deltaClock.restart();
 
         Receive();
@@ -198,7 +197,7 @@ void GameThread::OnMonsterDestoyed(int destroyed_monster_id, ClientID client_id)
 // Monster updates -- maybe a class on its own?
 MonsterType GameThread::GetRandomType()
 {
-    return ((MonsterType)(0 + (rand() % (1 - 0 + 1))));
+    return ((MonsterType)(0 + (rand() % (2 - 0 + 1))));
 }
 
 nuts::Vector2f GameThread::GetRandomPosSpawn()
@@ -225,10 +224,10 @@ void GameThread::UpdateMonstersPos()
         nuts::Vector2f &pos      = monster.pos;
         nuts::Vector2f &goto_pos = monster.goto_pos;
 
-        if (pos.x >= goto_pos.x + 10) { pos.x -= 50 * dt; }
-        if (pos.x <= goto_pos.x - 10) { pos.x += 50 * dt; }
-        if (pos.y >= goto_pos.y + 10) { pos.y -= 50 * dt; }
-        if (pos.y <= goto_pos.y - 10) { pos.y += 50 * dt; }
+        if (pos.x >= goto_pos.x + 10) { pos.x -= 75 * dt; }
+        if (pos.x <= goto_pos.x - 10) { pos.x += 75 * dt; }
+        if (pos.y >= goto_pos.y + 10) { pos.y -= 75 * dt; }
+        if (pos.y <= goto_pos.y - 10) { pos.y += 75 * dt; }
 
         if ((pos.x >= goto_pos.x - 10 && pos.x <= goto_pos.x + 10) && (pos.y >= goto_pos.y - 10 && pos.y <= goto_pos.y + 10)) {
             monster.goto_pos = GetRandomPos();
@@ -243,7 +242,7 @@ void GameThread::UpdateMonsters()
 
     if (_monsters.size() < mobs_to_spawn && _monsterSpawn.getElapsedTime().asSeconds() >= 0.9f) {
         // COUT("spawned monster with id: " << monster_id << "\n");
-        SMInfos tmp = { monster_id, GetRandomType(), GetRandomPos(), GetRandomPosSpawn() };
+        SMInfos tmp = { monster_id, GetRandomType(), GetRandomPosSpawn(), GetRandomPos() };
         _monsters.emplace_back(tmp);
         _monsterSpawn.restart();
         ++monster_id;
@@ -261,7 +260,7 @@ void GameThread::UpdateMonsters()
                 monster.update_sent_upon_destroy = true;
             }
             // ids_of_updated_mobs.push_back(monster.id);
-            COUT("sent out > monster with id: " << monster.id << "\n");
+            // COUT("sent out > monster with id: " << monster.id << "\n");
         }
 
         Broadcast(mPacket);
@@ -273,7 +272,7 @@ void GameThread::UpdateMonsters()
     if (_monsterSpawn.getElapsedTime().asSeconds() > 1 / 5.f)
         for (auto it = _monsters.begin(); it != _monsters.end();) {
             if (it->destroyed && it->update_sent_upon_destroy) {
-                COUT("erased > monster with id: " << it->id << "\n");
+                // COUT("erased > monster with id: " << it->id << "\n");
                 it = _monsters.erase(it);
                 i  = 0;
             } else {

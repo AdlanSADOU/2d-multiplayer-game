@@ -126,7 +126,7 @@ void RType::Run()
                 break;
 
             case GameState::MATCHM:
-                // _matchMaking.Draw();
+                _matchMaking.Draw();
                 break;
 
             case GameState::GAME:
