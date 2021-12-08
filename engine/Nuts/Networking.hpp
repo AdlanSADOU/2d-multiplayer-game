@@ -36,7 +36,7 @@
 
 using ClientID = sf::Int32;
 
-#define MAX_CLIENTS 4
+#define MAX_CLIENTS 2
 
 extern Scene scene;
 
@@ -70,7 +70,6 @@ namespace Net {
         GAMEID_OK,
         INITIAL_GAME_INFO,
         GAME_START,
-
     };
 
     /**

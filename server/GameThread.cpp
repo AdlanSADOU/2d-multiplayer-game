@@ -22,7 +22,6 @@ void GameThread::Run(std::vector<std::shared_ptr<SClientComponent>> clients, std
         sf::Packet packet;
 
         packet << Net::Events::GAME_START << sf::IpAddress::getLocalAddress().toInteger() << _socket.getLocalPort();
-        COUT("sent eventType: " << Net::Events::GAME_START);
         client->tcpSock->send(packet);
         packet.clear();
 
@@ -35,7 +34,6 @@ void GameThread::Run(std::vector<std::shared_ptr<SClientComponent>> clients, std
         }
 
         client->tcpSock->send(packet);
-        COUT("sent eventType: " << Net::Events::INITIAL_GAME_INFO);
 
         _clientsData.insert({ client->id, ClientData { 0, 0, 100 } });
     }

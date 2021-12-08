@@ -18,6 +18,7 @@
 #include "Systems/SClientsSystem.hpp"
 
 #include "GameThread.hpp"
+#include "Console.hpp"
 
 #include <thread>
 #include <vector>
@@ -80,6 +81,8 @@ public:
         sf::Time dt;
         sf::Time acc;
 
+        std::thread th_Console(&Console::handleCmdlineInput, &_running);
+
         while (_running) {
             dt = deltaClock.restart();
             acc += dt;
@@ -95,6 +98,8 @@ public:
                 acc = sf::Time::Zero;
             }
         }
+
+        th_Console.join();
     }
 
     void OnMatchMReady(Event &event)
