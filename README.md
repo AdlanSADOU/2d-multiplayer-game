@@ -1,41 +1,54 @@
 # R-Type
 
-## Installer les dependances
+## Install dependencies
 
+On linux, the following development libraries are needed in order to build SFML:
+(non exhaustive list)
+- openal
+- libvorbis
+- flac
+
+while cloning this repository :
 ```console
-sudo dnf install openal-soft-devel.x86_64 && libvorbis-devel.x86_64 && flac-devel.x86_64
+git clone --recursive [url]
+
+    or
 
 git submodule init
 git submodule update
 
 ```
 
-<!--
-```console
-pip install conan
-conan remote add bincrafters https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
-conan remote add conancenter https://center.conan.io
-```
-
----
-Ajouter la ligne suivante dans le fichier ~/.conan/conan.conf en dessous de la ligne [general]
-
-```console
-revisions_enabled = 1
-``` -->
-
-## Pour compiler
+## Windows build
 
 ```console
 cd SFML
-cmake -G “Unix Makefiles”
-cmake --build .
+cmake -A x64 -B build/
+cmake --build build/
+
+cd ..
+cmake -A x64 -B build/
+cmake --build build/
+
 ```
 
-## Pour ne pas track SFML dans l'extension Git
+## Linux build
 
-Ajoutez ces 2 lignes dans ```.vscode/settings.json```
+```console
+cd SFML
+cmake -G "Unix Makefiles" -B build/
+cmake --build build/
+
+cd ..
+cmake -G "Unix Makefiles" -B build/
+cmake --build build/
+```
+
+## To avoid tracking git submodule changes in vscode
+
+Add these lines in ```.vscode/settings.json```
 ```json
+    ...
     "git.ignoreSubmodules": true,
     "git.ignoredRepositories": ["SFML"],
 ```

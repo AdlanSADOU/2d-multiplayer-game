@@ -1,31 +1,17 @@
 # TODO
-Event loop must be run by the client
-not the engine
-cause engine is a shared lib, so static function isKeyPressed() executes on all clients...
+- No "GameThread" anymore, we are switching to single instance persisent world
+- make the server authoritative
+- Engine: Improve rendering/input backend abtraction, we might move away from sfml at some point
+- Server:
+    - move into Engine any socket based logic as a framework on its own
+    - add support for a mySQL database for world persistence & user accounts
 
-
-<!-- - player scores -->
-<!-- - sounds -->
-- monster projectiles
-- monster projectiles/player collision
-- score milestones
-    - if score reaches 20, increase mob density & spawn rate
-- handle player disconnection/death
-
-does each player receive monster inputs?
+- Client/Server: remove & replace lobby system with a login system
 
 # TODO Engine
 
 
 # Remarks
-$[Client]> mob marked as destroyed > id [0
-
-$[Server]> player [2] destroyed monster: 0
-$[Server]> sent out > monster with id: 0
-
-$[Client]> mob erased > id [0
-
-$[Server]> erased > monster with id: 0
 
 # Notes
 git submodule update --force --init --remote
@@ -35,30 +21,6 @@ https://cmake.org/cmake/help/latest/guide/tutorial/Selecting%20Static%20or%20Sha
 https://code.austinmorlan.com/austin/ecs/src/branch/master/Source/Core/Event.hpp
 
 # Server Issues
-
-
-# Client/Server
-
-When the game is first launched & loaded you are in the MainMenu
-
-The game can ONLY be played in multiplayer
-
-So when you launch the game, your `[Client] first tries to [CONNECT] to the server`.
-
-The `[Server] then replies with your attributed [ID]` and you land on the lobby screen.
-
-Once in the [Lobby_Screen] your [Client] tells the server that it is in the [Lobby_Screen]
-The `server sends a list of any existing lobbys -> list[LobbyId]` or `-1 if no lobbys exist`.
-Your `client then draws a button list of those lobbys` and `when clicked, a request to join the lobby is sent to the server`.
-
-The server then associates your client ID with the lobby id and send back a [LOBBY_JOINED] response upon success followed by a list of all clients that already joined the lobby. For every client that joins the lobby, the server broadcast to all those clients an updated list with the newly joined client.
-
-Once in a lobby clients have a [READY] button, when clicked, server receives a packet with the format [CLIENT_READY][lobbyId][clientId]
-
-When the last client in the lobby clicks the [READY] button, the server receives a [START_GAME] packet, which inits a game session on the server side and broadcasts to all clients data related to the game session. the client can now start to load the necessary sprite assets to start drawing all entities received from the server.
-
-###### not actually sure about what follows (turned out exactly as stated)
-Each GameSession could be a thread, that thread has its own UDP socket that only clients belonging to that session can communicate with
 
 
 ---
@@ -79,12 +41,7 @@ https://en.cppreference.com/w/cpp/thread/mutex
         t.join();
     });
 
-### threading obeservations
-trying to join workers ouside the class they were pushed
-crashes
-
-
-# Client/Server Protocol
+# Network spoofing
 https://www.netresec.com/index.ashx?page=RawCap
 
 - sequence diagram
