@@ -1,5 +1,8 @@
 # R-Type
 
+This project was an attempt at writing a LAN multiplayer 2D game in a month, with up to 4 players (technically the server can handle more than 100 players on a single instance).
+It is a Client/Server architecture, features an ECS (Entity Component System) and a generic Event system.
+
 ## Install dependencies
 
 On linux, the following development libraries are needed in order to build SFML:
